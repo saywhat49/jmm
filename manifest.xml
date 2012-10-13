@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE install SYSTEM "http://dev.joomla.org/xml/1.5/component-install.dtd">
+<extension type="component" version="2.5.0" method="upgrade">
+	<name>com_jmm</name>
+	<author>Biswarup Adhikari</author>
+	<creationDate>Oct 2012</creationDate>
+	<copyright>biswarupadhikari@gmail.com</copyright>
+	<license>MIT</license>
+	<authorEmail>biswarupadhikari@gmail.com</authorEmail>
+	<version>1.0</version>
+	<description>JMM Joomla Mysql Manager Extension for mangage Mysql database in joomla admin panel.</description>
+	<languages folder="language/en-GB">
+		<language tag="en-GB">en-GB.com_jmm.ini</language>
+	</languages>
+
+	<media destination="com_jmm" folder="media">
+		<folder>js</folder>
+		<folder>css</folder>
+		<folder>images</folder>
+	</media>
+
+	<files folder="components/com_jmm">
+		<filename>controller.php</filename>
+		<folder>controllers</folder>
+		<filename>jmm.php</filename>
+		<folder>helpers</folder>
+		<filename>index.html</filename>
+		<folder>models</folder>
+		<folder>views</folder>
+	</files>
+
+	<install>
+		<sql>
+			<file charset="utf8" driver="mysql">install.mysql.sql</file>
+		</sql>
+	</install>
+	<uninstall>
+		<sql>
+			<file charset="utf8" driver="mysql">uninstall.mysql.sql</file>
+		</sql>
+	</uninstall>
+        <update> 
+			<sql>
+				<file charset="utf8" driver="mysql">update.mysql.sql</file>
+			</sql>
+        </update>
+
+	<administration>
+		<languages folder="administrator/language/en-GB">
+			<language tag="en-GB">en-GB.com_jmm.sys.ini</language>
+			<language tag="en-GB">en-GB.com_jmm.ini</language>
+		</languages>
+		<menu link="option=com_jmm&amp;view=lists" img="../media/com_jmm/images/database-16x16.png">com_jmm</menu>
+		<submenu>
+			<menu link="option=com_jmm&amp;view=databases" alt="COM_JMM_DATABASES" img="../media/com_jmm/images/database-16x16.png">COM_JMM_DATABASES</menu>
+			<menu link="option=com_jmm&amp;view=tables" alt="COM_JMM_TABLES" img="../media/com_jmm/images/table-16x16.png">COM_JMM_TABLES</menu>
+			<menu link="option=com_jmm&amp;view=sql" alt="COM_JMM_SQL_QUERY" img="../media/com_jmm/images/sql-16x16.png">COM_JMM_SQL_QUERY</menu>
+			<menu link="option=com_jmm&amp;view=cannedqueries" alt="COM_JMM_CANNED_QUERY" img="../media/com_jmm/images/can-16x16.png">COM_JMM_CANNED_QUERY</menu>
+		</submenu>
+		
+		<files folder="administrator/components/com_jmm">
+			<filename>controller.php</filename>
+			<folder>controllers</folder>
+			<filename>jmm.php</filename>
+			<filename>index.html</filename>
+			<filename>install.mysql.sql</filename>
+			<filename>manifest.xml</filename>
+			<filename>config.xml</filename>
+			<folder>models</folder>
+			<folder>tables</folder>
+			<filename>uninstall.mysql.sql</filename>
+			<filename>update.mysql.sql</filename>
+			<folder>views</folder>
+			<folder>helpers</folder>
+		</files>
+	</administration>
+</extension>

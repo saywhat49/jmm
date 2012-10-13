@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+        <fieldset
+                name="jmm_database_config"
+                label="JMM Database Configuration"
+                description=""
+        >
+                <field
+                        name="dbhost"
+                        type="text"
+                        label="DB Host"
+                        description=""
+                        default="0"
+                />
+                <field
+                        name="dbusername"
+                        type="text"
+                        label="DB Username"
+                        description=""
+                        default="0"
+                />
+                <field
+                        name="dbpass"
+                        type="text"
+                        label="DB Password"
+                        description=""
+                        default="0"
+                />
+                <field
+                        name="dbname"
+                        type="text"
+                        label="DB Name"
+                        description=""
+                        default="0"
+                />
+
+        </fieldset>
+</config>
