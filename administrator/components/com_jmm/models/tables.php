@@ -27,9 +27,18 @@ class JMMModelTables extends JModelList {
 		$query -> select('*');
 		$query -> from($tbl);
 		$search = $this -> getState('filter.search');
+		$db = $this -> getDbo();
+		/*
+		if (!empty($search)) {
+			$search = '%' . $db -> getEscaped($search, true) . '%';
+			$fileds = JMMCommon::getCloumnsFromTable($tbl);
+			$searchflString = implode(" LIKE '$search' OR ", $fileds);
+			$field_searches = "($searchflString)";
+			$query -> where($field_searches);
+		}
+		*/
 		$orderCol = $this -> getState('list.ordering');
 		$orderDirn = $this -> getState('list.direction');
-		$db = $this -> getDbo();
 		if (isset($orderCol)) {
 			$query -> order($db -> getEscaped($orderCol . ' ' . $orderDirn));
 		}

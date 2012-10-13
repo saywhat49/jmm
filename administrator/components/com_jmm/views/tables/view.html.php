@@ -10,12 +10,21 @@ class JMMViewTables extends JView {
 	function display($tmpl = null) {
 		$action = JRequest::getString('action', '');
 		$tbl = JRequest::getString('tbl');
+		$filter_browsetable=JRequest::getVar('filter_browsetable','');
+		if($filter_browsetable!=''){
+			JFactory::getApplication()->redirect('index.php?option=com_jmm&view=tables&action=browse&tbl='.$filter_browsetable);
+		}
+		$filter_tablestructure=JRequest::getVar('filter_tablestructure');
+		if($filter_tablestructure!=''){			
+			JFactory::getApplication()->redirect('index.php?option=com_jmm&view=tables&action=structure&tbl='.$filter_tablestructure);
+		}
+		
+		
 		switch ($action) {
 			case 'structure' :
 				$this -> items = JMMCommon::showTableStructure($tbl);
 				break;
 			case 'browse' :
-				//$this -> items = JMMCommon::showDataFromTable($tbl);
 				$this -> items =  $this -> get('Items');
 				break;
 

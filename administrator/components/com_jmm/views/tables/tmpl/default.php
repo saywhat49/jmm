@@ -5,6 +5,7 @@ $orderDirn=$this->escape($this->state->get('list.direction'));
 ?>
 <form method="post" id="adminForm" name="adminForm">
 	<fieldset id="filter-bar">
+		<!--
 		<div class="filter-search fltlft">
 			<label for="filter_search">Search</label>
 			<input type="text" name="filter_search" id="filter_search" 
@@ -14,9 +15,10 @@ $orderDirn=$this->escape($this->state->get('list.direction'));
 			Clear
 			</button>
 		</div>
+		-->
 		<div class="filter-select fltrt">
 			<select name="filter_browsetable" class="inputbox" onchange="this.form.submit()">				
-				<option value="">Browse Table</option>
+				<option value="">Browse Table Data</option>
 				<?php
 				echo JHtml::_('select.options',$this->tables,'value','text',$this->state->get('filter.browsetable'),true);
 				?>
@@ -24,11 +26,14 @@ $orderDirn=$this->escape($this->state->get('list.direction'));
 						
 			<select name="filter_tablestructure" class="inputbox" onchange="this.form.submit()">
 
-				<option value="">Table Strucuture</option>
+				<option value="">View Table Strucuture</option>
 				<?php echo JHtml::_('select.options', $this->tables, 'value', 'text', $this -> state -> get('filter.tablestructure'), true); ?>
 			</select>		
 		</div>
 	</fieldset>
+	<?php
+	if(count($this->items)>0){
+	?>
 	<table class="adminlist">
 		<thead>
 			<tr>
@@ -88,6 +93,9 @@ $orderDirn=$this->escape($this->state->get('list.direction'));
 		}
 		?>
 	</table>
+	<?php
+	}
+	?>
 	<input type="hidden" name="task" value="" />
 	<input type="hidden" name="boxchecked" value="0" />
 	<input type="hidden" name="filter_order" value="<?php echo $listOrder; ?>" />
