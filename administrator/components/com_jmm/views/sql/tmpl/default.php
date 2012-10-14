@@ -1,7 +1,7 @@
 <?php
 defined('_JEXEC') or die('Restricted access');
 ?>
-<form action="index.php?option=com_jmm&amp;view=sql" method="post" id="adminForm" name="adminForm">
+<form method="post" id="adminForm" name="adminForm">
 <textarea placeholder="Enter your SQL Quiries......" rows="10" cols="150" id="query" name="query"><?php echo JRequest::getVar('query','');?></textarea><br>
 <input type="submit" class="btn_runquery large" value="Run Query">
 	<?php

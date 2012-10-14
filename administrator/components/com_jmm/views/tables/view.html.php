@@ -11,12 +11,18 @@ class JMMViewTables extends JView {
 		$action = JRequest::getString('action', '');
 		$tbl = JRequest::getString('tbl');
 		$filter_browsetable=JRequest::getVar('filter_browsetable','');
+		if(isset($_REQUEST['dbname'])){
+			$dbname=JRequest::getVar('dbname');
+			$urlString='&dbname='.$dbname;
+		}else{
+			$urlString='';
+		}
 		if($filter_browsetable!=''){
-			JFactory::getApplication()->redirect('index.php?option=com_jmm&view=tables&action=browse&tbl='.$filter_browsetable);
+			JFactory::getApplication()->redirect('index.php?option=com_jmm&view=tables&action=browse&tbl='.$filter_browsetable.$urlString,'Table Data of '.$filter_browsetable);
 		}
 		$filter_tablestructure=JRequest::getVar('filter_tablestructure');
 		if($filter_tablestructure!=''){			
-			JFactory::getApplication()->redirect('index.php?option=com_jmm&view=tables&action=structure&tbl='.$filter_tablestructure);
+			JFactory::getApplication()->redirect('index.php?option=com_jmm&view=tables&action=structure&tbl='.$filter_tablestructure.$urlString,'Table Structure of '.$filter_tablestructure);
 		}
 		
 		

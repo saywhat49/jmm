@@ -4,7 +4,7 @@ jimport('joomla.application.component.jmodel');
 class JMMModelSQL extends JModel {
 
 	function getItems() {
-		$db = JFactory::getDBO();
+		$db=JMMCommon::getDBInstance();
 		$query = JRequest::getVar('query', null);
 		if (isset($query)) {
 			$db -> setQuery($query);

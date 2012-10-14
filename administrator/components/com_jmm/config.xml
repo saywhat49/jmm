@@ -1,38 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
-        <fieldset
-                name="jmm_database_config"
-                label="JMM Database Configuration"
-                description=""
-        >
-                <field
-                        name="dbhost"
-                        type="text"
-                        label="DB Host"
-                        description=""
-                        default="0"
-                />
-                <field
-                        name="dbusername"
-                        type="text"
-                        label="DB Username"
-                        description=""
-                        default="0"
-                />
-                <field
-                        name="dbpass"
-                        type="text"
-                        label="DB Password"
-                        description=""
-                        default="0"
-                />
-                <field
-                        name="dbname"
-                        type="text"
-                        label="DB Name"
-                        description=""
-                        default="0"
-                />
+	<fieldset
+	name="jmm_database_config"
+	label="COM_JMM_CONFIGURATION_DB"
+	description=""
+	>
+		<field name="dbsettings" type="radio" default="0" label="COM_JMM_CONFIGURATION_DB_SETTINGS" description="">
+			<option value="0">COM_JMM_CONFIGURATION_DB_JOOMLA_SETTINGS</option>
+			<option value="1">COM_JMM_CONFIGURATION_DB_CUSTOM_SETTINGS</option>
+		</field>
 
-        </fieldset>
+	</fieldset>
+	<fieldset
+	name="jmm_database_config_custom"
+	label="COM_JMM_CONFIGURATION_DB_CUSTOM_SETTINGS"
+	description=""
+	>
+		<field
+		name="dbhost"
+		type="text"
+		label="COM_JMM_CONFIGURATION_DB_HOST"
+		description=""
+		default=""
+		/>
+		<field
+		name="dbusername"
+		type="text"
+		label="COM_JMM_CONFIGURATION_DB_USERNAME"
+		description=""
+		default=""
+		/>
+		<field
+		name="dbpass"
+		type="text"
+		label="COM_JMM_CONFIGURATION_DB_PASSWORD"
+		description=""
+		default=""
+		/>
+		<field
+		name="dbname"
+		type="text"
+		label="COM_JMM_CONFIGURATION_DB_NAME"
+		description=""
+		default=""
+		/>
+		<field
+		name="dbprefix"
+		type="text"
+		label="COM_JMM_CONFIGURATION_DB_PREFIX"
+		description=""
+		default=""
+		size="5"
+		/>
+
+	</fieldset>
 </config>
