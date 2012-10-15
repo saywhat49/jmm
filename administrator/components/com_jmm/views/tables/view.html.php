@@ -7,6 +7,7 @@ class JMMViewTables extends JView {
 	protected $state;
 	protected $pagination;
 	protected $tables;
+	protected $databases;
 	function display($tmpl = null) {
 		$action = JRequest::getString('action', '');
 		$tbl = JRequest::getString('tbl');
@@ -24,6 +25,10 @@ class JMMViewTables extends JView {
 		if($filter_tablestructure!=''){			
 			JFactory::getApplication()->redirect('index.php?option=com_jmm&view=tables&action=structure&tbl='.$filter_tablestructure.$urlString,'Table Structure of '.$filter_tablestructure);
 		}
+		$filter_chnagedatabase=JRequest::getVar('filter_chnagedatabase','');
+		if($filter_chnagedatabase!=''){
+			JFactory::getApplication()->redirect('index.php?option=com_jmm&view=tables&dbname='.$filter_chnagedatabase,'Database Switched to  '.$filter_chnagedatabase);
+		}
 		
 		
 		switch ($action) {
@@ -39,6 +44,7 @@ class JMMViewTables extends JView {
 				break;
 		}
 		$this->tables=$this->get('Tables');
+		$this->databases=$this->get('Databases');
 		$this -> pagination = $this -> get('Pagination');
 		$this -> state = $this -> get('State');
 		$this -> addToolbar();

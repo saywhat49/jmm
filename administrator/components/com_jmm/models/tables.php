@@ -21,22 +21,28 @@ class JMMModelTables extends JModelList {
 		return $items;
 	}
 
+	public function getDbo() {
+		$db = JMMCommon::getDBInstance();
+		return $db;
+	}
+
 	public function getListQuery() {
 		$tbl = JRequest::getString('tbl', '#__users');
 		$query = parent::getListQuery();
 		$query -> select('*');
 		$query -> from($tbl);
 		$search = $this -> getState('filter.search');
-		$db = $this -> getDbo();
+		//$db = $this -> getDbo();
+		$this->_db=JMMCommon::getDBInstance();
 		/*
-		if (!empty($search)) {
-			$search = '%' . $db -> getEscaped($search, true) . '%';
-			$fileds = JMMCommon::getCloumnsFromTable($tbl);
-			$searchflString = implode(" LIKE '$search' OR ", $fileds);
-			$field_searches = "($searchflString)";
-			$query -> where($field_searches);
-		}
-		*/
+		 if (!empty($search)) {
+		 $search = '%' . $db -> getEscaped($search, true) . '%';
+		 $fileds = JMMCommon::getCloumnsFromTable($tbl);
+		 $searchflString = implode(" LIKE '$search' OR ", $fileds);
+		 $field_searches = "($searchflString)";
+		 $query -> where($field_searches);
+		 }
+		 */
 		$orderCol = $this -> getState('list.ordering');
 		$orderDirn = $this -> getState('list.direction');
 		if (isset($orderCol)) {
@@ -52,6 +58,14 @@ class JMMModelTables extends JModelList {
 			$tables[] = JHTML::_('select.option', $rows[$i], $rows[$i]);
 		}
 		return $tables;
+	}
+	function getDatabases() {
+		$rows = JMMCommon::getDataBaseLists();
+		$databases = array();
+		for ($i = 0; $i < count($rows); $i++) {
+			$databases[] = JHTML::_('select.option', $rows[$i], $rows[$i]);
+		}
+		return $databases;
 	}
 
 	protected function populateState($ordering = null, $direction = null) {
