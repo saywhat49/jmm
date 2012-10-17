@@ -1,14 +1,18 @@
 var JQ = jQuery.noConflict();
 JQ('document').ready(function(){
+JQ('.loading-icon').hide();
 /**	
  * On Click Save As Canned Query
  */
 JQ('#save_as_canned_query').live('click',(function(){
 	var title=prompt("Enter Canned Query Title");
 	if (title!=null && title!=""){
+		JQ('.loading-icon').show();
 		var query=JQ('#query').val();
 		var dbname=JQ('#currentdb').val();
-		JQ.post('index.php',{option:'com_jmm',task:'saveCannedQuery',title:title,dbname:dbname,query:query},function(response){
+		var r=Math.random();
+		JQ.post('index.php',{option:'com_jmm',task:'saveCannedQuery',title:title,dbname:dbname,query:query,r:r},function(response){
+			JQ('.loading-icon').hide();
 			var data=JSON.parse(response);
 			if(data.status){
 				alert(data.msg);
@@ -24,9 +28,11 @@ JQ('#save_as_canned_query').live('click',(function(){
 JQ('#save_as_site_table').live('click',(function(){
 	var title=prompt("Enter Canned Query Title");
 	if (title!=null && title!=""){
+		JQ('.loading-icon').show();
 		var query=JQ('#query').val();
 		var dbname=JQ('#currentdb').val();
-		JQ.post('index.php',{option:'com_jmm',task:'saveSiteTable',title:title,dbname:dbname,query:query},function(response){
+		JQ.post('index.php',{option:'com_jmm',task:'saveSiteTable',title:title,dbname:dbname,query:query,r:r},function(response){
+			JQ('.loading-icon').hide();
 			var data=JSON.parse(response);
 			if(data.status){
 				alert(data.msg);

@@ -188,3 +188,10 @@ table {
 .icon-48-sitetable {
 	background-image: url('../images/sitetable-48x48.png');
 }
+.loading-icon {
+	background: url('../images/ajax-loader.gif');
+	width: 32px;
+	height: 32px;
+	display: inline-block;
+	margin-bottom: -10px;
+}

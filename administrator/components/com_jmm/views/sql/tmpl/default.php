@@ -12,6 +12,7 @@ if(isset($_GET['dbname'])){
 <input type="hidden" id="currentdb" name="currentdb" value="<?php echo $dbname;?>">
 <input type="button" class="btn_runquery large" id="save_as_canned_query" value="Save as Canned Query">
 <input type="button" class="btn_runquery large" id="save_as_site_table" value="Save as Site Table">
+<div id="loading-icon" class="loading-icon"></div>
 	<?php
 	if($this->items && count($this->items)>0){
 		?>
