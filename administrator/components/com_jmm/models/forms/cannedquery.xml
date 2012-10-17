@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fieldset>
+		<field name="id"
+		type="hidden"
+		label="JGLOBAL_FIELD_ID_LABEL"
+		description="JGLOBAL_FIELD_ID_DESC"
+		size="30"
+		readonly="true"
+		class="readonly"
+		/>		
+		<field name="title"
+		type="text"
+		label="Title"
+		description=""
+		size="30"
+		required="true"
+		class="inputbox" 
+		/>		
+		<field name="dbname"
+		type="text"
+		label="DataBase"
+		description=""
+		size="30"
+		required="true"
+		class="inputbox" 
+		/>		
+		<field name="query"
+		type="textarea"
+		label="Query"
+		description=""
+		rows="10"
+		cols="40"
+		required="true"
+		class="inputbox" 
+		/>
+		
+		<field name="published"
+		type="list"
+		label="JSTATUS"
+		description="JFIELD_PUBLISHED_DESC"
+		class="inputbox"
+		filter="intval"
+		size="1"
+		default="1"	
+		>
+			<option value="1">JPUBLISHED</option>
+			<option value="0">JUNPUBLISHED</option>
+		</field>
+
+	</fieldset>
+</form>
+ 

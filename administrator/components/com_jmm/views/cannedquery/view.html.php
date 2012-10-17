@@ -1,0 +1,32 @@
+<?php
+defined('_JEXEC') or die('Restricted access');
+jimport('joomla.application.component.view');
+class JMMViewCannedQuery extends JView {
+	
+	protected $item;
+	protected $form;
+	
+	function display($tpl=null) 
+	{
+		$this->item=$this->get('Item');
+		$this->form=$this->get('Form');
+		$this->addToolbar();
+		parent::display($tpl);
+	}
+	
+	public function addToolbar()
+	{
+		if($this->item->id){
+			JToolBarHelper::title('Edit Canned Query');
+		}else{
+			JToolBarHelper::title('Save Canned Query');
+		}
+		
+		
+		JToolBarHelper::apply('cannedquery.apply','JToolBar_APPLY');
+		JToolBarHelper::save('cannedquery.save','JToolBar_SAVE');
+		JToolBarHelper::save2new('cannedquery.save2new','JToolBar_SAVE_AND_NEW');
+		JToolBarHelper::cancel('cannedquery.cancel');
+	}
+
+}

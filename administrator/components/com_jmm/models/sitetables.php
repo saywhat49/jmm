@@ -1,14 +1,11 @@
 <?php
 defined('_JEXEC') or die('Restricted access');
 jimport('joomla.application.component.modellist');
-class JMMModelTables extends JModelList {
+class JMMModelSiteTables extends JModelList {
 
 	public function __construct($config = array()) {
 		if (empty($config['filter_fields'])) {
-			if (isset($_REQUEST['tbl'])) {
-				$tbl = JRequest::getVar('tbl');
-				$config['filter_fields'] = JMMCommon::getCloumnsFromTable($tbl);
-			}
+			$config['filter_fields'] = array('id', 'title', 'dbname', 'query', 'datetime', 'published');
 		}
 		parent::__construct($config);
 	}
@@ -16,48 +13,42 @@ class JMMModelTables extends JModelList {
 	function getItems() {
 		$items = parent::getItems();
 		foreach ($items as &$item) {
-			$item = (array)$item;
+
 		}
 		return $items;
 	}
 
-	public function getDbo() {
-		$db = JMMCommon::getDBInstance();
-		return $db;
-	}
-
 	public function getListQuery() {
-		$tbl = JRequest::getString('tbl', '#__users');
 		$query = parent::getListQuery();
 		$query -> select('*');
-		$query -> from($tbl);
+		$query -> from('#__jmm_sitetables');
+		$published = $this -> getState('filter.published');
+		if ($published == '') {
+			$query -> where('published IN(1,0)');
+		} else if ($published != '*') {
+			$published = (int)$published;
+			$query -> where("published='$published'");
+		}		
 		$search = $this -> getState('filter.search');
-		//$db = $this -> getDbo();
-		$this->_db=JMMCommon::getDBInstance();
-		/*
-		 if (!empty($search)) {
-		 $search = '%' . $db -> getEscaped($search, true) . '%';
-		 $fileds = JMMCommon::getCloumnsFromTable($tbl);
-		 $searchflString = implode(" LIKE '$search' OR ", $fileds);
-		 $field_searches = "($searchflString)";
-		 $query -> where($field_searches);
-		 }
-		 */
+		$database = $this -> getState('filter.database');
+		if ($database!='') {
+			$query -> where("dbname='$database'");
+		}
+		$db = $this -> getDbo();
+
+		if (!empty($search)) {
+			$search = '%' . $db -> getEscaped($search, true) . '%';
+			$field_searches = "(title LIKE '{$search}' OR dbname LIKE '{$search}' OR query LIKE '{$search}')";
+			$query -> where($field_searches);
+		}
 		$orderCol = $this -> getState('list.ordering');
 		$orderDirn = $this -> getState('list.direction');
 		if (isset($orderCol)) {
 			$query -> order($db -> getEscaped($orderCol . ' ' . $orderDirn));
+		} else { 
+			$query -> order('id desc');
 		}
 		return $query;
-	}
-
-	function getTables() {
-		$rows = JMMCommon::getTablesFromDB();
-		$tables = array();
-		for ($i = 0; $i < count($rows); $i++) {
-			$tables[] = JHTML::_('select.option', $rows[$i], $rows[$i]);
-		}
-		return $tables;
 	}
 	function getDatabases() {
 		$rows = JMMCommon::getDataBaseLists();
@@ -72,7 +63,9 @@ class JMMModelTables extends JModelList {
 		$search = $this -> getUserStateFromRequest($this -> context . '.filter_search', 'filter_search');
 		$this -> setState('filter.search', $search);
 		$published = $this -> getUserStateFromRequest($this -> context . '.filter.published', 'filter_published');
-		$this -> setState('filter.published', $published);
+		$this -> setState('filter.published', $published);		
+		$database = $this -> getUserStateFromRequest($this -> context . '.filter.database', 'filter_database');
+		$this -> setState('filter.database', $database);
 		parent::populateState($ordering, $direction);
 
 	}
