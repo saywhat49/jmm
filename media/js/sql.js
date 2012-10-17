@@ -31,6 +31,7 @@ JQ('#save_as_site_table').live('click',(function(){
 		JQ('.loading-icon').show();
 		var query=JQ('#query').val();
 		var dbname=JQ('#currentdb').val();
+		var r=Math.random();
 		JQ.post('index.php',{option:'com_jmm',task:'saveSiteTable',title:title,dbname:dbname,query:query,r:r},function(response){
 			JQ('.loading-icon').hide();
 			var data=JSON.parse(response);

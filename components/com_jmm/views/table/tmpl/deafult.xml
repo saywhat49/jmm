@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+        <layout title="COM_JMM_TABLE_VIEW_DEFAULT_TITLE">
+                <message>
+                        <![CDATA[COM_JMM_TABLE_VIEW_DEFAULT_DESC]]>
+                </message>
+        </layout>
+	<fields name="params">
+		<fieldset 
+			name="sitetableconfig"
+			label="JMM Site Table Config">
+				<field name="site_table_id" type="sql" class="required" default="10" label="Select Site Table" query="SELECT id, title FROM #__jmm_sitetables WHERE published=1" key_field="id" value_field="title" />	
+				<field name="table_pagination" type="radio" default="0" label="Enable Pagination" description="">
+				  <option value="1">On</option>
+				  <option value="0">Off</option>
+				</field>				
+		</fieldset>		
+		<fieldset 
+			name="pagination_settings"
+			label="JMM Site Table Pagination Settings">
+			<field name="no_record_per_page" type="text" default="10" label="Record Per Page" description="" size="3" />
+		</fieldset>
+	</fields>
+</metadata>
