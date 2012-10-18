@@ -61,7 +61,7 @@ $orderDirn=$this->escape($this->state->get('list.direction'));
 					<td class="center">
 						<?php echo $this->escape($item->id);?>
 					</td>
-    				<td class="center">
+    				<td>
 						<?php echo $this->escape($item->title);?>
 					</td>
 					<td>

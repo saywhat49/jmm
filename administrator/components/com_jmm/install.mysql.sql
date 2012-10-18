@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS `#__jmm_canned_queries` (
   `dbname` varchar(64) NOT NULL,
   `query` mediumtext NOT NULL,
   `datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `published` tinyint(1) NOT NULL DEFAULT '0',
+  `published` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
@@ -15,6 +15,6 @@ CREATE TABLE IF NOT EXISTS `#__jmm_sitetables` (
   `dbname` varchar(64) NOT NULL,
   `query` mediumtext NOT NULL,
   `datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `published` tinyint(1) NOT NULL DEFAULT '0',
+  `published` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;

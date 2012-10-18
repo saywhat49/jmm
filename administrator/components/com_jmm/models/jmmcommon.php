@@ -91,23 +91,23 @@ class JMMCommon {
 	/**
 	 * List Databases
 	 */
-	 function getDataBaseLists($db = null){
-	 	if (!isset($db)) {
+	function getDataBaseLists($db = null) {
+		if (!isset($db)) {
 			$db = JMMCommon::getDBInstance();
 		}
 		$query = "SHOW DATABASES";
 		$db -> setQuery($query);
 		$rows = $db -> loadAssocList();
-		$database=array();
+		$database = array();
 		for ($i = 0; $i < count($rows); $i++) {
 			$row = &$rows[$i];
 			foreach ($row as $key => &$val) {
-				$database[]=$val;
+				$database[] = $val;
 			}
 		}
 		return $database;
-	 }
-	 
+	}
+
 	/**
 	 * Show Databases
 	 */
@@ -196,8 +196,51 @@ class JMMCommon {
 	}
 
 	/**
+	 * Lists Canned Queries
+	 */
+
+	function listCannedQueries($db = null) {
+		if (!isset($db)) {
+			//$db = JMMCommon::getDBInstance();
+			$db = JFactory::getDBO();
+		}
+		$selecteddb = '';
+		if (isset($_REQUEST['dbname'])) {
+			$selecteddb = JRequest::getVar('dbname');
+		} else {
+			$selecteddb = JFactory::getApplication() -> getCfg('db');
+		}
+		$query = "SELECT * FROM `#__jmm_canned_queries` WHERE `dbname`='$selecteddb' AND `published`=1 ORDER BY `id` DESC";
+		$db -> setQuery($query);
+		$rows = $db -> loadObjectList();
+		return $rows;
+	}
+
+	/**
+	 * Lists Site Tables Queries
+	 */
+
+	function listSiteTables($db = null) {
+		if (!isset($db)) {
+			//$db = JMMCommon::getDBInstance();
+			$db = JFactory::getDBO();
+		}
+		$selecteddb = '';
+		if (isset($_REQUEST['dbname'])) {
+			$selecteddb = JRequest::getVar('dbname');
+		} else {
+			$selecteddb = JFactory::getApplication() -> getCfg('db');
+		}
+		$query = "SELECT * FROM `#__jmm_sitetables` WHERE `dbname`='$selecteddb' AND `published`=1 ORDER BY `id` DESC";
+		$db -> setQuery($query);
+		$rows = $db -> loadObjectList();
+		return $rows;
+	} 
+
+	/**
 	 * Get Model
 	 */
+
 	function getModel($modelName, $prefix = null, $backend = true) {
 		if (!isset($prefix)) {
 			$prefix = 'JMMModel';

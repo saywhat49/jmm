@@ -5,8 +5,8 @@ class JMMModelSQL extends JModel {
 
 	function getItems() {
 		$db = JMMCommon::getDBInstance();
-		$query = JRequest::getVar('query', null);
-		if (isset($query)) {
+		$query = JRequest::getVar('query', '');
+		if (isset($query) && $query!='') {
 			$db -> setQuery($query);
 			if (!$db -> query()) {
 				JFactory::getApplication() -> enqueueMessage($db -> getErrorMsg(), 'error');
@@ -23,51 +23,82 @@ class JMMModelSQL extends JModel {
 	}
 
 	function saveCannedQuery($data) {
-		$response=array();
+		$response = array();
 		$row = JTable::getInstance('CannedQuery', 'JMMTable');
 		if (!$row -> bind($data)) {
-			$response['status']=false;
-			$response['msg']=$this -> _db -> getErrorMsg();
+			$response['status'] = false;
+			$response['msg'] = $this -> _db -> getErrorMsg();
 			return $response;
 		}
 		if (!$row -> check()) {
-			$response['status']=false;
-			$response['msg']=$this -> _db -> getErrorMsg();
+			$response['status'] = false;
+			$response['msg'] = $this -> _db -> getErrorMsg();
 			return $response;
 		}
 		if (!$row -> store()) {
-			$response['status']=false;
-			$response['msg']=$this -> _db -> getErrorMsg();
+			$response['status'] = false;
+			$response['msg'] = $this -> _db -> getErrorMsg();
 			return $response;
 		}
-		$response['status']=true;
-		$response['msg']='Canned Query Added Sucessfully';
-		
+		$response['status'] = true;
+		$response['msg'] = 'Canned Query Added Sucessfully';
+		$response['row']=array('title'=>JRequest::getVar('title'),'query'=>JRequest::getVar('query'));
+
 		return $response;
 	}
-	
-	function saveSiteTable($data){
-		$response=array();
+
+	function saveSiteTable($data) {
+		$response = array();
 		$row = JTable::getInstance('SiteTable', 'JMMTable');
 		if (!$row -> bind($data)) {
-			$response['status']=false;
-			$response['msg']=$this -> _db -> getErrorMsg();
+			$response['status'] = false;
+			$response['msg'] = $this -> _db -> getErrorMsg();
 			return $response;
 		}
 		if (!$row -> check()) {
-			$response['status']=false;
-			$response['msg']=$this -> _db -> getErrorMsg();
+			$response['status'] = false;
+			$response['msg'] = $this -> _db -> getErrorMsg();
 			return $response;
 		}
 		if (!$row -> store()) {
-			$response['status']=false;
-			$response['msg']=$this -> _db -> getErrorMsg();
+			$response['status'] = false;
+			$response['msg'] = $this -> _db -> getErrorMsg();
 			return $response;
 		}
-		$response['status']=true;
-		$response['msg']='Site Table Added Sucessfully';
-		
+		$response['status'] = true;
+		$response['msg'] = 'Site Table Added Sucessfully';  
+		$response['row']=array('title'=>JRequest::getVar('title'),'query'=>JRequest::getVar('query'));
 		return $response;
 	}
+
+	function getDatabases() {
+		$rows = JMMCommon::getDataBaseLists();
+		$databases = array();
+		for ($i = 0; $i < count($rows); $i++) {
+			$databases[] = JHTML::_('select.option', $rows[$i], $rows[$i]);
+		}
+		return $databases;
+	}
+	
+	function getCannedQueries(){
+		$rows = JMMCommon::listCannedQueries();
+		$queries = array();
+		for ($i = 0; $i < count($rows); $i++) {
+			$queries[] = JHTML::_('select.option', $rows[$i]->query, $rows[$i]->title);
+		}
+		return $queries;
+		
+	}
+	function getSiteTables(){
+		$rows = JMMCommon::listSiteTables();
+		$queries = array();
+		for ($i = 0; $i < count($rows); $i++) {
+			$queries[] = JHTML::_('select.option', $rows[$i]->query, $rows[$i]->title);
+		}
+		return $queries;
+		
+	}
+ 
+
 
 }

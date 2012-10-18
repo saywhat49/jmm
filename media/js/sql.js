@@ -15,6 +15,8 @@ JQ('#save_as_canned_query').live('click',(function(){
 			JQ('.loading-icon').hide();
 			var data=JSON.parse(response);
 			if(data.status){
+				var option='<option value="'+data.row.query+'">'+data.row.title+'</option>';
+				JQ('#opt-canned').prepend(option);
 				alert(data.msg);
 			}else{
 				alert(data.msg);				
@@ -36,6 +38,8 @@ JQ('#save_as_site_table').live('click',(function(){
 			JQ('.loading-icon').hide();
 			var data=JSON.parse(response);
 			if(data.status){
+				var option='<option value="'+data.row.query+'">'+data.row.title+'</option>';
+				JQ('#opt-stbl').prepend(option);
 				alert(data.msg);
 			}else{
 				alert(data.msg);				
