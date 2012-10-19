@@ -1,7 +1,11 @@
 <?php
-error_reporting(0);
-ini_set('display_errors',1);
 defined('_JEXEC') or die('Restricted access');
+set_error_handler("JMMErrorHandler");
+function JMMErrorHandler(){
+	/**
+	 * Do not Display Any Errors Warning
+	 */
+}
 function printobj($obj){
 	echo '<pre>';
 	print_r($obj);
