@@ -18,30 +18,47 @@ class JMMCommon {
 	 */
 	function getDBInstance($driver = null, $host = null, $user = null, $password = null, $dbname = null, $prefix = null) {
 		$app = &JFactory::getApplication();
-
-		if (!isset($driver)) {
+		$params = &JComponentHelper::getParams('com_jmm');
+		$dbsettings = $params -> get('dbsettings');
+		if ($dbsettings == 1) {
 			$driver = $app -> getCfg('dbtype');
-		}
-		if (!isset($host)) {
-			$host = $app -> getCfg('host');
-		}
-		if (!isset($user)) {
-			$user = $app -> getCfg('user');
-		}
-		if (!isset($password)) {
-			$password = $app -> getCfg('password');
-		}
-		if (!isset($dbname)) {
+			$host = $params -> get('dbhost');
+			$user = $params -> get('dbusername');
+			$password = $params -> get('dbpass');
 			if (isset($_REQUEST['dbname'])) {
 				$dbname = JRequest::getVar('dbname');
 			} else {
-				$dbname = $app -> getCfg('db');
+				$dbname = $params -> get('dbname');
 			}
+			$prefix = $params -> get('dbprefix');
+		} else {
+			if (!isset($driver)) {
+				$driver = $app -> getCfg('dbtype');
+			}
+			if (!isset($host)) {
+				$host = $app -> getCfg('host');
+			}
+			if (!isset($user)) {
+				$user = $app -> getCfg('user');
+			}
+			if (!isset($password)) {
+				$password = $app -> getCfg('password');
+			}
+			if (!isset($dbname)) {
+				if (isset($_REQUEST['dbname'])) {
+					$dbname = JRequest::getVar('dbname');
+				} else {
+					$dbname = $app -> getCfg('db');
+				}
 
+			}
+			if (!isset($prefix)) {
+				$prefix = $app -> getCfg('dbprefix');
+			}
 		}
-		if (!isset($prefix)) {
-			$prefix = $app -> getCfg('dbprefix');
-		}
+		/**
+		 * If User Use Custom DB Configuration
+		 */
 
 		$option = array();
 		$option['driver'] = $driver;
@@ -51,6 +68,14 @@ class JMMCommon {
 		$option['database'] = $dbname;
 		$option['prefix'] = $prefix;
 		$db = &JDatabase::getInstance($option);
+
+		if ($dbname == '') {
+			$dbLists=self::getDataBaseLists($db);
+			if(count($dbLists)>0){
+				JFactory::getApplication() -> redirect('index.php?option=com_jmm&view=tables&dbname='.$dbLists[0],'DataBase Switched to '.$dbLists[0]);
+			}
+			
+		}
 		return $db;
 
 	}
@@ -236,7 +261,7 @@ class JMMCommon {
 		$db -> setQuery($query);
 		$rows = $db -> loadObjectList();
 		return $rows;
-	} 
+	}
 
 	/**
 	 * Get Model

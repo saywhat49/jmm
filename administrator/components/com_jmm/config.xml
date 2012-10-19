@@ -21,7 +21,7 @@
 		type="text"
 		label="COM_JMM_CONFIGURATION_DB_HOST"
 		description=""
-		default=""
+		default="localhost"
 		/>
 		<field
 		name="dbusername"
@@ -32,7 +32,7 @@
 		/>
 		<field
 		name="dbpass"
-		type="text"
+		type="password"
 		label="COM_JMM_CONFIGURATION_DB_PASSWORD"
 		description=""
 		default=""
@@ -41,7 +41,7 @@
 		name="dbname"
 		type="text"
 		label="COM_JMM_CONFIGURATION_DB_NAME"
-		description=""
+		description="COM_JMM_CONFIGURATION_DB_NAME_DESC"
 		default=""
 		/>
 		<field
