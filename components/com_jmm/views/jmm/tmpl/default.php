@@ -1,7 +1,3 @@
 <?php
-$params=JFactory::getApplication()->getParams();
-$dbHost=$params->get('dbhost');
-$dbUsername=$params->get('dbusername');
-$dbPass=$params->get('dbpass');
-$dbName=$params->get('dbname');
+defined('_JEXEC') or die('Restricted access');
 ?>

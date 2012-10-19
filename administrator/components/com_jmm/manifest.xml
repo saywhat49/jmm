@@ -7,7 +7,7 @@
 	<copyright>biswarupadhikari@gmail.com</copyright>
 	<license>MIT</license>
 	<authorEmail>biswarupadhikari@gmail.com</authorEmail>
-	<version>1.0</version>
+	<version>1.0.0</version>
 	<description>JMM Joomla Mysql Manager Extension for mangage Mysql database in joomla admin panel.</description>
 	<languages folder="language/en-GB">
 		<language tag="en-GB">en-GB.com_jmm.ini</language>
@@ -75,4 +75,8 @@
 			<folder>helpers</folder>
 		</files>
 	</administration>
+	 <updateservers>
+                <!-- Note: No spaces or linebreaks allowed between the server tags -->
+        <server type="extension" priority="1" name="JMM Update Site">http://adidac.github.com/jmm/update/jmm-update.xml</server>
+        </updateservers>
 </extension>

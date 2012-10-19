@@ -1,5 +1,5 @@
 <?php
-defined('_JEXEC') or die ;
+defined('_JEXEC') or die("Access Not Allowed") ;
 abstract class JMMHelper {
 
 	public static function addSubmenu($viewName) {

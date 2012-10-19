@@ -1,4 +1,5 @@
 <?php
+defined('_JEXEC') or die('Restricted access');
 	if($this->items && count($this->items)>0){
 
 ?>
