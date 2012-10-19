@@ -1,4 +1,5 @@
 <?php
+defined('_JEXEC') or die('Restricted access');
 class JMMCommon {
 	public $db;
 	public $tbl;
