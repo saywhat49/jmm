@@ -11,6 +11,11 @@ function printobj($obj){
 	print_r($obj);
 	echo '</pre>';
 }
+function dd($obj){
+	echo '<pre>';
+	print_r($obj);
+	echo '</pre>';
+}
 JLoader::register('JMMHelper', dirname(__FILE__) . DS . 'helpers' . DS . 'jmm.php');
 JLoader::register('JMMCommon', dirname(__FILE__) . DS . 'models' . DS . 'jmmcommon.php');
 $document=&JFactory::getDocument();

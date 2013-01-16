@@ -42,8 +42,15 @@ if(isset($_GET['dbname'])){
 <textarea placeholder="Enter your SQL Quiries......" rows="10" cols="150" id="query" name="query"><?php echo JRequest::getVar('query','');?></textarea><br>
 <input type="submit" class="btn_runquery large" value="Run Query">
 <input type="hidden" id="currentdb" name="currentdb" value="<?php echo $dbname;?>">
+<?php
+if(isset($_POST['query'])){
+?>
 <input type="button" class="btn_runquery large" id="save_as_canned_query" value="Save as Canned Query">
 <input type="button" class="btn_runquery large" id="save_as_site_table" value="Save as Site Table">
+<input type="button" class="btn_runquery large" id="export_as_csv" value="Export as CSV">
+<?php
+}
+?>
 <div id="loading-icon" class="loading-icon"></div>
 	<?php
 	if($this->items && count($this->items)>0){
