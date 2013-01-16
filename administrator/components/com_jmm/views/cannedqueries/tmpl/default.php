@@ -50,12 +50,15 @@ $this -> state -> set('filter.database',JRequest::getVar('dbname'));
 				</th>	
 				<th>
 					<?php echo JHtml::_('grid.sort','Status','published',$orderDirn,$listOrder);?>
+				</th>				
+				<th>
+					Export
 				</th>
 			</tr>
 		</thead>
 		<tbody>
 			<?php foreach ($this->items as $i => $item): ?>	
-				<tr class="row<?php echo $i % 2?>">					
+				<tr class="row<?php echo $i % 2?>" id="id<?php echo $i;?>">					
 					<td class="center">
 						<?php echo JHtml::_('grid.id',$i,$item->id);?>
 					</td>
@@ -78,6 +81,9 @@ $this -> state -> set('filter.database',JRequest::getVar('dbname'));
 						<?php 
 						echo JHtml::_('jgrid.published',$item->published,'sitetable',true,'cb');
 						?>
+					</td>
+					<td class="center">
+							<input type="button" class="btn_runquery large" id="export_as_csv" value="Export as CSV">
 					</td>
 				</tr>
 				

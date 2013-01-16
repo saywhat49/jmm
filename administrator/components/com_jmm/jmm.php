@@ -18,7 +18,7 @@ function dd($obj){
 }
 JLoader::register('JMMHelper', dirname(__FILE__) . DS . 'helpers' . DS . 'jmm.php');
 JLoader::register('JMMCommon', dirname(__FILE__) . DS . 'models' . DS . 'jmmcommon.php');
-$document=&JFactory::getDocument();
+$document=JFactory::getDocument();
 //$document->addStyleSheet(JURI::root().'media'.DS.'com_jmm'.DS.'css'.DS.'bootstrap.min.css');
 $document->addStyleSheet(JURI::root().'media'.DS.'com_jmm'.DS.'css'.DS.'jmm.css');
 jimport('joomla.application.component.controller');

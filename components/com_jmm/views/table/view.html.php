@@ -6,7 +6,7 @@ class JMMViewTable extends JView
 	protected $items;
 	function display($tmpl=null) 
 	{
-		$model=&$this->getModel();
+		$model=$this->getModel();
 		$params=JFactory::getApplication()->getParams();
 		$siteTableId=$params->get('site_table_id');
 		$table_pagination=$params->get('table_pagination');
@@ -17,7 +17,7 @@ class JMMViewTable extends JView
 		$db=JMMCommon::getDBInstance(null,null,null,null, $dbname,null);
 		$db->setQuery($query);		
 		$this->items = $db -> loadAssocList();
-		$document=&JFactory::getDocument();
+		$document=JFactory::getDocument();
 		$document->addStyleSheet(JURI::root().'media'.DS.'com_jmm'.DS.'css'.DS.'jmm.css');
         parent::display($tmpl);
 	}

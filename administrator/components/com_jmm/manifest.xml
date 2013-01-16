@@ -8,7 +8,7 @@
 	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
 	<authorEmail>biswarupadhikari@gmail.com</authorEmail>
 	<authorUrl>http://adidac.github.com/jmm/index.html</authorUrl>
-	<version>1.0.0</version>
+	<version>1.0.1</version>
 	<description>JMM Joomla Mysql Manager Extension for mangage Mysql database in joomla admin panel.</description>
 	<languages folder="language/en-GB">
 		<language tag="en-GB">en-GB.com_jmm.ini</language>
@@ -74,6 +74,7 @@
 			<filename>update.mysql.sql</filename>
 			<folder>views</folder>
 			<folder>helpers</folder>
+			<folder>exported</folder>
 		</files>
 	</administration>
 	 <updateservers>
