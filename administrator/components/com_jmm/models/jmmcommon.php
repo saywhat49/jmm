@@ -164,16 +164,19 @@ class JMMCommon {
 		if (isset($_REQUEST['dbname'])) {
 			$dbname = JRequest::getVar('dbname');
 			$urlString = '&dbname=' . $dbname;
+			$defaultdbName='dbname="'.$dbname.'"';
 		} else {
 			$urlString = '';
+			$defaultdbName='';
 		}
 		$query = "SHOW TABLE STATUS";
 		$db -> setQuery($query);
 		$rows = $db -> loadAssocList();
 		foreach ($rows as &$row) {
 			$tblName = $row['Name'];
-			$row['Action'] = '<a href="index.php?option=com_jmm&view=tables&action=structure&&tbl=' . $tblName . $urlString . '">Structure</a>';
-			$row['Action'] .= '<a href="index.php?option=com_jmm&view=tables&action=browse&&tbl=' . $tblName . $urlString . '">Browse</a>';
+			$row['Structure'] = '<a class="btn_runquery large" href="index.php?option=com_jmm&view=tables&action=structure&&tbl=' . $tblName . $urlString . '">Structure</a>';
+			$row['Browse']= '<a class="btn_runquery large" href="index.php?option=com_jmm&view=tables&action=browse&&tbl=' . $tblName . $urlString . '">Browse</a>';
+			$row['Export']= '<input type="button" class="btn_runquery large" id="export_as_csv_from_table" value="Export as CSV" filename="'.$tblName.'" query="SELECT * FROM `'.$tblName.'`" '.$defaultdbName.'>';
 			$row['Name'] = '<a href="index.php?option=com_jmm&view=tables&action=browse&tbl=' . $tblName . $urlString . '">' . $tblName . '</a>';
 		}
 

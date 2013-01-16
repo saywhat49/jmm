@@ -49,6 +49,34 @@ JQ('#save_as_site_table').live('click',(function(){
 	
 }));
 
+/**	
+ * On Click Export to CSV
+ */
+JQ('#export_as_csv').live('click',(function(){
+	var filename=prompt("Enter File Name","csvFileName");
+	if (filename!=null && filename!=""){
+		JQ('.loading-icon').show();
+		var query=JQ('#query').val();
+		var dbname=JQ('#currentdb').val();
+		var r=Math.random();
+		JQ.post('index.php',{option:'com_jmm',task:'export.csv',filename:filename,dbname:dbname,query:query,r:r},function(response){
+			JQ('.loading-icon').hide();
+			try{				
+				var data=JSON.parse(response);
+			}catch(e){
+				alert("Exception is Parsing JSON");
+				return false;
+			}
+			if(data.status){
+				var downloadURL=decodeURI(data.download_url);
+				window.location=downloadURL;
+				console.log(downloadURL);
+			}else{
+				alert(data.msg);				
+			}
+		});
+	}
+}));
 
 /**
  * DOM Ready Ends

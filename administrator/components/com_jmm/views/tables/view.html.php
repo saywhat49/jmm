@@ -9,6 +9,9 @@ class JMMViewTables extends JView {
 	protected $tables;
 	protected $databases;
 	function display($tmpl = null) {
+		$document=JFactory::getDocument();
+		$document->addScript(JURI::root().'media'.DS.'com_jmm'.DS.'js'.DS.'jquery-1.7.2.min.js');
+		$document->addScript(JURI::root().'media'.DS.'com_jmm'.DS.'js'.DS.'export.js');
 		$action = JRequest::getString('action', '');
 		$limit = JRequest::getInt('limit',15);
 		$limitstart = JRequest::getInt('limitstart',0);
