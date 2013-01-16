@@ -10,6 +10,14 @@ class JMMViewTables extends JView {
 	protected $databases;
 	function display($tmpl = null) {
 		$action = JRequest::getString('action', '');
+		$limit = JRequest::getInt('limit',15);
+		$limitstart = JRequest::getInt('limitstart',0);
+		$pagination='&limit='.$limit.'&limitstart='.$limitstart;
+		$filter_order=JRequest::getString('filter_order',null);
+		$filter_order_Dir=JRequest::getString('filter_order_Dir',null);
+		if(isset($filter_order) && isset($filter_order_Dir)){
+			$pagination.='&filter_order='.$filter_order.'&filter_order_Dir='.$filter_order_Dir;
+		}
 		$tbl = JRequest::getString('tbl');
 		$filter_browsetable=JRequest::getVar('filter_browsetable','');
 		if(isset($_REQUEST['dbname'])){
@@ -19,7 +27,7 @@ class JMMViewTables extends JView {
 			$urlString='';
 		}
 		if($filter_browsetable!=''){
-			JFactory::getApplication()->redirect('index.php?option=com_jmm&view=tables&action=browse&tbl='.$filter_browsetable.$urlString,'Table Data of '.$filter_browsetable);
+			JFactory::getApplication()->redirect('index.php?option=com_jmm&view=tables&action=browse&tbl='.$filter_browsetable.$urlString.$pagination,'Table Data of '.$filter_browsetable);
 		}
 		$filter_tablestructure=JRequest::getVar('filter_tablestructure');
 		if($filter_tablestructure!=''){			

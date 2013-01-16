@@ -43,10 +43,12 @@ class JMMModelTables extends JModelList {
 		 $query -> where($field_searches);
 		 }
 		 */
-		$orderCol = $this -> getState('list.ordering');
-		$orderDirn = $this -> getState('list.direction');
-		if (isset($orderCol)) {
-			$query -> order($db -> getEscaped($orderCol . ' ' . $orderDirn));
+
+		$filter_order=JRequest::getString('filter_order',null);
+		$filter_order_Dir=JRequest::getString('filter_order_Dir',null);
+
+		if(!empty($filter_order) && !empty($filter_order_Dir)){
+			$query -> order($filter_order . ' ' . $filter_order_Dir);
 		}
 		return $query;
 	}
