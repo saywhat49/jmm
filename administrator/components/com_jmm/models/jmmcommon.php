@@ -16,9 +16,9 @@ class JMMCommon {
 	/**
 	 * Get Database Default Settings
 	 */
-	function getDBInstance($driver = null, $host = null, $user = null, $password = null, $dbname = null, $prefix = null) {
-		$app = &JFactory::getApplication();
-		$params = &JComponentHelper::getParams('com_jmm');
+	static function getDBInstance($driver = null, $host = null, $user = null, $password = null, $dbname = null, $prefix = null) {
+		$app = JFactory::getApplication();
+		$params = JComponentHelper::getParams('com_jmm');
 		$dbsettings = $params -> get('dbsettings');
 		if ($dbsettings == 1) {
 			$driver = $app -> getCfg('dbtype');
@@ -67,7 +67,7 @@ class JMMCommon {
 		$option['password'] = $password;
 		$option['database'] = $dbname;
 		$option['prefix'] = $prefix;
-		$db = &JDatabase::getInstance($option);
+		$db = JDatabase::getInstance($option);
 
 		if ($dbname == '') {
 			$dbLists=self::getDataBaseLists($db);
