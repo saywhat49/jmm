@@ -88,7 +88,7 @@
       <description>Joomla Mysql Manager Component</description>
       <element>com_jmm</element>
       <type>component</type>
-      <version>1.0.3</version>
+      <version>1.0.4</version>
  
       <infourl title="JMM URL">http://adidac.github.com/jmm/index.html</infourl>
       <downloads>
