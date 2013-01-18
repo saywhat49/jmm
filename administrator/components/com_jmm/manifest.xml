@@ -58,6 +58,7 @@
 			<menu link="option=com_jmm&amp;view=sql" alt="COM_JMM_SQL_QUERY" img="../media/com_jmm/images/sql-16x16.png">COM_JMM_SQL_QUERY</menu>
 			<menu link="option=com_jmm&amp;view=cannedqueries" alt="COM_JMM_CANNED_QUERY" img="../media/com_jmm/images/can-16x16.png">COM_JMM_CANNED_QUERY</menu>
 			<menu link="option=com_jmm&amp;view=sitetables" alt="COM_JMM_SITE_TABLES" img="../media/com_jmm/images/sitetable-16x16.png">COM_JMM_SITE_TABLES</menu>
+			<menu link="option=com_jmm&amp;view=createtable" alt="COM_JMM_CREATE_TABLE" img="../media/com_jmm/images/createtable-16x16.png">COM_JMM_CREATE_TABLE</menu>
 		</submenu>
 		
 		<files folder="administrator/components/com_jmm">
