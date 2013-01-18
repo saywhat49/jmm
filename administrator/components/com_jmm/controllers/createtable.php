@@ -12,7 +12,7 @@ class JMMControllerCreateTable extends JControllerAdmin
 		$query='CREATE TABLE IF NOT EXISTS `'.$this->getTableName().'` (';
 		$query.="\n";
 		for($i=0;$i<$totalfields;$i++){
-			$query.='`'.$this->getFieldName($i).'`'.' '.$this->getFieldType($i).'('.$this->getFieldLength($i).')'.' '.$this->getNull($i).$this->getAutoIncrements($i).$this->getFieldComments($i).',';
+			$query.='`'.$this->getFieldName($i).'`'.$this->getFieldType($i).$this->getFieldLength($i).$this->getNull($i).$this->getAutoIncrements($i).$this->getFieldComments($i).',';
 			//$query.="\n";
 		}
 		$query=rtrim($query,',');
@@ -47,9 +47,9 @@ class JMMControllerCreateTable extends JControllerAdmin
 	 */
 	function getNull($fieldIndex){
 		if(isset($this->posts['field_null'][$fieldIndex])){
-			return 'NULL';
+			return ' NULL';
 		}else{
-			return 'NOT NULL';
+			return ' NOT NULL';
 		}
 	}
 
@@ -79,13 +79,15 @@ class JMMControllerCreateTable extends JControllerAdmin
 	 * Get Field Length
 	 */
 	function getFieldLength($fieldIndex){
-		return $this->posts['field_length'][$fieldIndex];
+		if($this->posts['field_length'][$fieldIndex]>0){
+			return '('.$this->posts['field_length'][$fieldIndex].')';
+		}
 	}
 	/**
 	 * Get Field Type
 	 */
 	function getFieldType($fieldIndex){
-		return $this->posts['field_type'][$fieldIndex];
+		return ' '.$this->posts['field_type'][$fieldIndex];
 	}
 	/**
 	 * Get Field Comments

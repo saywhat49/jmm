@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fieldset>
+		<field name="tablefields"
+		type="tablefields"
+		label="DataBasesss"
+		description=""
+		size="30"
+		required="true"
+		class="inputbox" 
+		/>	
+	</fieldset>
+</form>
+ 
