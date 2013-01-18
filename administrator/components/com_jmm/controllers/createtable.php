@@ -5,6 +5,7 @@ class JMMControllerCreateTable extends JControllerAdmin
 {
 	private $posts=array();
 	function createTableStructure(){
+		$result=array();
 		$mainframe=JFactory::getApplication();
 		$this->posts=$_POST;
 		$totalfields=count($_POST['field_name']);
@@ -12,11 +13,21 @@ class JMMControllerCreateTable extends JControllerAdmin
 		$query.="\n";
 		for($i=0;$i<$totalfields;$i++){
 			$query.='`'.$this->getFieldName($i).'`'.' '.$this->getFieldType($i).'('.$this->getFieldLength($i).')'.' '.$this->getNull($i).$this->getAutoIncrements($i).$this->getFieldComments($i).',';
-			$query.="\n";
+			//$query.="\n";
 		}
+		$query=rtrim($query,',');
 		$query.=$this->getTableKeys();
 		$query.=')'.' ENGINE='.$this->getTableType().' DEFAULT CHARSET=latin1'.$this->getTableComment().$this->getAutoIncrementCounter();
-		echo $query;
+		$db = JMMCommon::getDBInstance();
+		$db->setQuery($query);
+		if($db->query()){
+			$result['status']=true;
+			$result['msg']='Table '.$this->getTableName().' Created sucessfully';
+		}else{
+			$result['status']=false;
+			$result['msg']=$db->getErrorMsg();
+		}
+		echo json_encode($result);
 		$mainframe->close();
 	}
 
@@ -134,7 +145,7 @@ class JMMControllerCreateTable extends JControllerAdmin
 		}
 		
 		if(in_array('primary',$this->posts['field_key'])){
-			$keys='PRIMARY KEY ('.$this->getFields($primaryFields).')';
+			$keys=', PRIMARY KEY ('.$this->getFields($primaryFields).')';
 			$keys.="\n";
 		}
 		
