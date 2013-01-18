@@ -168,6 +168,7 @@ class JFormFieldTableFields extends JFormField {
          * Draw Text Field
          */
         function drawtextElement($name,$type,$id,$label_name,$label_id,$length){
+            return $this->getWYSIWYGEditor($name,$type,$id,$label_name,$label_id,$length);
         	$element='<li>';
         	$element.='<label id="'.$label_id.'" for="'.$id.'">';
         	$element.=$label_name;
@@ -180,6 +181,7 @@ class JFormFieldTableFields extends JFormField {
          * Draw Medium Text Field
          */
         function drawmediumtextElement($name,$type,$id,$label_name,$label_id,$length){
+            return $this->getWYSIWYGEditor($name,$type,$id,$label_name,$label_id,$length);
         	$element='<li>';
         	$element.='<label id="'.$label_id.'" for="'.$id.'">';
         	$element.=$label_name;
@@ -192,6 +194,7 @@ class JFormFieldTableFields extends JFormField {
          * Draw Long Text Field
          */
         function drawlongtextElement($name,$type,$id,$label_name,$label_id,$length){
+            return $this->getWYSIWYGEditor($name,$type,$id,$label_name,$label_id,$length);
         	$element='<li>';
         	$element.='<label id="'.$label_id.'" for="'.$id.'">';
         	$element.=$label_name;
@@ -211,6 +214,21 @@ class JFormFieldTableFields extends JFormField {
         	$element.='<textarea name="'.$name.'" id="'.$id.'" style="margin: 5px 5px 5px 0px; width: 394px; height: 132px;" class="'.$type.'"></textarea>';
         	$element.='</li>';
         	return $element;
+        }
+
+        /**
+         * Get UI Editor
+         */
+        function getWYSIWYGEditor($name,$type,$id,$label_name,$label_id,$length){
+            $editor =JFactory::getEditor();
+            $element='<li>';
+            $element.='<label id="'.$label_id.'" for="'.$id.'">';
+            $element.=$label_name;
+            $element.='</label>';
+            $element.=$editor->display($name, null, '800', '300', '60', '20', true);
+            $element.='</li>';
+            return $element;
+
         }
 
 

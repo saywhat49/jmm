@@ -6,7 +6,7 @@ class JMMControllerInsert extends JControllerForm
 	protected $view_list='insert';
 
 	function save(){
-		$jform=JRequest::getVar('jform');
+		$jform=JRequest::getVar('jform',null,null,'validation type',JREQUEST_ALLOWRAW);
 		$dbname=JRequest::getVar('dbname',JFactory::getApplication() -> getCfg('db'));
 		$tbl=JRequest::getVar('tbl');
 		$db=JMMCommon::getDBInstance();
@@ -15,7 +15,7 @@ class JMMControllerInsert extends JControllerForm
 		$values='';
 		foreach($jform as $key=>$value){
 			$fields.='`'.$key.'`,';
-			$values.=$db->quote($value).',';
+			$values.=$db->quote($value).',';		
 		}
 		$fields=rtrim($fields,',');
 		$values=rtrim($values,',');
