@@ -1,3 +1,28 @@
+#query-status{
+
+}
+.sucess-msg{
+  background-color: #ACD87C;
+-moz-border-radius: 15px;
+-webkit-border-radius: 15px;
+border-radius: 15px;
+min-height: 47px;
+padding-left: 28px;
+font-size: 24px;
+padding-top: 15px;
+}
+
+.fail-msg{
+  background-color: red;
+-moz-border-radius: 15px;
+-webkit-border-radius: 15px;
+border-radius: 15px;
+min-height: 47px;
+padding-left: 28px;
+font-size: 24px;
+padding-top: 15px;
+}
+
 #add_another_fields{
 cursor: pointer;
 margin: 10px;

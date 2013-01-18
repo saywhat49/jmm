@@ -1,6 +1,8 @@
 <?php
 defined('_JEXEC') or die('Restricted access');
 ?>
+<div id="query-status">
+</div>
 <form action="index.php" method="post" id="adminForm" name="adminForm">
 	<table>
 			<tr>

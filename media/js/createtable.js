@@ -31,7 +31,18 @@ JQ('document').ready(function(){
 	JQ('#create_table_structure').live('click',(function(){
 		var data=JQ('#adminForm').serialize();
 		JQ.post('index.php?option=com_jmm&task=createTable.createTableStructure',data,function(res){
-			console.log(res);
+			var data=JSON.parse(res);
+			JQ('#query-status').html(data.msg);
+			if(data.status){
+				JQ('#query-status').removeClass('fail-msg');
+				JQ('#query-status').addClass('sucess-msg');
+				JQ('#query-status').fadeIn(500);
+			}else{
+				JQ('#query-status').removeClass('sucess-msg');
+				JQ('#query-status').addClass('fail-msg');
+				JQ('#query-status').fadeIn(500);
+
+			}
 		});
 
 	}));
