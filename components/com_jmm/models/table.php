@@ -85,4 +85,10 @@ class JMMModelTable extends JModel
 	return $items;
   }
 
+  function getColumns(){
+    $rows=$this->getItems();
+    $cols=$rows[0];
+    return array_keys($cols);
+  }
+
 }

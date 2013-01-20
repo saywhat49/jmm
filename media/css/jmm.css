@@ -181,6 +181,9 @@ table {
 .icon-48-sitetable {
 	background-image: url('../images/sitetable-48x48.png');
 }
+.icon-48-insert {
+	background-image: url('../images/insert-48x48.png');
+}
 .loading-icon {
 	background: url('../images/ajax-loader.gif');
 	width: 32px;

@@ -24,7 +24,7 @@ defined('_JEXEC') or die('Restricted access');
 			</select>			
 		</div>
 </fieldset>
-<div class="width-70 fltlft">
+<div class="width-60 fltlft">
 	<fieldset class="adminform">
 
 		<?php 
