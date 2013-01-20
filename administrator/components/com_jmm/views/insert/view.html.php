@@ -61,9 +61,9 @@ class JMMViewInsert extends JView {
 	public function addToolbar()
 	{
 		if($this->item->id){
-			JToolBarHelper::title('Insert Into Table');
+			JToolBarHelper::title('Insert Into Table', 'insert.png');
 		}else{
-			JToolBarHelper::title('Save to Table');
+			JToolBarHelper::title('Save to Table', 'insert.png');
 		}
 		
 		
