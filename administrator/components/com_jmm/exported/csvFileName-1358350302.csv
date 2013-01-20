@@ -1,2 +1,0 @@
-id,name,username,email,password,usertype,block,sendEmail,registerDate,lastvisitDate,activation,params,lastResetTime,resetCount
-531,"Super User",admin,adidac@live.com,19ad1fd4336f6df4c2b8508cbcb98c8e:JvCKW7lKYtbskQVbhggLWU1bmyTpsyLN,deprecated,0,1,"2012-11-27 05:34:12","2013-01-16 14:09:30",0,,"0000-00-00 00:00:00",0
