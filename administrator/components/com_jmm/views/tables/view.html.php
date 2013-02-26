@@ -45,13 +45,16 @@ class JMMViewTables extends JView {
 		switch ($action) {
 			case 'structure' :
 				$this -> items = JMMCommon::showTableStructure($tbl);
+				JFactory::getApplication()->enqueueMessage('Table Structure of '.$tbl, 'message');
 				break;
 			case 'browse' :
 				$this -> items =  $this -> get('Items');
+				JFactory::getApplication()->enqueueMessage('Table Data of '.$tbl, 'message');
 				break;
 
 			default :
 				$this -> items = JMMCommon::showTableLists();
+				JFactory::getApplication()->enqueueMessage('Table Lists', 'message');
 				break;
 		}
 		$this->tables=$this->get('Tables');

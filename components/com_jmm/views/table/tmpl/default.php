@@ -13,6 +13,9 @@ require_once($themeFile);
 }
 
 ?>
+<?php
+if($this->defaultPagination){
+?>
 <form action="index.php?option=com_jmm&amp;view=table" method="post" id="adminForm" name="adminForm">
 <div class="jmm-pagination">
 	<?php echo $this->pagination->getPagesLinks(); ?>
@@ -21,3 +24,6 @@ require_once($themeFile);
 <input type="hidden" name="view" value="table" />
 <?php echo JHtml::_('form.token');?>
 </form>
+<?php
+}
+?>
