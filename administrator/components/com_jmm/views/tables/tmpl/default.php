@@ -103,7 +103,7 @@ if(isset($_REQUEST['action']) && $_REQUEST['action']=='browse'){
 		?>
 		<tfoot>
 			<tr>
-				<td colspan="4"> <?php echo $this -> pagination -> getListFooter(); ?> </td>
+				<td colspan="<?php echo count($this->items[0]);?>"> <?php echo $this -> pagination -> getListFooter(); ?> </td>
 			</tr>
 		</tfoot>
 

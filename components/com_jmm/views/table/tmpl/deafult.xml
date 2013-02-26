@@ -10,16 +10,22 @@
 			name="sitetableconfig"
 			label="JMM Site Table Config">
 				<field name="site_table_id" type="sql" class="required" default="10" label="Select Site Table" query="SELECT id, title FROM #__jmm_sitetables WHERE published=1" key_field="id" value_field="title" />	
-				<field name="table_pagination" type="radio" default="0" label="Enable Pagination" description="">
+				<field name="table_pagination" type="radio" default="1" label="Enable Pagination" description="">
 				  <option value="1">On</option>
 				  <option value="0">Off</option>
 				</field>				
-			<field name="theme" type="folderlist" default="default" label="Select Site Table Theme" directory="components/com_jmm/themes/sitetables" filter="" exclude="" stripext="" />				
+			<field name="theme" type="folderlist" default="jtable" label="Select Site Table Theme" directory="components/com_jmm/themes/sitetables" filter="" exclude="" stripext="" />				
 		</fieldset>		
 		<fieldset 
 			name="pagination_settings"
 			label="JMM Site Table Pagination Settings">
 			<field name="no_record_per_page" type="text" default="10" label="Record Per Page" description="" size="3" />
+		</fieldset>		
+		<fieldset 
+			name="jtable_settings"
+			label="JTable Theme Settings">
+			<field name="jtable_theme_type" type="folderlist" default="metro" label="Select Jtable Theme" directory="components/com_jmm/themes/sitetables/jtable/jtable/themes" filter="" exclude="" stripext="" />	
+			<field name="jtable_theme_color" type="folderlist" default="jtable" label="JTable Theme Color" directory="components/com_jmm/themes/sitetables/jtable/jtable/themes/metro" filter="" exclude="" stripext="" />	
 		</fieldset>
 	</fields>
 </metadata>

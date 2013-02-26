@@ -14,14 +14,7 @@ $orderDirn=$this->escape($this->state->get('list.direction'));
 			Clear
 			</button>
 		</div>
-		<div class="filter-select fltrt">
-			<select name="filter_published" class="inputbox" onchange="this.form.submit()">
-				
-				<option value="">Select State</option>
-				<?php
-				echo JHtml::_('select.options',JHtml::_('jgrid.publishedOptions'),'value','text',$this->state->get('filter.published'),true);
-				?>
-			</select>		
+		<div class="filter-select fltrt">	
 		</div>
 	</fieldset>
 	<table class="adminlist">
