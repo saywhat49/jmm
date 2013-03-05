@@ -1,4 +1,10 @@
 <?php
+/**
+ * @package		JMM
+ * @link		http://adidac.github.com/jmm/index.html
+ * @license		GNU/GPL
+ * @copyright	Biswarup Adhikari
+*/
 defined('_JEXEC') or die('Restricted access');
 if(isset($_GET['dbname'])){
 	$dbname=JRequest::getVar('dbname');
