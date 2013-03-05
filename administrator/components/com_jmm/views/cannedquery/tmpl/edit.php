@@ -1,4 +1,10 @@
 <?php
+/**
+ * @package		JMM
+ * @link		http://adidac.github.com/jmm/index.html
+ * @license		GNU/GPL
+ * @copyright	Biswarup Adhikari
+*/
 defined('_JEXEC') or die('Restricted access');
 ?>
 <form action="index.php?option=com_jmm&amp;layout=edit&amp;id=<?php echo $this->item->id;?>" method="POST" name="adminForm" class="form-validate">

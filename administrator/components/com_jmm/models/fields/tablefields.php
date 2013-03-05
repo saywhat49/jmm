@@ -1,4 +1,10 @@
 <?php
+/**
+ * @package     JMM
+ * @link        http://adidac.github.com/jmm/index.html
+ * @license     GNU/GPL
+ * @copyright   Biswarup Adhikari
+*/
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die('Restricted access');
  
