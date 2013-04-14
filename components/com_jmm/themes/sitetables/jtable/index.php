@@ -7,9 +7,8 @@
 */
 defined('_JEXEC') or die('Restricted access');
 $document=JFactory::getDocument();
-$jtable_theme_type=$this->params->get('jtable_theme_type');
-$jtable_theme_color=$params->get('jtable_theme_color');
-$document->addStyleSheet($this->curThemeURL.DS.'jtable'.DS.'themes'.DS.$jtable_theme_type.DS.$jtable_theme_color.DS.'jtable.min.css');
+$jtable_theme=$params->get('jtable_theme');
+$document->addStyleSheet($this->curThemeURL.DS.'jtable'.DS.'themes'.DS.$jtable_theme);
 $document->addStyleSheet($this->curThemeURL.DS.'css'.DS.'ui-themes'.DS.'redmond'.DS.'jquery-ui-1.8.16.custom.css');
 $document->addScript($this->curThemeURL.DS.'js'.DS.'jquery-1.9.0.min.js');
 $document->addScript($this->curThemeURL.DS.'js'.DS.'jquery-ui-1.9.2.min.js');

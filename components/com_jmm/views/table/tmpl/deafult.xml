@@ -24,8 +24,31 @@
 		<fieldset 
 			name="jtable_settings"
 			label="JTable Theme Settings">
-			<field name="jtable_theme_type" type="folderlist" default="metro" label="Select Jtable Theme" directory="components/com_jmm/themes/sitetables/jtable/jtable/themes" filter="" exclude="" stripext="" />	
-			<field name="jtable_theme_color" type="folderlist" default="jtable" label="JTable Theme Color" directory="components/com_jmm/themes/sitetables/jtable/jtable/themes/metro" filter="" exclude="" stripext="" />	
+
+			<field name="jtable_theme" type="groupedlist" default="" label="Select JTable Theme" description="">
+			  <group label="Basic">
+			    <option value="basic/jtable_basic.min.css">Bassic</option>
+			  </group>
+			  <group label="Light Color">
+			    <option value="lightcolor/blue/jtable.min.css">Blue</option>
+			    <option value="lightcolor/gray/jtable.min.css">Gray</option>
+			    <option value="lightcolor/green/jtable.min.css">Green</option>
+			    <option value="lightcolor/orange/jtable.min.css">Orange</option>
+			    <option value="lightcolor/red/jtable.min.css">Red</option>
+			  </group>
+			  <group label="Metro">
+			    <option value="metro/blue/jtable.min.css">Blue</option>
+			    <option value="metro/brown/jtable.min.css">Brown</option>
+			    <option value="metro/crimson/jtable.min.css">Crimson</option>
+			    <option value="metro/darkgray/jtable.min.css">Dark Gray</option>
+			    <option value="metro/darkorange/jtable.min.css">Dark Orange</option>
+			    <option value="metro/green/jtable.min.css">Green</option>
+			    <option value="metro/lightgray/jtable.min.css">Light Gray</option>
+			    <option value="metro/pink/jtable.min.css">Pink</option>
+			    <option value="metro/purple/jtable.min.css">Purple</option>
+			    <option value="metro/red/jtable.min.css">Red</option>
+			  </group>
+			</field>
 		</fieldset>
 	</fields>
 </metadata>
