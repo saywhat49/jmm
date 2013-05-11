@@ -22,6 +22,7 @@ abstract class JMMHelper {
 		JSubMenuHelper::addEntry('Site Tables', 'index.php?option=com_jmm&amp;view=sitetables'.$urlString, $viewName == 'sitetables' OR $viewName == 'sitetable');   
 		JSubMenuHelper::addEntry('Create Table', 'index.php?option=com_jmm&amp;view=createtable'.$urlString, $viewName == 'createtables' OR $viewName == 'createtable');       
 		JSubMenuHelper::addEntry('Insert Data', 'index.php?option=com_jmm&amp;view=insert'.$urlString, $viewName == 'insert' OR $viewName == 'insert');                                   
+		JSubMenuHelper::addEntry('Templates', 'index.php?option=com_jmm&amp;view=templates'.$urlString, $viewName == 'templates' OR $viewName == 'template');                                   
 	}
 
 }

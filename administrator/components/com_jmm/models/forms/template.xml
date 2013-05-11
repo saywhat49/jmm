@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fieldset>
+		<field
+			name="id"
+			type="hidden" />
+
+		<field
+			name="title"
+			type="text" 
+			label="Template Name"
+			/>
+
+		<field
+			name="php"
+			type="editor"
+			editor="codemirror|none"
+			buttons="no"
+			label="PHP Code"
+			description="Write your PHP Code"
+			rows="500"
+			height="500px"
+			cols="80"
+			default="php"
+			filter="raw" />
+
+		<field
+			name="css"
+			type="editor"
+			editor="codemirror|none"
+			buttons="no"
+			label="CSS Code"
+			description="Style your template using css"
+			rows="500"
+			cols="80"
+			height="500px"
+			filter="raw" />
+
+		<field
+			name="js"
+			type="editor"
+			editor="codemirror|none"
+			buttons="no"
+			label="JS Code"
+			description="Write your Javascript Codes"
+			rows="500"
+			height="500px"
+			cols="80"
+			filter="raw" />
+		<field 
+			name="images" 
+			type="media" 
+			directory="stories" />
+	</fieldset>
+</form>
