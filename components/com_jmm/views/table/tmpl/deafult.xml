@@ -13,8 +13,8 @@
 				<field name="table_pagination" type="radio" default="1" label="Enable Pagination" description="">
 				  <option value="1">On</option>
 				  <option value="0">Off</option>
-				</field>				
-			<field name="theme" type="folderlist" default="jtable" label="Select Site Table Theme" directory="components/com_jmm/themes/sitetables" filter="" exclude="" stripext="" />				
+				</field>		
+			<field name="theme" type="sql" default="10" label="Select an Template" query="SELECT id, title FROM #__jmm_templates ORDER BY id DESC" key_field="title" value_field="title" />		
 		</fieldset>		
 		<fieldset 
 			name="pagination_settings"
@@ -37,13 +37,10 @@
 			    <option value="lightcolor/red/jtable.min.css">Red</option>
 			  </group>
 			  <group label="Metro">
-			    <option value="metro/blue/jtable.min.css">Blue</option>
 			    <option value="metro/brown/jtable.min.css">Brown</option>
 			    <option value="metro/crimson/jtable.min.css">Crimson</option>
 			    <option value="metro/darkgray/jtable.min.css">Dark Gray</option>
 			    <option value="metro/darkorange/jtable.min.css">Dark Orange</option>
-			    <option value="metro/green/jtable.min.css">Green</option>
-			    <option value="metro/lightgray/jtable.min.css">Light Gray</option>
 			    <option value="metro/pink/jtable.min.css">Pink</option>
 			    <option value="metro/purple/jtable.min.css">Purple</option>
 			    <option value="metro/red/jtable.min.css">Red</option>
