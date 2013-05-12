@@ -28,7 +28,7 @@
 		<filename>index.html</filename>
 		<folder>models</folder>
 		<folder>views</folder>
-		<folder>themes</folder>
+		<folder>templates</folder>
 	</files>
 
 	<install>
@@ -61,6 +61,7 @@
 			<menu link="option=com_jmm&amp;view=sitetables" alt="COM_JMM_SITE_TABLES" img="../media/com_jmm/images/sitetable-16x16.png">COM_JMM_SITE_TABLES</menu>
 			<menu link="option=com_jmm&amp;view=createtable" alt="COM_JMM_CREATE_TABLE" img="../media/com_jmm/images/createtable-16x16.png">COM_JMM_CREATE_TABLE</menu>
 			<menu link="option=com_jmm&amp;view=insert" alt="COM_JMM_INSERT_DATA" img="../media/com_jmm/images/insert-16x16.png">COM_JMM_INSERT_DATA</menu>
+			<menu link="option=com_jmm&amp;view=templates" alt="COM_JMM_TEMPLATES" img="../media/com_jmm/images/template-16x16.png">COM_JMM_TEMPLATES</menu>
 		</submenu>
 		
 		<files folder="administrator/components/com_jmm">

@@ -18,9 +18,6 @@
 			buttons="no"
 			label="PHP Code"
 			description="Write your PHP Code"
-			rows="500"
-			height="500px"
-			cols="80"
 			default=""
 			filter="raw" />
 

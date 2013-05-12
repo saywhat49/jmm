@@ -27,3 +27,10 @@ CREATE TABLE IF NOT EXISTS `#__jmm_templates` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `title` (`title`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+INSERT INTO `#__jmm_templates` (`id`, `title`, `datetime`, `published`) VALUES
+(1, 'default', '2013-05-12 07:15:02', 1),
+(2, 'jtable2', '2013-05-12 07:15:02', 1),
+(3, 'blog4', '2013-05-12 07:15:02', 1),
+(4, 'piechart', '2013-05-12 07:15:02', 1),
+(5, 'test', '2013-05-12 07:15:02', 1);
