@@ -29,7 +29,8 @@ class JMMTableTemplate extends JTable
 				$oldTitle=$this->getTitle($id);	
 				if($oldTitle!=$title){
 					$oldTemplateFolder=JPATH_SITE.DS.'components'.DS.'com_jmm'.DS.'templates'.DS.$oldTitle;
-					$this->deleteDirectory($oldTemplateFolder);
+					//$this->deleteDirectory($oldTemplateFolder);
+					JFolder::move($oldTemplateFolder,$templateFolder);
 				}
 		}else{
 			if(!is_dir($templateFolder)){				

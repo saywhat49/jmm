@@ -15,7 +15,6 @@ class JMMModelTemplates extends JModelList {
 		}
 		parent::__construct($config);
 	}
-
 	function getItems() {
 		$items = parent::getItems();
 		foreach ($items as &$item) {

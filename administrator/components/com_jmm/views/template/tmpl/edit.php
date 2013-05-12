@@ -21,9 +21,9 @@ if(isset($this->item->title)){
 				<li><?php echo $this->form->getLabel('title'); ?>
 				<?php echo $this->form->getInput('title'); ?><br><br>	</li>
 				<li><?php echo $this->form->getLabel('php'); ?>
-				<?php echo $this->form->getInput('php'); ?></li>
+				<?php echo $this->form->getInput('php'); ?><br><br></li>
 				<li><?php echo $this->form->getLabel('css'); ?>
-				<?php echo $this->form->getInput('css'); ?></li>
+				<?php echo $this->form->getInput('css'); ?><br><br></li>
 				<li><?php echo $this->form->getLabel('js'); ?>
 				<?php echo $this->form->getInput('js'); ?></li>
 		</ul>
