@@ -6,6 +6,11 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
+if(isset($this->item->title)){
+	$templateFolder='/components'.DS.'com_jmm'.DS.'templates'.DS.$this->item->title.DS.'images';
+}else{
+	$templateFolder='/images';
+}
 ?>
 <form action="index.php?option=com_jmm&amp;layout=edit&amp;id=<?php echo $this->item->id;?>" method="POST" name="adminForm" class="form-validate">
 <div class="width-60 fltlft">
@@ -29,6 +34,6 @@ defined('_JEXEC') or die('Restricted access');
 </form>
 <div class="width-40 fltrt">
 	<fieldset class="adminform">
-	<iframe width="100%" height="500" frameborder="0" scrolling="no" src="index.php?option=com_media&amp;view=images&amp;tmpl=component&amp;asset=com_jmm&amp;author=&amp;fieldid=jform_images&amp;folder="></iframe>
+	<iframe width="100%" height="700" frameborder="0" scrolling="no" src="index.php?option=com_media&amp;view=images&amp;tmpl=component&amp;folder=<?php echo $templateFolder;?>"></iframe>
 </fieldset>
 </div>

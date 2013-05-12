@@ -17,6 +17,7 @@ class JMMViewTable extends JView
 	protected $curThemeURL;
 	protected $siteTableDetails;
 	protected $defaultPagination;
+	protected $themeBaseURL;
 	function display($tmpl=null) 
 	{	
 
@@ -29,7 +30,9 @@ class JMMViewTable extends JView
         $this->theme=$this->params->get('theme');
 		$document=JFactory::getDocument();
 		$document->addStyleSheet(JURI::root().'media'.DS.'com_jmm'.DS.'css'.DS.'jmm.css');
-		$this->curThemeURL=JURI::root().'components'.DS.'com_jmm'.DS.'themes'.DS.'sitetables'.DS.$this->theme;
+		$document->addScript(JURI::root().'media'.DS.'com_jmm'.DS.'js'.DS.'jquery-1.7.2.min.js');		
+		$this->curThemeURL=JURI::root().'components'.DS.'com_jmm'.DS.'templates'.DS.$this->theme;
+		$this->themeBaseURL=JURI::root().'components/com_jmm/templates/'.$this->theme;
         parent::display($tmpl);
 	}
 }

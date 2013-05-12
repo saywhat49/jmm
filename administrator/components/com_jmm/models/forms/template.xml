@@ -21,7 +21,7 @@
 			rows="500"
 			height="500px"
 			cols="80"
-			default="php"
+			default=""
 			filter="raw" />
 
 		<field
