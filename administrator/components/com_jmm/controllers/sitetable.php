@@ -6,7 +6,7 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
-class JMMControllerSiteTable extends JControllerLegacyForm
+class JMMControllerSiteTable extends JControllerForm
 {	
 	protected $view_list='sitetables';
 
