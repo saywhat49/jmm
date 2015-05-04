@@ -6,7 +6,7 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
-class JMMControllerExport extends JControllerLegacyAdmin
+class JMMControllerExport extends JControllerAdmin
 {
 	/**
 	 * Export In CSV

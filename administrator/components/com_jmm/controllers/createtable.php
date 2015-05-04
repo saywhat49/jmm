@@ -6,7 +6,7 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
-class JMMControllerCreateTable extends JControllerLegacyAdmin
+class JMMControllerCreateTable extends JControllerAdmin
 {
 	private $posts=array();
 	function createTableStructure(){

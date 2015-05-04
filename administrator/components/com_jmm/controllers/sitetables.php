@@ -6,7 +6,7 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
-class JMMControllerSiteTables extends JControllerLegacyAdmin
+class JMMControllerSiteTables extends JControllerAdmin
 {
 	protected $text_prefix='COM_JMM_SITETABLES';
 	

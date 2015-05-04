@@ -6,7 +6,7 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
-class JMMModelExport extends JModel {
+class JMMModelExport extends JModelLegacy {
 	/**
 	 * Save as CSV File
 	 */

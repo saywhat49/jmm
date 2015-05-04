@@ -6,7 +6,7 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
-class JMMControllerCannedQueries extends JControllerLegacyAdmin
+class JMMControllerCannedQueries extends JControllerAdmin
 {
 	protected $text_prefix='COM_JMM_CANNED_QUERIES';
 	

@@ -6,7 +6,7 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
-class JMMControllerTemplates extends JControllerLegacyAdmin
+class JMMControllerTemplates extends JControllerAdmin
 {
 	protected $text_prefix='COM_JMM_TEMPLATES';
 	
