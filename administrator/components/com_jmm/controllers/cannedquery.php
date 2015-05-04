@@ -6,7 +6,7 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
-class JMMControllerCannedQuery extends JControllerLegacyForm
+class JMMControllerCannedQuery extends JControllerForm
 {	
 	protected $view_list='cannedqueries';
 

@@ -6,7 +6,7 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
-class JMMControllerTemplate extends JControllerLegacyForm
+class JMMControllerTemplate extends JControllerForm
 {	
 	protected $view_list='templates';
 

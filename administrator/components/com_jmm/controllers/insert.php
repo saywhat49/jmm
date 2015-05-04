@@ -6,7 +6,7 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
-class JMMControllerInsert extends JControllerLegacyForm
+class JMMControllerInsert extends JControllerForm
 {	
 	protected $view_list='insert';
 
