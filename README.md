@@ -9,10 +9,15 @@ panel go to Extension Manger from Extensions Menu then click on Select or Browse
 
 ### JMM Features?
 
+* Insert Data into Table via GUI
+* Create Table via GUI
+* Export Table,Custom Query in CSV format
 * You can View All Database Lists
 * You Can View All the Tables Within a Database
 * You can Run your Custom Query
-* You can Save Your Query for Future as Bookmark using Canned Query.
+* You can Save Your Query for Future as Bookmark using Canned Query OR Save as Site Table.
+* You can Generate Visual Table In the Frontend From Your Query,you can enable pagination also.
+* Now has template system where user can select theme or they can step further by customize the looks using css and javascript or jquery.
 
 ### Authors and Contributors
 
