@@ -40,7 +40,7 @@ JHtml::_('formbehavior.chosen', 'select');
 		<?php endforeach ?>
 		<!--Media Manager Starts-->
 				<div class="controls">
-					<iframe class="span10" height="650"  scrolling="no" frameborder="no" src="http://joomla30.dev/administrator/index.php?option=com_media&view=images&tmpl=component&asset=com_jmm&author=&fieldid=jform_images&folder=<?php echo $templateFolder;?>"></iframe>
+					<iframe class="span10" height="650"  scrolling="no" frameborder="no" src="<?php echo JURI::root();?>administrator/index.php?option=com_media&view=images&tmpl=component&asset=com_jmm&author=&fieldid=jform_images&folder=<?php echo $templateFolder;?>"></iframe>
 				</div>
 				<!--Media Manager Ends-->
 	</fieldset>
