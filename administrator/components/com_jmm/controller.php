@@ -8,8 +8,7 @@
 error_reporting(E_ALL);
 ini_set('display_errors',1);
 defined('_JEXEC') or die('Restricted access');
-jimport('joomla.application.component.controller');
-class JMMController extends JController
+class JMMController extends JControllerLegacy
 {
 
 	function display($cachable = false) 

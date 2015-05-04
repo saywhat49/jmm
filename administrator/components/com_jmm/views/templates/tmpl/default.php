@@ -9,20 +9,31 @@ defined('_JEXEC') or die('Restricted access');
 $listOrder=$this->escape($this->state->get('list.ordering'));
 $orderDirn=$this->escape($this->state->get('list.direction'));
 $this -> state -> set('filter.database',JRequest::getVar('dbname'));
+JHtml::_('bootstrap.tooltip');
+JHtml::_('behavior.multiselect');
+JHtml::_('dropdown.init');
+JHtml::_('formbehavior.chosen', 'select');
 ?>
 <form action="index.php?option=com_jmm&amp;view=templates" method="post" id="adminForm" name="adminForm">
-	<fieldset id="filter-bar">
-		<div class="filter-search fltlft">
-			<label for="filter_search">Search</label>
+<?php if (!empty( $this->sidebar)) : ?>
+	<div id="j-sidebar-container" class="span2">
+		<?php echo $this->sidebar; ?>
+	</div>
+	<div id="j-main-container" class="span10">
+<?php else : ?>
+	<div id="j-main-container">
+<?php endif;?>
+<div id="filter-bar" class="btn-toolbar">
+	<div class="btn-group pull-left">
+				<label for="filter_search">Search</label>
 			<input type="text" name="filter_search" id="filter_search" 
 			value="<?php echo $this->escape($this->state->get('filter.search'));?>" title="Search" />
-			<button type="submit" class="btn">Search</button>
-			<button type="button" onclick="document.id('filter_search').value='';this.form.submit();">
-			Clear
-			</button>
-		</div>
-	</fieldset>
-	<table class="adminlist">
+			<input type="submit" class="btn" value="Search">
+			<input type="button" class="btn" onclick="document.id('filter_search').value='';this.form.submit();" value="Clear">
+	</div>
+</div>
+<div class="clearfix"> </div>
+<table class="table table-bordered table-hover">
 		<thead>
 			<tr>
 				
@@ -36,7 +47,7 @@ $this -> state -> set('filter.database',JRequest::getVar('dbname'));
 					<?php echo JHtml::_('grid.sort','Title','title',$orderDirn,$listOrder);?>
 				</th>
 				<th>
-					<?php echo JHtml::_('grid.sort','Date Time','pp.datetime',$orderDirn,$listOrder);?>
+					<?php echo JHtml::_('grid.sort','Date Time','datetime',$orderDirn,$listOrder);?>
 				</th>	
 				<th>
 					<?php echo JHtml::_('grid.sort','Status','published',$orderDirn,$listOrder);?>
@@ -53,7 +64,7 @@ $this -> state -> set('filter.database',JRequest::getVar('dbname'));
 						<?php echo $this->escape($item->id);?>
 					</td>
     				<td>
-						<?php echo $this->escape($item->title);?>
+						<?php echo $item->title;?>
 					</td>
 					<td class="center">
 						<?php echo $this->escape($item->datetime);?>
@@ -69,7 +80,7 @@ $this -> state -> set('filter.database',JRequest::getVar('dbname'));
 		</tbody>
 			<tfoot>
 			<tr>
-				<td colspan="4">
+				<td colspan="5">
 					<?php echo $this->pagination->getListFooter();?>
 				</td>
 			</tr>
@@ -80,4 +91,5 @@ $this -> state -> set('filter.database',JRequest::getVar('dbname'));
 	<input type="hidden" name="filter_order" value="<?php echo $listOrder; ?>" />
 	<input type="hidden" name="filter_order_Dir" value="<?php echo $listDirn; ?>" />
 	<?php echo JHtml::_('form.token');?>
+</div>
 </form>

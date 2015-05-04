@@ -6,13 +6,13 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
-jimport('joomla.application.component.view');
-class JMMViewCreateTable extends JView {
+class JMMViewCreateTable extends JViewLegacy {
 
 	protected $databases;
 	
 	function display($tmpl = null) {
 		$this -> addToolbar();
+		$this->sidebar = JHtmlSidebar::render();
 		$document=JFactory::getDocument();
 		$document->addStyleSheet(JURI::root().'media'.DS.'com_jmm'.DS.'css'.DS.'createtable.css');
 		$document->addScript(JURI::root().'media'.DS.'com_jmm'.DS.'js'.DS.'jquery-1.7.2.min.js');

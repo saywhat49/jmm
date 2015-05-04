@@ -6,8 +6,7 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
-jimport('joomla.application.component.controlleradmin');
-class JMMControllerExport extends JControllerAdmin
+class JMMControllerExport extends JControllerLegacyAdmin
 {
 	/**
 	 * Export In CSV

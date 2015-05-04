@@ -6,8 +6,7 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
-jimport('joomla.application.component.view');
-class JMMViewTables extends JView {
+class JMMViewTables extends JViewLegacy {
 
 	protected $items;
 	protected $state;
@@ -68,6 +67,7 @@ class JMMViewTables extends JView {
 		$this -> pagination = $this -> get('Pagination');
 		$this -> state = $this -> get('State');
 		$this -> addToolbar();
+		$this->sidebar = JHtmlSidebar::render();
 		parent::display($tmpl);
 	}
 

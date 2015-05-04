@@ -6,8 +6,7 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
-jimport('joomla.application.component.jmodel');
-class JMMModelSQL extends JModel {
+class JMMModelSQL extends JModelItem {
 
 	function getItems() {
 		$db = JMMCommon::getDBInstance();

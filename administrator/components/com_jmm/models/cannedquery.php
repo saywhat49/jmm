@@ -6,7 +6,6 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
-jimport('joomla.application.component.modeladmin');
 class JMMModelCannedQuery extends JModelAdmin
 {
 	public function getTable($type='CannedQuery',$prefix='JMMTable',$config=array())

@@ -6,8 +6,7 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
-jimport('joomla.application.component.view');
-class JMMViewCannedQueries extends JView {
+class JMMViewCannedQueries extends JViewLegacy {
 
 	protected $items;
 	protected $pagination;
@@ -23,6 +22,7 @@ class JMMViewCannedQueries extends JView {
 		$this -> state = $this -> get('State');
 		$this->databases=$this->get('Databases');
 		$this -> addToolbar();
+		$this->sidebar = JHtmlSidebar::render();
 		parent::display($tmpl);
 	}
 

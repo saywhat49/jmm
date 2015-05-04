@@ -193,9 +193,12 @@ class JMMCommon {
 	 * Show Table Structure
 	 */
 
-	function showTableStructure($table, $db = null) {
+	function showTableStructure($table=null, $db = null) {
 		if (!isset($db)) {
 			$db = JMMCommon::getDBInstance();
+		}
+		if(!isset($table)){
+			return false;
 		}
 		$query = "DESC $table";
 		$db -> setQuery($query);
@@ -286,7 +289,7 @@ class JMMCommon {
 		} else {
 			JLoader::import($modelName, JPATH_SITE . DS . 'components' . DS . 'com_jmm' . DS . 'models');
 		}
-		$model = JModel::getInstance($modelName, $prefix);
+		$model = JModelLegacy::getInstance($modelName, $prefix);
 		return $model;
 
 	}

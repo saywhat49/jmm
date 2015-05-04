@@ -6,8 +6,7 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
-jimport('joomla.application.component.controlleradmin');
-class JMMControllerSiteTables extends JControllerAdmin
+class JMMControllerSiteTables extends JControllerLegacyAdmin
 {
 	protected $text_prefix='COM_JMM_SITETABLES';
 	

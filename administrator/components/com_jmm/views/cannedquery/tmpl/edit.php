@@ -6,23 +6,35 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
+JHtml::_('behavior.tooltip');
+JHtml::_('behavior.formvalidation');
+JHtml::_('formbehavior.chosen', 'select');
 ?>
-<form action="index.php?option=com_jmm&amp;layout=edit&amp;id=<?php echo $this->item->id;?>" method="POST" name="adminForm" class="form-validate">
-<div class="width-60 fltlft">
-	<fieldset class="adminform">
-		<ul class="adminformList">
+<script type="text/javascript">
+	Joomla.submitbutton = function(task)
+	{
+		if (task == 'cannedquery.cancel' || document.formvalidator.isValid(document.id('canned-query-form')))
+		{
+			Joomla.submitform(task, document.getElementById('canned-query-form'));
+		}
+	}
+</script>
+<form action="index.php?option=com_jmm&amp;layout=edit&amp;id=<?php echo $this->item->id;?>" method="POST" name="adminForm" id="canned-query-form" class="form-validate form-horizontal">
+<div class="span10 form-horizontal">
+	<fieldset>
 		<?php foreach($this->form->getFieldset() as $field):?>
-			<li>
-				<?php echo $field->label;?>
-				<?php echo $field->input;?>
-				
-			</li>
-			
-			<?php endforeach ?>
-		</ul>
+			<div class="control-group">
+				<div class="control-label">
+					<?php echo $field->label;?>
+				</div>
+				<div class="controls">
+					<?php echo $field->input;?>
+					
+				</div>
+			</div>			
+		<?php endforeach ?>
 	</fieldset>
-	
-</div>
-<input type="hidden" name="task" value="cannedquery.edit">
+	<input type="hidden" name="task" value="cannedquery.edit">
 <?php echo JHtml::_('form.token');?>
 </form>
+</div>

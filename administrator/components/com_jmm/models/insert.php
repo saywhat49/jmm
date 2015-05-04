@@ -6,7 +6,6 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
-jimport('joomla.application.component.modeladmin');
 class JMMModelInsert extends JModelAdmin
 {
 	public function getTable($type='Insert',$prefix='JMMTable',$config=array())

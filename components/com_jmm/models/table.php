@@ -7,8 +7,7 @@
  * @copyright Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
-jimport('joomla.application.component.jmodel');
-class JMMModelTable extends JModel
+class JMMModelTable extends JModelLegacy
 {
 
 	var $_total = null;
@@ -53,7 +52,9 @@ class JMMModelTable extends JModel
     function getTotal(){
       if (empty($this->_total)) {
   			$params=JFactory::getApplication()->getParams();
+      if((int)$params->get('site_table_id')){
         $siteTableId=(int)$params->get('site_table_id');
+      }        
       if(!isset($siteTableId)){
         $siteTableId=JRequest::getInt('site_table_id');
       }
@@ -84,8 +85,10 @@ class JMMModelTable extends JModel
    * @return [type] [description]
    */
   function getItems(){
-  	$params=JFactory::getApplication()->getParams();
-	$siteTableId=(int)$params->get('site_table_id');
+  $params=JFactory::getApplication()->getParams();
+	if((int)$params->get('site_table_id')){
+    $siteTableId=(int)$params->get('site_table_id');
+  }        
   if(!isset($siteTableId)){
     $siteTableId=JRequest::getInt('site_table_id');
   }
@@ -99,7 +102,7 @@ class JMMModelTable extends JModel
   }
 	$this->setState('limit',$no_record_per_page);
 	$siteTableDetails=$this->getSiteTableDetails($siteTableId);
-  	$dbname=$siteTableDetails->dbname;
+  $dbname=$siteTableDetails->dbname;
 	$query=$siteTableDetails->query;
 	$db=JMMCommon::getDBInstance(null,null,null,null, $dbname,null);
 

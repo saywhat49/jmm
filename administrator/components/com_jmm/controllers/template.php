@@ -6,8 +6,7 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
-jimport('joomla.application.component.controllerform');
-class JMMControllerTemplate extends JControllerForm
+class JMMControllerTemplate extends JControllerLegacyForm
 {	
 	protected $view_list='templates';
 

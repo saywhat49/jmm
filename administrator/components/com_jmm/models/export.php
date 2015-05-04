@@ -6,7 +6,6 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
-jimport('joomla.application.component.jmodel');
 class JMMModelExport extends JModel {
 	/**
 	 * Save as CSV File

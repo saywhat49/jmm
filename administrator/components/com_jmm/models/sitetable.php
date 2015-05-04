@@ -6,7 +6,6 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
-jimport('joomla.application.component.modeladmin');
 class JMMModelSiteTable extends JModelAdmin
 {
 	public function getTable($type='SiteTable',$prefix='JMMTable',$config=array())

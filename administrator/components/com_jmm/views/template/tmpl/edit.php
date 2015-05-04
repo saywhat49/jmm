@@ -9,31 +9,42 @@ defined('_JEXEC') or die('Restricted access');
 if(isset($this->item->title)){
 	$templateFolder='/components'.DS.'com_jmm'.DS.'templates'.DS.$this->item->title.DS.'images';
 }else{
-	$templateFolder='/images';
+	$templateFolder='images';
 }
+JHtml::_('behavior.tooltip');
+JHtml::_('behavior.formvalidation');
+JHtml::_('formbehavior.chosen', 'select');
 ?>
-<form action="index.php?option=com_jmm&amp;layout=edit&amp;id=<?php echo $this->item->id;?>" method="POST" name="adminForm" class="form-validate">
-<div class="width-60 fltlft">
-	<fieldset class="adminform">
-		<ul class="adminformList">
-			<li><?php echo $this->form->getLabel('id'); ?>
-				<?php echo $this->form->getInput('id'); ?></li>
-				<li><?php echo $this->form->getLabel('title'); ?>
-				<?php echo $this->form->getInput('title'); ?><br><br>	</li>
-				<li><?php echo $this->form->getLabel('php'); ?>
-				<?php echo $this->form->getInput('php'); ?><br><br></li>
-				<li><?php echo $this->form->getLabel('css'); ?>
-				<?php echo $this->form->getInput('css'); ?><br><br></li>
-				<li><?php echo $this->form->getLabel('js'); ?>
-				<?php echo $this->form->getInput('js'); ?></li>
-		</ul>
+<script type="text/javascript">
+	Joomla.submitbutton = function(task)
+	{
+		if (task == 'cannedquery.cancel' || document.formvalidator.isValid(document.id('template-form')))
+		{
+			Joomla.submitform(task, document.getElementById('template-form'));
+		}
+	}
+</script>
+<form action="index.php?option=com_jmm&amp;layout=edit&amp;id=<?php echo $this->item->id;?>" method="POST" name="adminForm" id="template-form" class="form-validate form-horizontal">
+<div class="span10 form-horizontal">
+	<fieldset>
+		<?php foreach($this->form->getFieldset() as $field):?>
+			<div class="control-group">
+				<div class="control-label">
+					<?php echo $field->label;?>
+				</div>
+				<div class="controls">
+					<?php echo $field->input;?>
+					
+				</div>
+			</div>			
+		<?php endforeach ?>
+		<!--Media Manager Starts-->
+				<div class="controls">
+					<iframe class="span10" height="650"  scrolling="no" frameborder="no" src="http://joomla30.dev/administrator/index.php?option=com_media&view=images&tmpl=component&asset=com_jmm&author=&fieldid=jform_images&folder=<?php echo $templateFolder;?>"></iframe>
+				</div>
+				<!--Media Manager Ends-->
 	</fieldset>
-</div>
-<input type="hidden" name="task" value="template.edit">
+	<input type="hidden" name="task" value="template.edit">
 <?php echo JHtml::_('form.token');?>
 </form>
-<div class="width-40 fltrt">
-	<fieldset class="adminform">
-	<iframe width="100%" height="700" frameborder="0" scrolling="no" src="index.php?option=com_media&amp;view=images&amp;tmpl=component&amp;folder=<?php echo $templateFolder;?>"></iframe>
-</fieldset>
 </div>

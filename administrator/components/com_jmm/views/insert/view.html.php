@@ -6,8 +6,7 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
-jimport('joomla.application.component.view');
-class JMMViewInsert extends JView {
+class JMMViewInsert extends JViewLegacy {
 	
 	protected $item;
 	protected $form;
@@ -25,10 +24,9 @@ class JMMViewInsert extends JView {
 			JFactory::getApplication()->redirect($redirectUrl,$message);
 		}
 		
-		$this->item=$this->get('Item');
-		$this->form=$this->get('Form');
-
+		
 		$this->addToolbar();
+		$this->sidebar = JHtmlSidebar::render();
 		$document=JFactory::getDocument();
 		$document->addStyleSheet('http://code.jquery.com/ui/1.10.0/themes/base/jquery-ui.css');
 		$document->addStyleSheet(JURI::root().'media'.DS.'com_jmm'.DS.'css'.DS.'jquery-ui-timepicker-addon.css');
@@ -57,6 +55,8 @@ class JMMViewInsert extends JView {
 		if($filter_chnagetable!='' || $filter_chnagedatabase!=''){
 			JFactory::getApplication()->redirect($redirectUrl,$message);
 		}
+		$this->item=$this->get('Item');
+		$this->form=$this->get('Form');
 
 		$this->databases=$this->get('Databases');
 		$this->Tables=$this->get('Tables');	

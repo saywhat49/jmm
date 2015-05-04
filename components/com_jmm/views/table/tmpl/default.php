@@ -14,10 +14,7 @@ $themeFile=JPATH_COMPONENT.DS.'templates'.DS.$this->theme.DS.'index.php';
 $themeCSSFile=JPATH_COMPONENT.DS.'templates'.DS.$this->theme.DS.'css'.DS.'default.css';
 $themeJSFile=JPATH_COMPONENT.DS.'templates'.DS.$this->theme.DS.'js'.DS.'custom.js';
 if(file_exists($themeCSSFile)){
-	$document->addStyleSheet($this->themeBaseURL.'/css/default.css');
-}
-if(file_exists($themeJSFile)){
-	$document->addScript($this->themeBaseURL.'/js/custom.js');
+	$document->addStyleSheet($this->templateBaseURL.'/css/default.css');
 }
 if(file_exists($themeFile)){
 	require_once($themeFile);
@@ -25,7 +22,9 @@ if(file_exists($themeFile)){
 	$themeFile=JPATH_COMPONENT.DS.'templates'.DS.'default'.DS.'index.php';	
 	require_once($themeFile);
 }
-
+if(file_exists($themeJSFile)){
+	$document->addScript($this->templateBaseURL.'/js/custom.js');
+}
 ?>
 <?php
 if($this->defaultPagination){

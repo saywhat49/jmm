@@ -32,7 +32,7 @@
 		rows="10"
 		cols="40"
 		required="true"
-		class="inputbox" 
+		class="inputbox  span10" 
 		/>
 		
 		<field name="published"

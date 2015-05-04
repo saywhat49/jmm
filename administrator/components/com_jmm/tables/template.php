@@ -16,14 +16,18 @@ class JMMTableTemplate extends JTable
 	}
 
 	function check(){
+
 		$jinput=JFactory::getApplication()->input;
 		$data=$jinput->get('jform',array(),'ARRAY');
 		$id=$data['id'];
 		$title=$data['title'];
+		$title=JApplication::stringURLSafe($title);
+		$this->title=$title;
 		$php=$data['php'];
 		$css=$data['css'];
 		$js=$data['js'];
 		$templateFolder=JPATH_SITE.DS.'components'.DS.'com_jmm'.DS.'templates'.DS.$title;
+		jimport('joomla.filesystem.folder');
 		if(isset($id) && $id>0){
 				
 				$oldTitle=$this->getTitle($id);	

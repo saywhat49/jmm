@@ -6,8 +6,7 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
-jimport('joomla.application.component.view');
-class JMMViewSql extends JView {
+class JMMViewSql extends JViewLegacy {
 
 	protected $items;
 	protected $databases;
@@ -28,13 +27,15 @@ class JMMViewSql extends JView {
 		if($filter_chnagedatabase!='' && $query==''){
 			JFactory::getApplication()->redirect('index.php?option=com_jmm&view=sql&dbname='.$filter_chnagedatabase,'Database Changed to '.$filter_chnagedatabase);
 		}
+		
 		$this->addToolbar();
+		$this->sidebar = JHtmlSidebar::render();
 		parent::display($tmpl);
 	}
 
 	public function addToolbar() {
 		JToolBarHelper::title('Run SQL Queries', 'sql.png');
-		JToolBarHelper::preferences('com_jmm');
+		JToolBarHelper::preferences('com_jmm');		
 	}
 
 }

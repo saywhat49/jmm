@@ -6,8 +6,7 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
-jimport('joomla.application.component.view');
-class JMMViewSiteTable extends JView {
+class JMMViewSiteTable extends JViewLegacy {
 	
 	protected $item;
 	protected $form;

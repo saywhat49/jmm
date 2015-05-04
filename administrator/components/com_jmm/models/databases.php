@@ -6,7 +6,6 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
-jimport('joomla.application.component.modellist');
 class JMMModelDatabases extends JModelList {
 
 	public function __construct($config = array()) {

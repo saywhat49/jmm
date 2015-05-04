@@ -44,12 +44,14 @@ class JFormFieldTableFields extends JFormField {
          * Draw Int Box
          */
         function drawintElement($name,$type,$id,$label_name,$label_id,$length){
-        	$element='<li>';
-        	$element.='<label id="'.$label_id.'" for="'.$id.'">';
+        	$element='<div class="control-group">';
+        	$element.='<div class="control-label id="'.$label_id.'" for="'.$id.'">';
         	$element.=$label_name;
-        	$element.='</label>';
+            $element.='</div>';
+            $element.='<div class="controls">';
         	$element.='<input type="text" name="'.$name.'" id="'.$id.'" value="" size="'.$length.'" class="'.$type.'">';        	
-        	$element.='</li>';
+        	$element.='</div>';
+            $element.='</div>';
         	return $element;
         }
 
@@ -57,12 +59,14 @@ class JFormFieldTableFields extends JFormField {
          * Function Display Decimal 
          */
         function drawdecimalElement($name,$type,$id,$label_name,$label_id,$length){
-        	$element='<li>';
-        	$element.='<label id="'.$label_id.'" for="'.$id.'">';
+        	$element='<div class="control-group">';
+            $element.='<div class="control-label id="'.$label_id.'" for="'.$id.'">';
         	$element.=$label_name;
-        	$element.='</label>';
+            $element.='</div>';
+            $element.='<div class="controls">';
         	$element.='<input type="text" name="'.$name.'" id="'.$id.'" value="" size="'.$length.'" class="'.$type.'">';        	
-        	$element.='</li>';
+        	$element.='</div>';
+            $element.='</div>';
         	return $element;
         }
 
@@ -70,12 +74,14 @@ class JFormFieldTableFields extends JFormField {
          * Draw Char Box
          */
         function drawcharElement($name,$type,$id,$label_name,$label_id,$length){
-        	$element='<li>';
-        	$element.='<label id="'.$label_id.'" for="'.$id.'">';
+        	$element='<div class="control-group">';
+            $element.='<div class="control-label id="'.$label_id.'" for="'.$id.'">';
         	$element.=$label_name;
-        	$element.='</label>';
+            $element.='</div>';
+            $element.='<div class="controls">';
         	$element.='<input type="text" name="'.$name.'" id="'.$id.'" value="" size="'.$length.'" class="'.$type.'">';        	
-        	$element.='</li>';
+        	$element.='</div>';
+            $element.='</div>';
         	return $element;
         }
 
@@ -83,12 +89,14 @@ class JFormFieldTableFields extends JFormField {
          * Draw Varchar Box
          */
         function drawvarcharElement($name,$type,$id,$label_name,$label_id,$length){
-        	$element='<li>';
-        	$element.='<label id="'.$label_id.'" for="'.$id.'">';
+        	$element='<div class="control-group">';
+            $element.='<div class="control-label id="'.$label_id.'" for="'.$id.'">';
         	$element.=$label_name;
-        	$element.='</label>';
+            $element.='</div>';
+            $element.='<div class="controls">';
         	$element.='<input type="text" name="'.$name.'" id="'.$id.'" value="" style="width:394px;" class="'.$type.'">';
-        	$element.='</li>';
+        	$element.='</div>';
+            $element.='</div>';
         	return $element;
         }
 
@@ -96,24 +104,28 @@ class JFormFieldTableFields extends JFormField {
          * Draw Tiny Element
          */
         function drawtinyintElement($name,$type,$id,$label_name,$label_id,$length){
-        	$element='<li>';
-        	$element.='<label id="'.$label_id.'" for="'.$id.'">';
+        	$element='<div class="control-group">';
+            $element.='<div class="control-label id="'.$label_id.'" for="'.$id.'">';
         	$element.=$label_name;
-        	$element.='</label>';
+            $element.='</div>';
+            $element.='<div class="controls">';
         	$element.='<input type="text" name="'.$name.'" id="'.$id.'" value="" size="'.$length.'" class="'.$type.'">';
-        	$element.='</li>';
+        	$element.='</div>';
+            $element.='</div>';
         	return $element;
         }
         /**
          * Draw Bigint Element
          */
         function drawbigintElement($name,$type,$id,$label_name,$label_id,$length){
-        	$element='<li>';
-        	$element.='<label id="'.$label_id.'" for="'.$id.'">';
+        	$element='<div class="control-group">';
+            $element.='<div class="control-label id="'.$label_id.'" for="'.$id.'">';
         	$element.=$label_name;
-        	$element.='</label>';
+            $element.='</div>';
+            $element.='<div class="controls">';
         	$element.='<input type="text" name="'.$name.'" id="'.$id.'" value="" size="'.$length.'" class="'.$type.'">';
-        	$element.='</li>';
+        	$element.='</div>';
+            $element.='</div>';
         	return $element;
         }
 
@@ -124,12 +136,14 @@ class JFormFieldTableFields extends JFormField {
          * Draw Unsigned Float Element
          */
         function drawfloat_unsignedElement($name,$type,$id,$label_name,$label_id,$length){
-        	$element='<li>';
-        	$element.='<label id="'.$label_id.'" for="'.$id.'">';
+        	$element='<div class="control-group">';
+            $element.='<div class="control-label id="'.$label_id.'" for="'.$id.'">';
         	$element.=$label_name;
-        	$element.='</label>';
+            $element.='</div>';
+            $element.='<div class="controls">';
         	$element.='<input type="text" name="'.$name.'" id="'.$id.'" value="" size="'.$length.'" class="'.$type.'">';
-        	$element.='</li>';
+        	$element.='</div>';
+            $element.='</div>';
         	return $element;
         }
 
@@ -139,12 +153,14 @@ class JFormFieldTableFields extends JFormField {
          * Draw unsignedElement Element
          */
         function drawdouble_unsignedElement($name,$type,$id,$label_name,$label_id,$length){
-        	$element='<li>';
-        	$element.='<label id="'.$label_id.'" for="'.$id.'">';
+        	$element='<div class="control-group">';
+            $element.='<div class="control-label id="'.$label_id.'" for="'.$id.'">';
         	$element.=$label_name;
-        	$element.='</label>';
+            $element.='</div>';
+            $element.='<div class="controls">';
         	$element.='<input type="text" name="'.$name.'" id="'.$id.'" value="" size="'.$length.'" class="'.$type.'">';
-        	$element.='</li>';
+        	$element.='</div>';
+            $element.='</div>';
         	return $element;
         }
 
@@ -154,12 +170,14 @@ class JFormFieldTableFields extends JFormField {
          * Draw DateTimeElement
          */
         function drawdatetimeElement($name,$type,$id,$label_name,$label_id,$length){
-        	$element='<li>';
-        	$element.='<label id="'.$label_id.'" for="'.$id.'">';
+        	$element='<div class="control-group">';
+            $element.='<div class="control-label id="'.$label_id.'" for="'.$id.'">';
         	$element.=$label_name;
-        	$element.='</label>';
+            $element.='</div>';
+            $element.='<div class="controls">';
         	$element.='<input type="text" name="'.$name.'" id="'.$id.'" value="" class="'.$type.'">';
-        	$element.='</li>';
+        	$element.='</div>';
+            $element.='</div>';
         	return $element;
         }
 
@@ -175,12 +193,14 @@ class JFormFieldTableFields extends JFormField {
          */
         function drawtextElement($name,$type,$id,$label_name,$label_id,$length){
             return $this->getWYSIWYGEditor($name,$type,$id,$label_name,$label_id,$length);
-        	$element='<li>';
-        	$element.='<label id="'.$label_id.'" for="'.$id.'">';
+        	$element='<div class="control-group">';
+            $element.='<div class="control-label id="'.$label_id.'" for="'.$id.'">';
         	$element.=$label_name;
-        	$element.='</label>';
+            $element.='</div>';
+            $element.='<div class="controls">';
         	$element.='<textarea name="'.$name.'" id="'.$id.'" style="margin: 5px 5px 5px 0px; width: 394px; height: 132px;" class="'.$type.'"></textarea>';
-        	$element.='</li>';
+        	$element.='</div>';
+            $element.='</div>';
         	return $element;
         }
         /**
@@ -188,12 +208,14 @@ class JFormFieldTableFields extends JFormField {
          */
         function drawmediumtextElement($name,$type,$id,$label_name,$label_id,$length){
             return $this->getWYSIWYGEditor($name,$type,$id,$label_name,$label_id,$length);
-        	$element='<li>';
-        	$element.='<label id="'.$label_id.'" for="'.$id.'">';
+        	$element='<div class="control-group">';
+            $element.='<div class="control-label id="'.$label_id.'" for="'.$id.'">';
         	$element.=$label_name;
-        	$element.='</label>';
+            $element.='</div>';
+            $element.='<div class="controls">';
         	$element.='<textarea name="'.$name.'" id="'.$id.'" style="margin: 5px 5px 5px 0px; width: 394px; height: 132px;" class="'.$type.'"></textarea>';
-        	$element.='</li>';
+        	$element.='</div>';
+            $element.='</div>';
         	return $element;
         }
         /**
@@ -201,24 +223,28 @@ class JFormFieldTableFields extends JFormField {
          */
         function drawlongtextElement($name,$type,$id,$label_name,$label_id,$length){
             return $this->getWYSIWYGEditor($name,$type,$id,$label_name,$label_id,$length);
-        	$element='<li>';
-        	$element.='<label id="'.$label_id.'" for="'.$id.'">';
+        	$element='<div class="control-group">';
+            $element.='<div class="control-label id="'.$label_id.'" for="'.$id.'">';
         	$element.=$label_name;
-        	$element.='</label>';
+            $element.='</div>';
+            $element.='<div class="controls">';
         	$element.='<textarea name="'.$name.'" id="'.$id.'" style="margin: 5px 5px 5px 0px; width: 394px; height: 132px;" class="'.$type.'"></textarea>';
-        	$element.='</li>';
+        	$element.='</div>';
+            $element.='</div>';
         	return $element;
         }
         /**
          * Draw Medium Blob Field
          */
         function drawmediumblobElement($name,$type,$id,$label_name,$label_id,$length){
-        	$element='<li>';
-        	$element.='<label id="'.$label_id.'" for="'.$id.'">';
+        	$element='<div class="control-group">';
+            $element.='<div class="control-label id="'.$label_id.'" for="'.$id.'">';
         	$element.=$label_name;
-        	$element.='</label>';
+            $element.='</div>';
+            $element.='<div class="controls">';
         	$element.='<textarea name="'.$name.'" id="'.$id.'" style="margin: 5px 5px 5px 0px; width: 394px; height: 132px;" class="'.$type.'"></textarea>';
-        	$element.='</li>';
+        	$element.='</div>';
+            $element.='</div>';
         	return $element;
         }
 
@@ -227,12 +253,14 @@ class JFormFieldTableFields extends JFormField {
          */
         function getWYSIWYGEditor($name,$type,$id,$label_name,$label_id,$length){
             $editor =JFactory::getEditor();
-            $element='<li>';
-            $element.='<label id="'.$label_id.'" for="'.$id.'">';
+            $element='<div class="control-group">';
+            $element.='<div class="control-label id="'.$label_id.'" for="'.$id.'">';
             $element.=$label_name;
-            $element.='</label>';
+            $element.='</div>';
+            $element.='<div class="controls">';
             $element.=$editor->display($name, null, '800', '300', '60', '20', true);
-            $element.='</li>';
+            $element.='</div>';
+            $element.='</div>';
             return $element;
 
         }

@@ -6,8 +6,7 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
-jimport('joomla.application.component.view');
-class JMMViewTemplates extends JView {
+class JMMViewTemplates extends JViewLegacy {
 
 	protected $items;
 	protected $pagination;
@@ -21,6 +20,7 @@ class JMMViewTemplates extends JView {
 		$this -> pagination = $this -> get('Pagination');
 		$this -> state = $this -> get('State');
 		$this -> addToolbar();
+		$this->sidebar = JHtmlSidebar::render();
 		parent::display($tmpl);
 	}
 

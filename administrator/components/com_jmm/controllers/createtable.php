@@ -6,8 +6,7 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
-jimport('joomla.application.component.controlleradmin');
-class JMMControllerCreateTable extends JControllerAdmin
+class JMMControllerCreateTable extends JControllerLegacyAdmin
 {
 	private $posts=array();
 	function createTableStructure(){
