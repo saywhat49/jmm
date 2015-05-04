@@ -64,6 +64,7 @@ JHtml::_('formbehavior.chosen', 'select');
 			</select>
 	</div>
 </div>
+<br>
 <div class="clearfix"> </div>
 	<?php
 if(count($this->items)>0){

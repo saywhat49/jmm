@@ -24,11 +24,12 @@ JHtml::_('formbehavior.chosen', 'select');
 <?php endif;?>
 <div id="filter-bar" class="btn-toolbar">
 	<div class="btn-group pull-left">
-				<label for="filter_search">Search</label>
+		<div class="btn-wrapper input-append">
 			<input type="text" name="filter_search" id="filter_search" 
 			value="<?php echo $this->escape($this->state->get('filter.search'));?>" title="Search" />
 			<input type="submit" class="btn" value="Search">
-			<input type="button" class="btn" onclick="document.id('filter_search').value='';this.form.submit();" value="Clear">
+			<input type="button" class="btn search_clear_btn" onclick="document.getElementById('filter_search').value='';this.form.submit();" value="Clear">
+		</div>
 	</div>
 </div>
 <div class="clearfix"> </div>
