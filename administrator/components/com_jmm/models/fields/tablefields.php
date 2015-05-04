@@ -37,22 +37,42 @@ class JFormFieldTableFields extends JFormField {
 
         function drawForm($name,$type,$id,$label_name,$label_id,$length){
         	$elementFun=str_replace(' ',_,'draw'.$type.'Element');
-        	$this->formData.=$this->$elementFun($name,$type,$id,$label_name,$label_id,$length);
+            if(!method_exists($this,$elementFun))
+            {
+               $elementFun='drawinputElement'; 
+            }
+            $this->formData.=$this->$elementFun($name,$type,$id,$label_name,$label_id,$length);
+        	
+        }
+
+        /**
+         * Draw Int Box
+         */
+        function drawinputElement($name,$type,$id,$label_name,$label_id,$length){
+            $element='<div class="control-group">';
+            $element.='<div class="control-label id="'.$label_id.'" for="'.$id.'">';
+            $element.=$label_name;
+            $element.='</div>';
+            $element.='<div class="controls">';
+            $element.='<input type="text" name="'.$name.'" id="'.$id.'" value="" size="'.$length.'" class="'.$type.'">';            
+            $element.='</div>';
+            $element.='</div>';
+            return $element;
         }
 
         /**
          * Draw Int Box
          */
         function drawintElement($name,$type,$id,$label_name,$label_id,$length){
-        	$element='<div class="control-group">';
-        	$element.='<div class="control-label id="'.$label_id.'" for="'.$id.'">';
-        	$element.=$label_name;
+            $element='<div class="control-group">';
+            $element.='<div class="control-label id="'.$label_id.'" for="'.$id.'">';
+            $element.=$label_name;
             $element.='</div>';
             $element.='<div class="controls">';
-        	$element.='<input type="text" name="'.$name.'" id="'.$id.'" value="" size="'.$length.'" class="'.$type.'">';        	
-        	$element.='</div>';
+            $element.='<input type="text" name="'.$name.'" id="'.$id.'" value="" size="'.$length.'" class="'.$type.'">';            
             $element.='</div>';
-        	return $element;
+            $element.='</div>';
+            return $element;
         }
 
         /**
