@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE install SYSTEM "http://dev.joomla.org/xml/1.5/component-install.dtd">
-<extension type="component" version="2.5.0" method="upgrade">
+<extension type="component" version="3.1" method="upgrade">
 	<name>com_jmm</name>
 	<author>Biswarup Adhikari</author>
 	<creationDate>JULY 2013</creationDate>
@@ -8,7 +8,7 @@
 	<license>The MIT License (MIT)</license>
 	<authorEmail>biswarupadhikari@gmail.com</authorEmail>
 	<authorUrl>http://adidac.github.com/jmm/index.html</authorUrl>
-	<version>3.0.0</version>
+	<version>3.1.0</version>
 	<description>JMM Joomla Mysql Manager Extension for mangage Mysql database in joomla admin panel.</description>
 	<languages folder="language/en-GB">
 		<language tag="en-GB">en-GB.com_jmm.ini</language>
