@@ -245,3 +245,11 @@ table {
   border-radius: 0 3px 3px 0;
 }
 
+#query
+{
+	margin-top: 15px;
+}
+#filter-bar
+{
+	margin-bottom: 30px;
+}
