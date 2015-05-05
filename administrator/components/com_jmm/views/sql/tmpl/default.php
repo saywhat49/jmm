@@ -57,14 +57,14 @@ JHtml::_('formbehavior.chosen', 'select');
 <div class="clearfix"> </div>
 <div>
 	<textarea placeholder="Enter your SQL Quiries......" rows="10" cols="150" id="query" name="query" class="span12"><?php echo JRequest::getVar('query','');?></textarea><br>
-	<input type="submit" class="btn_runquery large" value="Run Query">
+	<input type="submit" class="btn btn-success" value="Run Query">
 	<input type="hidden" id="currentdb" name="currentdb" value="<?php echo $dbname;?>">
 <?php
 if(isset($_POST['query'])){
 ?>
-<input type="button" class="btn_runquery large" id="save_as_canned_query" value="Save as Canned Query">
-<input type="button" class="btn_runquery large" id="save_as_site_table" value="Save as Site Table">
-<input type="button" class="btn_runquery large" id="export_as_csv" value="Export as CSV">
+<input type="button" class="btn btn-success" id="save_as_canned_query" value="Save as Canned Query">
+<input type="button" class="btn btn-success" id="save_as_site_table" value="Save as Site Table">
+<input type="button" class="btn btn-success" id="export_as_csv" value="Export as CSV">
 <?php
 }
 ?>

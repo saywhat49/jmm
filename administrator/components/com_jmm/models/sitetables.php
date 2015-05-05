@@ -26,34 +26,36 @@ class JMMModelSiteTables extends JModelList {
 
 	public function getListQuery() {
 		$query = parent::getListQuery();
-		$query -> select('*');
-		$query -> from('#__jmm_sitetables');
+		$query -> select('st.*');
+		$query -> from('#__jmm_sitetables as st');
 		$published = $this -> getState('filter.published');
 		if ($published == '') {
-			$query -> where('published IN(1,0)');
+			$query -> where('st.published IN(1,0)');
 		} else if ($published != '*') {
 			$published = (int)$published;
-			$query -> where("published='$published'");
+			$query -> where("st.published='$published'");
 		}		
 		$search = $this -> getState('filter.search');
 		$database = $this -> getState('filter.database');
 		if ($database!='') {
-			$query -> where("dbname='$database'");
+			$query -> where("st.dbname='$database'");
 		}
 		$db = $this -> getDbo();
 
 		if (!empty($search)) {
 			$search = '%' . $db -> getEscaped($search, true) . '%';
-			$field_searches = "(title LIKE '{$search}' OR dbname LIKE '{$search}' OR query LIKE '{$search}')";
+			$field_searches = "(st.title LIKE '{$search}' OR st.dbname LIKE '{$search}' OR st.query LIKE '{$search}')";
 			$query -> where($field_searches);
 		}
+		$query->select('vl.title as access_level');
+		$query->join('LEFT','#__viewlevels as vl ON vl.id=st.access_level');
 		$orderCol = $this -> getState('list.ordering');
 		$orderDirn = $this -> getState('list.direction');
 		if (isset($orderCol)) {
 			$query -> order($orderCol . ' ' . $orderDirn);
 		} else { 
-			$query -> order('id desc');
-		}
+			$query -> order('st.id desc');
+		}		
 		return $query;
 	}
 	function getDatabases() {

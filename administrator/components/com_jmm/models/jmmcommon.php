@@ -180,9 +180,9 @@ class JMMCommon {
 		$rows = $db -> loadAssocList();
 		foreach ($rows as &$row) {
 			$tblName = $row['Name'];
-			$row['Structure'] = '<a class="btn_runquery large" href="index.php?option=com_jmm&view=tables&action=structure&&tbl=' . $tblName . $urlString . '">Structure</a>';
-			$row['Browse']= '<a class="btn_runquery large" href="index.php?option=com_jmm&view=tables&action=browse&&tbl=' . $tblName . $urlString . '">Browse</a>';
-			$row['Export']= '<input type="button" class="btn_runquery large" id="export_as_csv_from_table" value="Export as CSV" filename="'.$tblName.'" query="SELECT * FROM `'.$tblName.'`" '.$defaultdbName.'>';
+			$row['Structure'] = '<a class="btn btn-success" href="index.php?option=com_jmm&view=tables&action=structure&&tbl=' . $tblName . $urlString . '">Structure</a>';
+			$row['Browse']= '<a class="btn btn-success" href="index.php?option=com_jmm&view=tables&action=browse&&tbl=' . $tblName . $urlString . '">Browse</a>';
+			$row['Export']= '<input type="button" class="btn btn-success" id="export_as_csv_from_table" value="Export as CSV" filename="'.$tblName.'" query="SELECT * FROM `'.$tblName.'`" '.$defaultdbName.'>';
 			$row['Name'] = '<a href="index.php?option=com_jmm&view=tables&action=browse&tbl=' . $tblName . $urlString . '">' . $tblName . '</a>';
 		}
 

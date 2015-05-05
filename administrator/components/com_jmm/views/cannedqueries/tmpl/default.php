@@ -98,7 +98,7 @@ JHtml::_('formbehavior.chosen', 'select');
 						?>
 					</td>
 					<td class="center">
-							<input type="button" class="btn_runquery large" id="export_as_csv" value="Export as CSV">
+							<input type="button" class="btn btn-success" id="export_as_csv" value="Export as CSV">
 					</td>
 				</tr>
 				

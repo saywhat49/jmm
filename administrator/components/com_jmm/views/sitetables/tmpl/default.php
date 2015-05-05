@@ -65,22 +65,25 @@ JHtml::_('formbehavior.chosen', 'select');
 					<input type="checkbox" name="checkall-toggle" value="" onclick="checkAll(this)"/>
 				</th>
 				<th>
-					<?php echo JHtml::_('grid.sort','ID','id',$orderDirn,$listOrder);?>
+					<?php echo JHtml::_('grid.sort','ID','st.id',$orderDirn,$listOrder);?>
 				</th>
     			<th>
-					<?php echo JHtml::_('grid.sort','Title','title',$orderDirn,$listOrder);?>
-				</th>
-				<th>
-					<?php echo JHtml::_('grid.sort','DataBase','dbname',$orderDirn,$listOrder);?>
+					<?php echo JHtml::_('grid.sort','Title','st.title',$orderDirn,$listOrder);?>
 				</th>
     			<th>
-					<?php echo JHtml::_('grid.sort','Query','query',$orderDirn,$listOrder);?>
+					<?php echo JHtml::_('grid.sort','Access Level','vl.title',$orderDirn,$listOrder);?>
 				</th>
 				<th>
-					<?php echo JHtml::_('grid.sort','Date Time','datetime',$orderDirn,$listOrder);?>
+					<?php echo JHtml::_('grid.sort','DataBase','st.dbname',$orderDirn,$listOrder);?>
+				</th>
+    			<th>
+					<?php echo JHtml::_('grid.sort','Query','st.query',$orderDirn,$listOrder);?>
+				</th>
+				<th>
+					<?php echo JHtml::_('grid.sort','Date Time','st.datetime',$orderDirn,$listOrder);?>
 				</th>	
 				<th>
-					<?php echo JHtml::_('grid.sort','Status','published',$orderDirn,$listOrder);?>
+					<?php echo JHtml::_('grid.sort','Status','st.published',$orderDirn,$listOrder);?>
 				</th>
 				<th>
 					Export
@@ -89,6 +92,7 @@ JHtml::_('formbehavior.chosen', 'select');
 		</thead>
 		<tbody>
 			<?php foreach ($this->items as $i => $item): ?>	
+				
 				<tr class="row<?php echo $i % 2?>" id="id<?php echo $i;?>">					
 					<td class="center">
 						<?php echo JHtml::_('grid.id',$i,$item->id);?>
@@ -98,6 +102,9 @@ JHtml::_('formbehavior.chosen', 'select');
 					</td>
     				<td>
 						<?php echo $item->title;?>
+					</td>
+    				<td>
+						<?php echo $item->access_level;?>
 					</td>
 					<td>
 						<?php echo $this->escape($item->dbname);?>
@@ -114,7 +121,7 @@ JHtml::_('formbehavior.chosen', 'select');
 						?>
 					</td>
 					<td class="center">
-							<input type="button" class="btn_runquery large" id="export_as_csv" value="Export as CSV">
+							<input type="button" class="btn btn-success" id="export_as_csv" value="Export as CSV">
 					</td>
 				</tr>
 				
