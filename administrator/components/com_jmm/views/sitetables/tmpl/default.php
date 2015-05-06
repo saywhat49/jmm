@@ -70,14 +70,14 @@ JHtml::_('formbehavior.chosen', 'select');
     			<th>
 					<?php echo JHtml::_('grid.sort','Title','st.title',$orderDirn,$listOrder);?>
 				</th>
-    			<th>
-					<?php echo JHtml::_('grid.sort','Access Level','vl.title',$orderDirn,$listOrder);?>
-				</th>
 				<th>
 					<?php echo JHtml::_('grid.sort','DataBase','st.dbname',$orderDirn,$listOrder);?>
 				</th>
     			<th>
 					<?php echo JHtml::_('grid.sort','Query','st.query',$orderDirn,$listOrder);?>
+				</th>				
+    			<th>
+					<?php echo JHtml::_('grid.sort','Access Level','vl.title',$orderDirn,$listOrder);?>
 				</th>
 				<th>
 					<?php echo JHtml::_('grid.sort','Date Time','st.datetime',$orderDirn,$listOrder);?>
@@ -103,14 +103,14 @@ JHtml::_('formbehavior.chosen', 'select');
     				<td>
 						<?php echo $item->title;?>
 					</td>
-    				<td>
-						<?php echo $item->access_level;?>
-					</td>
 					<td>
 						<?php echo $this->escape($item->dbname);?>
 					</td>
     				<td>
 						<?php echo $this->escape($item->query);?>
+					</td>
+    				<td>
+						<?php echo $item->access_level;?>
 					</td>
 					<td class="center">
 						<?php echo $this->escape($item->datetime);?>
