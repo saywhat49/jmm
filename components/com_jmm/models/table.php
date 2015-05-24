@@ -61,6 +61,7 @@ class JMMModelTable extends JModelLegacy
       $siteTableDetails=$this->getSiteTableDetails($siteTableId);
 		  $dbname=$siteTableDetails->dbname;
 			$query=$siteTableDetails->query;
+			$query=rtrim($query,';');
 			$db=JMMCommon::getDBInstance(null,null,null,null, $dbname,null);
 			$db->setQuery($query);	
             $this->_total =count($db->loadObjectList());      
@@ -104,6 +105,7 @@ class JMMModelTable extends JModelLegacy
 	$siteTableDetails=$this->getSiteTableDetails($siteTableId);
   $dbname=$siteTableDetails->dbname;
 	$query=$siteTableDetails->query;
+	$query=rtrim($query,';');
 	$db=JMMCommon::getDBInstance(null,null,null,null, $dbname,null);
 
 	if($table_pagination){
