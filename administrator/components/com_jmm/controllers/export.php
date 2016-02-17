@@ -12,7 +12,6 @@ class JMMControllerExport extends JControllerAdmin
 	 * Export In CSV
 	 */
 	function csv(){
-		die("Temporarily disabling EXPORT TO CSV due to security issue.")
 		$mainframe=JFactory::getApplication();
 		$response = array();
 		$response['status'] = false;
