@@ -2,75 +2,33 @@
 <updates>
    <update>
       <name>JMM</name>
-      <description>Joomla Mysql Manager Component</description>
+      <description>Joomla Mysql Manager Component for Joomla 3.0 or above</description>
       <element>com_jmm</element>
       <type>component</type>
-      <version>1.0.0</version>
+      <version>3.0.0</version>
  
       <infourl title="JMM URL">http://adidac.github.com/jmm/index.html</infourl>
       <downloads>
-         <downloadurl type="full" format="zip">https://github.com/downloads/adidac/jmm/com_jmm-1.0.0-beta.zip</downloadurl>
+         <downloadurl type="full" format="zip">http://adidac.github.com/jmm/installer/com_jmm-v3.0.0.zip</downloadurl>
       </downloads>
       <tags>
          <tag>joomla-database-management</tag>
-      </tags>
- 
+      </tags> 
       <maintainer>adidac</maintainer>
       <maintainerurl>https://github.com/adidac/jmm</maintainerurl>
       <section>Database-Management</section>
-      <targetplatform name="joomla" version="2.5" />
-   </update> 
-   <update>
-      <name>JMM</name>
-      <description>Joomla Mysql Manager Component</description>
-      <element>com_jmm</element>
-      <type>component</type>
-      <version>1.0.1</version>
- 
-      <infourl title="JMM URL">http://adidac.github.com/jmm/index.html</infourl>
-      <downloads>
-         <downloadurl type="full" format="zip">https://github.com/downloads/adidac/jmm/com_jmm-1.0.1-beta.zip</downloadurl>
-      </downloads>
-      <tags>
-         <tag>joomla-database-management</tag>
-      </tags>
- 
-      <maintainer>adidac</maintainer>
-      <maintainerurl>https://github.com/adidac/jmm</maintainerurl>
-      <section>Database-Management</section>
-      <targetplatform name="joomla" version="2.5" />
-   </update> 
-    
-   <update>
-      <name>JMM</name>
-      <description>Joomla Mysql Manager Component</description>
-      <element>com_jmm</element>
-      <type>component</type>
-      <version>1.0.2</version>
- 
-      <infourl title="JMM URL">http://adidac.github.com/jmm/index.html</infourl>
-      <downloads>
-         <downloadurl type="full" format="zip">https://github.com/downloads/adidac/jmm/com_jmm-1.0.2-beta.zip</downloadurl>
-      </downloads>
-      <tags>
-         <tag>joomla-database-management</tag>
-      </tags>
- 
-      <maintainer>adidac</maintainer>
-      <maintainerurl>https://github.com/adidac/jmm</maintainerurl>
-      <section>Database-Management</section>
-      <targetplatform name="joomla" version="2.5" />
+      <targetplatform name="joomla" version="3.0" />
    </update> 
     <update>
       <name>JMM</name>
-      <description>Joomla Mysql Manager Component</description>
+      <description>Joomla Mysql Manger V3.1.0 releasing with Joomla 3.x Bug fix and Few CSS Fix.</description>
       <element>com_jmm</element>
       <type>component</type>
-      <version>1.0.3</version>
+      <version>3.0.1</version>
  
       <infourl title="JMM URL">http://adidac.github.com/jmm/index.html</infourl>
       <downloads>
-         <downloadurl type="full" format="zip">http://adidac.github.com/jmm/installer/com_jmm-v1.0.3.zip</downloadurl>
+         <downloadurl type="full" format="zip">https://github.com/adidac/jmm/archive/v3.1.0.zip</downloadurl>
       </downloads>
       <tags>
          <tag>joomla-database-management</tag>
@@ -79,18 +37,19 @@
       <maintainer>adidac</maintainer>
       <maintainerurl>https://github.com/adidac/jmm</maintainerurl>
       <section>Database-Management</section>
-      <targetplatform name="joomla" version="2.5" />
+      <targetplatform name="joomla" version="3.1" />
    </update> 
+
     <update>
       <name>JMM</name>
-      <description>Joomla Mysql Manager Component</description>
+      <description>Joomla Mysql Manger V3.1.1 releasing with Joomla 3.x Export to CSV Issue.</description>
       <element>com_jmm</element>
       <type>component</type>
-      <version>1.0.4</version>
+      <version>3.1.1</version>
  
       <infourl title="JMM URL">http://adidac.github.com/jmm/index.html</infourl>
       <downloads>
-         <downloadurl type="full" format="zip">http://adidac.github.com/jmm/installer/com_jmm-v1.0.4.zip</downloadurl>
+         <downloadurl type="full" format="zip">https://github.com/adidac/jmm/archive/3.1.1.zip</downloadurl>
       </downloads>
       <tags>
          <tag>joomla-database-management</tag>
@@ -99,66 +58,6 @@
       <maintainer>adidac</maintainer>
       <maintainerurl>https://github.com/adidac/jmm</maintainerurl>
       <section>Database-Management</section>
-      <targetplatform name="joomla" version="2.5" />
-   </update> 
-   <update>
-      <name>JMM</name>
-      <description>Joomla Mysql Manager Component Create Table Via GUI Working</description>
-      <element>com_jmm</element>
-      <type>component</type>
-      <version>1.0.5</version>
- 
-      <infourl title="JMM URL">http://adidac.github.com/jmm/index.html</infourl>
-      <downloads>
-         <downloadurl type="full" format="zip">http://adidac.github.com/jmm/installer/com_jmm-v1.0.5.zip</downloadurl>
-      </downloads>
-      <tags>
-         <tag>joomla-database-management</tag>
-      </tags>
- 
-      <maintainer>adidac</maintainer>
-      <maintainerurl>https://github.com/adidac/jmm</maintainerurl>
-      <section>Database-Management</section>
-      <targetplatform name="joomla" version="2.5" />
-   </update> 
-   <update>
-      <name>JMM</name>
-      <description>Joomla Mysql Manager Component Insert Data Into Table via GUI Done</description>
-      <element>com_jmm</element>
-      <type>component</type>
-      <version>1.0.6</version>
- 
-      <infourl title="JMM URL">http://adidac.github.com/jmm/index.html</infourl>
-      <downloads>
-         <downloadurl type="full" format="zip">http://adidac.github.com/jmm/installer/com_jmm-v1.0.6.zip</downloadurl>
-      </downloads>
-      <tags>
-         <tag>joomla-database-management</tag>
-      </tags>
- 
-      <maintainer>adidac</maintainer>
-      <maintainerurl>https://github.com/adidac/jmm</maintainerurl>
-      <section>Database-Management</section>
-      <targetplatform name="joomla" version="2.5" />
-   </update>  
-   <update>
-      <name>JMM</name>
-      <description>Joomla Mysql Manager Component JTable Theme Ajax pagination implemented</description>
-      <element>com_jmm</element>
-      <type>component</type>
-      <version>1.0.7</version>
- 
-      <infourl title="JMM URL">http://adidac.github.com/jmm/index.html</infourl>
-      <downloads>
-         <downloadurl type="full" format="zip">http://adidac.github.com/jmm/installer/com_jmm-v1.0.7.zip</downloadurl>
-      </downloads>
-      <tags>
-         <tag>joomla-database-management</tag>
-      </tags>
- 
-      <maintainer>adidac</maintainer>
-      <maintainerurl>https://github.com/adidac/jmm</maintainerurl>
-      <section>Database-Management</section>
-      <targetplatform name="joomla" version="2.5" />
-   </update> 
+      <targetplatform name="joomla" version="3.1" />
+   </update>
 </updates>
