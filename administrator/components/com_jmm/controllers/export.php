@@ -14,6 +14,11 @@ class JMMControllerExport extends JControllerAdmin
 	function csv(){
 		$mainframe=JFactory::getApplication();
 		$response = array();
+		$response['status'] = false;
+		$response['msg'] = 'Temporarily disabling EXPORT TO CSV due to security issue.Please delete all the csv files from Directory (administrator/components/com_jmm/exported/). For more info contact biswarupadhikari@gmail.com';
+		echo json_encode($response);
+		$mainframe->close();
+		exit(0);
 		$query = JRequest::getVar('query', '');
 		$filename = JRequest::getVar('filename', 'export');
 		if (isset($query) && $query!='') {
