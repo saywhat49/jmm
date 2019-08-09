@@ -9,7 +9,7 @@ JMM is a Joomla Extension for managing Mysql Datbase from the joomla administrat
 
 ### How to Install JMM
 
-Download Latest Zip File From here http://saywhat49.github.io/jmm/index.html . Login to your joomla administrator
+Download Latest Zip File From here https://github.com/saywhat49/jmm/index.html . Login to your joomla administrator
 panel go to Extension Manger from Extensions Menu then click on Select or Browse File Icon select your recently downloaded JMM Zip File. Then Click on Install.After successfull installation Click on componnent Menu you can see Joomla Mysql Manager Menu click here and start JMM. 
 
 
