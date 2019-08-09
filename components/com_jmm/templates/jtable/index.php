@@ -10,7 +10,7 @@ $document=JFactory::getDocument();
 $jtable_theme=$params->get('jtable_theme');
 $document->addStyleSheet($this->curThemeURL.DS.'jtable'.DS.'themes'.DS.$jtable_theme);
 $document->addStyleSheet($this->curThemeURL.DS.'css'.DS.'ui-themes'.DS.'redmond'.DS.'jquery-ui-1.8.16.custom.css');
-//$document->addScript($this->curThemeURL.DS.'js'.DS.'jquery-1.9.0.min.js');
+//$document->addScript($this->curThemeURL.DS.'js'.DS.'jquery-1.9.1.min.js');
 //$document->addScript($this->curThemeURL.DS.'js'.DS.'jquery-ui-1.9.2.min.js');
 //$document->addScript($this->curThemeURL.DS.'jtable'.DS.'jquery.jtable.min.js');
 $siteTableId=(int)$this->params->get('site_table_id');
