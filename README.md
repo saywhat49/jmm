@@ -32,7 +32,7 @@ Fork by saywhat49
 
 ### Support or Contact
 
-For any Problem,Bugs,Feedback you can email me at biswarupadhikari@gmail.com.
+For any Problem,Bugs,Feedback you can email me at ...
 
 ### Licence
 
