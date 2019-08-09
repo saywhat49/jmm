@@ -41,7 +41,7 @@ class JMMViewTable extends JViewLegacy
         $this->theme=$this->params->get('theme');
 		$document=JFactory::getDocument();
 		$document->addStyleSheet(JURI::root().'media'.DS.'com_jmm'.DS.'css'.DS.'jmm.css');
-		$document->addScript(JURI::root().'media'.DS.'com_jmm'.DS.'js'.DS.'jquery-1.9.0.min.js');		
+		$document->addScript(JURI::root().'media'.DS.'com_jmm'.DS.'js'.DS.'jquery-1.9.1.min.js');		
 		$this->curThemeURL=JURI::root().'components'.DS.'com_jmm'.DS.'templates'.DS.$this->theme;
 		$this->templateBaseURL=JURI::root().'components/com_jmm/templates/'.$this->theme;
         parent::display($tmpl);
