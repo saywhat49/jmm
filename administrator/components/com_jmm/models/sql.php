@@ -77,7 +77,7 @@ class JMMModelSQL extends JModelItem {
 	}
 
 	function getDatabases() {
-		$rows = JMMCommon->getDataBaseLists();
+		$rows = JMMCommon::getDataBaseLists();
 		$databases = array();
 		for ($i = 0; $i < count($rows); $i++) {
 			$databases[] = JHTML::_('select.option', $rows[$i], $rows[$i]);
@@ -86,7 +86,7 @@ class JMMModelSQL extends JModelItem {
 	}
 	
 	function getCannedQueries(){
-		$rows = JMMCommon->listCannedQueries();
+		$rows = JMMCommon::listCannedQueries();
 		$queries = array();
 		for ($i = 0; $i < count($rows); $i++) {
 			$queries[] = JHTML::_('select.option', $rows[$i]->query, $rows[$i]->title);
@@ -95,7 +95,7 @@ class JMMModelSQL extends JModelItem {
 		
 	}
 	function getSiteTables(){
-		$rows = JMMCommon->listSiteTables();
+		$rows = JMMCommon::listSiteTables();
 		$queries = array();
 		for ($i = 0; $i < count($rows); $i++) {
 			$queries[] = JHTML::_('select.option', $rows[$i]->query, $rows[$i]->title);

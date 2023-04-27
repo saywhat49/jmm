@@ -56,7 +56,7 @@ class JMMModelCannedQueries extends JModelList {
 		return $query;
 	}
 	function getDatabases() {
-		$rows = JMMCommon->getDataBaseLists();
+		$rows = JMMCommon::getDataBaseLists();
 		$databases = array();
 		for ($i = 0; $i < count($rows); $i++) {
 			$databases[] = JHTML::_('select.option', $rows[$i], $rows[$i]);

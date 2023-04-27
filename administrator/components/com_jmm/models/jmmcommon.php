@@ -76,7 +76,7 @@ class JMMCommon {
 		$db = JDatabase::getInstance($option);
 
 		if ($dbname == '') {
-			$dbLists=self->getDataBaseLists($db);
+			$dbLists=self::getDataBaseLists($db);
 			if(count($dbLists)>0){
 				JFactory::getApplication() -> redirect('index.php?option=com_jmm&view=tables&dbname='.$dbLists[0],'DataBase Switched to '.$dbLists[0]);
 			}

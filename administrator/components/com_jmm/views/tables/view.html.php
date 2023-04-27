@@ -49,7 +49,7 @@ class JMMViewTables extends JViewLegacy {
 		
 		switch ($action) {
 			case 'structure' :
-				$this -> items = JMMCommon->showTableStructure($tbl);
+				$this -> items = JMMCommon::showTableStructure($tbl);
 				JFactory::getApplication()->enqueueMessage('Table Structure of '.$tbl, 'message');
 				break;
 			case 'browse' :

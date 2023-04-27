@@ -18,7 +18,7 @@ class JFormFieldTableFields extends JFormField {
         public function getInput() {
         	$table=JRequest::getVar('tbl');
         	$dbname=JRequest::getVar('dbname');
-        	$tableFields=JMMCommon->showTableStructure($table);
+        	$tableFields=JMMCommon::showTableStructure($table);
         	for($i=0;$i<count($tableFields);$i++){
         		$field=$tableFields[$i];
         		$tmp=explode('(',$field['Type']);
