@@ -26,7 +26,7 @@ class JMMController extends JControllerLegacy {
 		$jtSorting=JRequest::getString('jtSorting',null);	
 		if(isset($siteTableDetails)){
 			$dbname=$siteTableDetails->dbname;
-			$db=JMMCommon::getDBInstance(null,null,null,null, $dbname,null);
+			$db=JMMCommon->getDBInstance(null,null,null,null, $dbname,null);
 			$query=$siteTableDetails->query;
 			$db->setQuery($query);
 			$db->query();

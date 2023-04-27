@@ -13,7 +13,7 @@ class JMMTableInsert extends JTable
 
 		$tbl=JRequest::getVar('tbl',null);
 		if(isset($tbl)){			
-			$db=JMMCommon::getDBInstance();
+			$db=JMMCommon->getDBInstance();
 			parent::__construct($tbl,null,$db);
 		}
 	}

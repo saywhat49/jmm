@@ -27,7 +27,7 @@ class JMMModelTables extends JModelList {
 	}
 
 	public function getDbo() {
-		$db = JMMCommon::getDBInstance();
+		$db = JMMCommon->getDBInstance();
 		return $db;
 	}
 
@@ -38,7 +38,7 @@ class JMMModelTables extends JModelList {
 		$query -> from($tbl);
 		$search = $this -> getState('filter.search');
 		//$db = $this -> getDbo();
-		$this->_db=JMMCommon::getDBInstance();
+		$this->_db=JMMCommon->getDBInstance();
 		/*
 		 if (!empty($search)) {
 		 $search = '%' . $db -> getEscaped($search, true) . '%';
