@@ -12,7 +12,7 @@ class JMMModelTemplate extends JModelAdmin
 	{
 		return JTable::getInstance($type,$prefix,$config);		
 	}	
-	public function getItem(){
+	public function getItem($pk = null){
 		$item=parent::getItem();
 		$templateFolder=JPATH_SITE.DS.'components'.DS.'com_jmm'.DS.'templates'.DS.$item->title;
 		$item->php=$this->getFileContent($templateFolder.DS.'index.php','php');
