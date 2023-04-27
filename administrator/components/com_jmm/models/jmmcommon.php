@@ -146,7 +146,7 @@ class JMMCommon {
 
 	 static function showDatabaseLists($db = null) {
 		if (!isset($db)) {
-			$db = JMMCommon->getDBInstance();
+			$db = JMMCommon::getDBInstance();
 		}
 		$query = "SHOW DATABASES";
 		$db -> setQuery($query);
