@@ -12,7 +12,7 @@ class JMMModelTables extends JModelList {
 		if (empty($config['filter_fields'])) {
 			if (isset($_REQUEST['tbl'])) {
 				$tbl = JRequest::getVar('tbl');
-				$config['filter_fields'] = JMMCommon->getCloumnsFromTable($tbl);
+				$config['filter_fields'] = JMMCommon::getCloumnsFromTable($tbl);
 			}
 		}
 		parent::__construct($config);
@@ -27,7 +27,7 @@ class JMMModelTables extends JModelList {
 	}
 
 	public function getDbo() {
-		$db = JMMCommon->getDBInstance();
+		$db = JMMCommon::getDBInstance();
 		return $db;
 	}
 
@@ -38,7 +38,7 @@ class JMMModelTables extends JModelList {
 		$query -> from($tbl);
 		$search = $this -> getState('filter.search');
 		//$db = $this -> getDbo();
-		$this->_db=JMMCommon->getDBInstance();
+		$this->_db=JMMCommon::getDBInstance();
 		/*
 		 if (!empty($search)) {
 		 $search = '%' . $db -> getEscaped($search, true) . '%';
@@ -59,7 +59,7 @@ class JMMModelTables extends JModelList {
 	}
 
 	function getTables() {
-		$rows = JMMCommon->getTablesFromDB();
+		$rows = JMMCommon::getTablesFromDB();
 		$tables = array();
 		for ($i = 0; $i < count($rows); $i++) {
 			$tables[] = JHTML::_('select.option', $rows[$i], $rows[$i]);
@@ -67,7 +67,7 @@ class JMMModelTables extends JModelList {
 		return $tables;
 	}
 	function getDatabases() {
-		$rows = JMMCommon->getDataBaseLists();
+		$rows = JMMCommon::getDataBaseLists();
 		$databases = array();
 		for ($i = 0; $i < count($rows); $i++) {
 			$databases[] = JHTML::_('select.option', $rows[$i], $rows[$i]);

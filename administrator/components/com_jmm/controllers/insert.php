@@ -14,7 +14,7 @@ class JMMControllerInsert extends JControllerForm
 		$jform=JRequest::getVar('jform',null,null,'validation type',JREQUEST_ALLOWRAW);
 		$dbname=JRequest::getVar('dbname',JFactory::getApplication() -> getCfg('db'));
 		$tbl=JRequest::getVar('tbl');
-		$db=JMMCommon->getDBInstance();
+		$db=JMMCommon::getDBInstance();
 		$query='INSERT INTO `'.$tbl.'`';
 		$fields='';
 		$values='';

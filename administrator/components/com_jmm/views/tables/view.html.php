@@ -58,7 +58,7 @@ class JMMViewTables extends JViewLegacy {
 				break;
 
 			default :
-				$this -> items = JMMCommon->showTableLists();
+				$this -> items = JMMCommon::showTableLists();
 				JFactory::getApplication()->enqueueMessage('Table Lists', 'message');
 				break;
 		}

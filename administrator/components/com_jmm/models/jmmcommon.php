@@ -91,7 +91,7 @@ class JMMCommon {
 	 */
 	static function getTablesFromDB($db = null) {
 		if (!isset($db)) {
-			$db = JMMCommon->getDBInstance();
+			$db = JMMCommon::getDBInstance();
 		}
 		$query = "SHOW TABLE STATUS";
 		$db -> setQuery($query);
@@ -108,7 +108,7 @@ class JMMCommon {
 	 */
 	static function getCloumnsFromTable($table, $db = null) {
 		if (!isset($db)) {
-			$db = JMMCommon->getDBInstance();
+			$db = JMMCommon::getDBInstance();
 		}
 		$query = "SHOW COLUMNS FROM `$table`";
 		$db -> setQuery($query);
@@ -125,7 +125,7 @@ class JMMCommon {
 	 */
 	static function getDataBaseLists($db = null) {
 		if (!isset($db)) {
-			$db = JMMCommon->getDBInstance();
+			$db = JMMCommon::getDBInstance();
 		}
 		$query = "SHOW DATABASES";
 		$db -> setQuery($query);
@@ -165,7 +165,7 @@ class JMMCommon {
 	 */
 	static function showTableLists($db = null) {
 		if (!isset($db)) {
-			$db = JMMCommon->getDBInstance();
+			$db = JMMCommon::getDBInstance();
 		}
 		if (isset($_REQUEST['dbname'])) {
 			$dbname = JRequest::getVar('dbname');
@@ -195,7 +195,7 @@ class JMMCommon {
 
 	 static function showTableStructure($table=null, $db = null) {
 		if (!isset($db)) {
-			$db = JMMCommon->getDBInstance();
+			$db = JMMCommon::getDBInstance();
 		}
 		if(!isset($table)){
 			return false;
@@ -218,7 +218,7 @@ class JMMCommon {
 	 */
 	static function showDataFromTable($table, $db = null) {
 		if (!isset($db)) {
-			$db = JMMCommon->getDBInstance();
+			$db = JMMCommon::getDBInstance();
 		}
 		$query = "SELECT * FROM $table";
 		$db -> setQuery($query);
@@ -239,7 +239,7 @@ class JMMCommon {
 
 	static function listCannedQueries($db = null) {
 		if (!isset($db)) {
-			//$db = JMMCommon->getDBInstance();
+			//$db = JMMCommon::getDBInstance();
 			$db = JFactory::getDBO();
 		}
 		$selecteddb = '';
@@ -260,7 +260,7 @@ class JMMCommon {
 
 	static function listSiteTables($db = null) {
 		if (!isset($db)) {
-			//$db = JMMCommon->getDBInstance();
+			//$db = JMMCommon::getDBInstance();
 			$db = JFactory::getDBO();
 		}
 		$selecteddb = '';

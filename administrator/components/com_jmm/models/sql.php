@@ -9,7 +9,7 @@ defined('_JEXEC') or die('Restricted access');
 class JMMModelSQL extends JModelItem {
 
 	function getItems() {
-		$db = JMMCommon->getDBInstance();
+		$db = JMMCommon::getDBInstance();
 		$query = JRequest::getVar('query', '');
 		if (isset($query) && $query!='') {
 			$db -> setQuery($query);
