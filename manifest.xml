@@ -83,6 +83,6 @@
 	</administration>
 	 <updateservers>
                 <!-- Note: No spaces or linebreaks allowed between the server tags -->
-        <server type="extension" priority="1" name="JMM Update Site">http://adidac.github.com/jmm/update/jmm3-update.xml</server>
+        <server type="extension" priority="1" name="JMM Update Site">http://saywhat49.github.com/jmm/update/jmm3-update.xml</server>
         </updateservers>
 </extension>
