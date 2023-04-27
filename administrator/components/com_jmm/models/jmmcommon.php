@@ -89,7 +89,7 @@ class JMMCommon {
 	/**
 	 * Get Tables From Database
 	 */
-	function getTablesFromDB($db = null) {
+	static function getTablesFromDB($db = null) {
 		if (!isset($db)) {
 			$db = JMMCommon::getDBInstance();
 		}
@@ -106,7 +106,7 @@ class JMMCommon {
 	/**
 	 * Get Cloumn Lists From Tablename
 	 */
-	function getCloumnsFromTable($table, $db = null) {
+	static function getCloumnsFromTable($table, $db = null) {
 		if (!isset($db)) {
 			$db = JMMCommon::getDBInstance();
 		}
@@ -123,7 +123,7 @@ class JMMCommon {
 	/**
 	 * List Databases
 	 */
-	function getDataBaseLists($db = null) {
+	static function getDataBaseLists($db = null) {
 		if (!isset($db)) {
 			$db = JMMCommon::getDBInstance();
 		}
@@ -144,7 +144,7 @@ class JMMCommon {
 	 * Show Databases
 	 */
 
-	function showDatabaseLists($db = null) {
+	 static function showDatabaseLists($db = null) {
 		if (!isset($db)) {
 			$db = JMMCommon::getDBInstance();
 		}
@@ -163,7 +163,7 @@ class JMMCommon {
 	/**
 	 * Show Tables Lists
 	 */
-	function showTableLists($db = null) {
+	static function showTableLists($db = null) {
 		if (!isset($db)) {
 			$db = JMMCommon::getDBInstance();
 		}
@@ -193,7 +193,7 @@ class JMMCommon {
 	 * Show Table Structure
 	 */
 
-	function showTableStructure($table=null, $db = null) {
+	 static function showTableStructure($table=null, $db = null) {
 		if (!isset($db)) {
 			$db = JMMCommon::getDBInstance();
 		}
@@ -216,7 +216,7 @@ class JMMCommon {
 	/**
 	 * Display Data From Table
 	 */
-	function showDataFromTable($table, $db = null) {
+	static function showDataFromTable($table, $db = null) {
 		if (!isset($db)) {
 			$db = JMMCommon::getDBInstance();
 		}
@@ -237,7 +237,7 @@ class JMMCommon {
 	 * Lists Canned Queries
 	 */
 
-	function listCannedQueries($db = null) {
+	static function listCannedQueries($db = null) {
 		if (!isset($db)) {
 			//$db = JMMCommon::getDBInstance();
 			$db = JFactory::getDBO();
@@ -258,7 +258,7 @@ class JMMCommon {
 	 * Lists Site Tables Queries
 	 */
 
-	function listSiteTables($db = null) {
+	static function listSiteTables($db = null) {
 		if (!isset($db)) {
 			//$db = JMMCommon::getDBInstance();
 			$db = JFactory::getDBO();
@@ -279,7 +279,7 @@ class JMMCommon {
 	 * Get Model
 	 */
 
-	function getModel($modelName, $prefix = null, $backend = true) {
+	static function getModel($modelName, $prefix = null, $backend = true) {
 		if (!isset($prefix)) {
 			$prefix = 'JMMModel';
 		}
