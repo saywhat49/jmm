@@ -11,7 +11,7 @@ defined('_JEXEC') or die('Restricted access');
 class JMMController extends JControllerLegacy
 {
 
-	function display($cachable = false) 
+	function display($cachable = false, $urlparams = false) 
 	{
 		
 		parent::display($cachable);
