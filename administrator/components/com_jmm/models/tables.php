@@ -12,7 +12,7 @@ class JMMModelTables extends JModelList {
 		if (empty($config['filter_fields'])) {
 			if (isset($_REQUEST['tbl'])) {
 				$tbl = JRequest::getVar('tbl');
-				$config['filter_fields'] = JMMCommon::getCloumnsFromTable($tbl);
+				$config['filter_fields'] = JMMCommon->getCloumnsFromTable($tbl);
 			}
 		}
 		parent::__construct($config);
@@ -59,7 +59,7 @@ class JMMModelTables extends JModelList {
 	}
 
 	function getTables() {
-		$rows = JMMCommon::getTablesFromDB();
+		$rows = JMMCommon->getTablesFromDB();
 		$tables = array();
 		for ($i = 0; $i < count($rows); $i++) {
 			$tables[] = JHTML::_('select.option', $rows[$i], $rows[$i]);
@@ -67,7 +67,7 @@ class JMMModelTables extends JModelList {
 		return $tables;
 	}
 	function getDatabases() {
-		$rows = JMMCommon::getDataBaseLists();
+		$rows = JMMCommon->getDataBaseLists();
 		$databases = array();
 		for ($i = 0; $i < count($rows); $i++) {
 			$databases[] = JHTML::_('select.option', $rows[$i], $rows[$i]);

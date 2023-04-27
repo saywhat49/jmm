@@ -23,7 +23,7 @@ class JMMControllerCreateTable extends JControllerAdmin
 		$query=rtrim($query,',');
 		$query.=$this->getTableKeys();
 		$query.=')'.' ENGINE='.$this->getTableType().' DEFAULT CHARSET=latin1'.$this->getTableComment().$this->getAutoIncrementCounter();
-		$db = JMMCommon::getDBInstance();
+		$db = JMMCommon->getDBInstance();
 		$db->setQuery($query);
 		if($db->query()){
 			$result['status']=true;

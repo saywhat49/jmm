@@ -10,7 +10,7 @@ class JMMViewDatabases extends JViewLegacy
 {
 
 	function display($tmpl = null) {
-		$this -> items = JMMCommon::showDatabaseLists();		
+		$this -> items = JMMCommon->showDatabaseLists();		
 		$this -> pagination = $this -> get('Pagination');
 		$this -> state = $this -> get('State');
 		$this -> addToolbar();

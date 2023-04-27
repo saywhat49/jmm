@@ -30,7 +30,7 @@ class JMMModelInsert extends JModelAdmin
 	}
 
 	function getDatabases() {
-		$rows = JMMCommon::getDataBaseLists();
+		$rows = JMMCommon->getDataBaseLists();
 		$databases = array();
 		for ($i = 0; $i < count($rows); $i++) {
 			$databases[] = JHTML::_('select.option', $rows[$i], $rows[$i]);
@@ -40,7 +40,7 @@ class JMMModelInsert extends JModelAdmin
 
 	
 	function getTables() {
-		$rows = JMMCommon::getTablesFromDB();
+		$rows = JMMCommon->getTablesFromDB();
 		$tables = array();
 		for ($i = 0; $i < count($rows); $i++) {
 			$tables[] = JHTML::_('select.option', $rows[$i], $rows[$i]);
