@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE install SYSTEM "http://dev.joomla.org/xml/1.5/component-install.dtd">
-<extension type="component" version="3.1.3" method="upgrade">
+<extension type="component" version="3.3.0" method="upgrade">
 	<name>com_jmm</name>
 	<author>Biswarup Adhikari</author>
 	<creationDate>APRIL 2023</creationDate>
@@ -8,11 +8,11 @@
 	<license>The MIT License (MIT)</license>
 	<authorEmail>saywhat49@gmail.com</authorEmail>
 	<authorUrl>http://saywhat49.github.com/jmm/index.html</authorUrl>
-	<version>3.2.0</version>
+	<version>3.1.3.0</version>
 	<description>JMM Joomla Mysql Manager Extension for mangage Mysql database in joomla admin panel, created by Biswarup Adhikari (JULY 2013).</description>
-	<languages folder="language/en-GB">
-		<language tag="en-GB">en-GB.com_jmm.ini</language>
-		<language tag="fr-FR">fr-FR.com_jmm.ini</language>
+	<languages>
+		<language tag="en-GB">language/en-GB/en-GB.com_jmm.ini</language>
+		<language tag="fr-FR">language/fr-FR/fr-FR.com_jmm.ini</language>
 	</languages>
 
 	<media destination="com_jmm" folder="media">
@@ -49,9 +49,11 @@
         </update>
 
 	<administration>
-		<languages folder="administrator/language/en-GB">
-			<language tag="en-GB">en-GB.com_jmm.sys.ini</language>
-			<language tag="en-GB">en-GB.com_jmm.ini</language>
+		<languages>
+			<language tag="en-GB">administrator/language/en-GB/en-GB.com_jmm.sys.ini</language>
+			<language tag="en-GB">administrator/language/en-GB/en-GB.com_jmm.ini</language>
+			<language tag="en-GB">administrator/language/fr-FR/fr-FR.com_jmm.sys.ini</language>
+			<language tag="en-GB">administrator/language/fr-FR/fr-FR.com_jmm.ini</language>
 		</languages>
 		<menu link="option=com_jmm&amp;view=lists" img="../media/com_jmm/images/database-16x16.png">com_jmm</menu>
 		<submenu>
