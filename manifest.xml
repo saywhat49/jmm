@@ -12,6 +12,7 @@
 	<description>JMM Joomla Mysql Manager Extension for mangage Mysql database in joomla admin panel, created by Biswarup Adhikari (JULY 2013).</description>
 	<languages folder="language/en-GB">
 		<language tag="en-GB">en-GB.com_jmm.ini</language>
+		<language tag="fr-FR">fr-FR.com_jmm.ini</language>
 	</languages>
 
 	<media destination="com_jmm" folder="media">
