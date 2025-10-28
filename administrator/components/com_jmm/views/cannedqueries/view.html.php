@@ -6,44 +6,90 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die;
+
 use Joomla\CMS\MVC\View\HtmlView;
-('Restricted access');
+use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Language\Text;
+
+/**
+ * Canned Queries View for JMM component
+ */
 class JMMViewCannedQueries extends HtmlView {
 
+	/**
+	 * The canned queries items
+	 *
+	 * @var    array
+	 */
 	protected $items;
+	
+	/**
+	 * The pagination object
+	 *
+	 * @var    object
+	 */
 	protected $pagination;
+	
+	/**
+	 * The model state
+	 *
+	 * @var    object
+	 */
 	protected $state;
+	
+	/**
+	 * The available databases
+	 *
+	 * @var    array
+	 */
 	protected $databases;
 	
-	function display($tmpl = null) {
-		$document=Joomla\CMS\Factory::getDocument();
-		$document->addScript(JURI::root().'media/com_jmm/js/jquery-1.7.2.min.js');
-		$document->addScript(JURI::root().'media/com_jmm/js/export.js');
-		$this -> items = $this -> get('Items');
-		$this -> pagination = $this -> get('Pagination');
-		$this -> state = $this -> get('State');
-		$this->databases=$this->get('Databases');
-		$this -> addToolbar();
-		parent::display($tmpl);
-	}
+	/**
+	 * Display the view
+	 *
+	 * @param   string  $tmpl  The template file to use
+	 *
+	 * @return  void
+	 */
+function display($tmpl = null) {
+    // Utiliser WebAsset Manager au lieu d'addScript direct
+    $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+    $wa->useScript('jquery');
+    
+    $document = Factory::getDocument();
+    $document->addScript(Uri::root().'media/com_jmm/js/export.js');
+    
+    $this->items = $this->get('Items');
+    $this->pagination = $this->get('Pagination');
+    $this->state = $this->get('State');
+    $this->databases = $this->get('Databases');
+    
+    $this->addToolbar();
+    parent::display($tmpl);
+}
 
+	/**
+	 * Add the page title and toolbar
+	 *
+	 * @return  void
+	 */
 	public function addToolbar() {
-		JToolBarHelper::title('Canned Queries', 'cannedqueries.png');
-		JToolBarHelper::addNew('cannedquery.add');
-		JToolBarHelper::editList('cannedquery.edit');
+		ToolbarHelper::title(Text::_('COM_JMM_CANNED_QUERIES'), 'cannedqueries.png');
+		ToolbarHelper::addNew('cannedquery.add');
+		ToolbarHelper::editList('cannedquery.edit');
 		
-		JToolBarHelper::divider();
-		JToolBarHelper::publishList('cannedqueries.publish');
-		JToolBarHelper::unpublishList('cannedqueries.unpublish');
+		ToolbarHelper::divider();
+		ToolbarHelper::publishList('cannedqueries.publish');
+		ToolbarHelper::unpublishList('cannedqueries.unpublish');
 	
-		JToolBarHelper::divider();
+		ToolbarHelper::divider();
 		
-		
-		JToolBarHelper::archiveList('cannedqueries.archive');
-		JToolBarHelper::trash('cannedqueries.trash');
-		JToolBarHelper::deleteList('Are you sure you want to delete this Site Table?', 'cannedqueries.delete' );
-		JToolBarHelper::divider();
-		JToolBarHelper::preferences('com_jmm');
+		ToolbarHelper::archiveList('cannedqueries.archive');
+		ToolbarHelper::trash('cannedqueries.trash');
+		ToolbarHelper::deleteList(Text::_('COM_JMM_SITETABLES_SURE_TO_DELETE'), 'cannedqueries.delete');
+		ToolbarHelper::divider();
+		ToolbarHelper::preferences('com_jmm');
 	}
-
 }

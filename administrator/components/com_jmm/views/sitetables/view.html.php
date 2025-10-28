@@ -17,7 +17,7 @@ class JMMViewSiteTables extends HtmlView {
 	
 	function display($tmpl = null) {
 		$document=Joomla\CMS\Factory::getDocument();
-		$document->addScript(JURI::root().'media/com_jmm/js/jquery-1.7.2.min.js');
+		$document->addScript('https://code.jquery.com/js/jquery-3.7.1.min.js');
 		$document->addScript(JURI::root().'media/com_jmm/js/export.js');
 		$this -> items = $this -> get('Items');
 		$this -> pagination = $this -> get('Pagination');

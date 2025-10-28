@@ -1,47 +1,64 @@
 <?php
-/**
- * @package		JMM
- * @link		http://adidac.github.com/jmm/index.html
- * @license		GNU/GPL
- * @copyright	Biswarup Adhikari
-*/
+
 defined('_JEXEC') or die;
 use Joomla\CMS\MVC\View\HtmlView;
-('Restricted access');
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Language\Text;
+
+/**
+ * Templates View for JMM component
+ */
 class JMMViewTemplates extends HtmlView {
 
 	protected $items;
 	protected $pagination;
+    protected $form;
 	protected $state;
 	
+	/**
+	 * Display the view
+	 *
+	 * @param   string  $tmpl  The template file to use
+	 *
+	 * @return  void
+	 */
 	function display($tmpl = null) {
-		$document=Joomla\CMS\Factory::getDocument();
-		$document->addScript(JURI::root().'media/com_jmm/js/jquery-1.7.2.min.js');
-		$document->addScript(JURI::root().'media/com_jmm/js/export.js');
-		$this -> items = $this -> get('Items');
-		$this -> pagination = $this -> get('Pagination');
-		$this -> state = $this -> get('State');
-		$this -> addToolbar();
-		parent::display($tmpl);
-	}
 
+		
+		$this->items = $this->get('Items');
+        $this->form = $this->get('Form');
+		$this->pagination = $this->get('Pagination');
+		$this->state = $this->get('State');
+		
+        $wa = $this->document->getWebAssetManager();
+        $wa->useScript('form.validate');
+        $wa->useScript('keepalive');
+        
+        $this->addToolbar();
+        parent::display($tmpl);
+    }
+
+
+	/**
+	 * Add the page title and toolbar
+	 *
+	 * @return  void
+	 */
 	public function addToolbar() {
-		JToolBarHelper::title('Templates', 'template.png');
-		JToolBarHelper::addNew('template.add');
-		JToolBarHelper::editList('template.edit');
+		ToolbarHelper::title(Text::_('Templates'), 'template.png');
+		ToolbarHelper::addNew('template.add');
+		ToolbarHelper::editList('template.edit');
 		
-		JToolBarHelper::divider();
-		JToolBarHelper::publishList('templates.publish');
-		JToolBarHelper::unpublishList('templates.unpublish');
+		ToolbarHelper::divider();
+		ToolbarHelper::publishList('templates.publish');
+		ToolbarHelper::unpublishList('templates.unpublish');
 	
-		JToolBarHelper::divider();
+		ToolbarHelper::divider();
 		
-		
-		JToolBarHelper::archiveList('templates.archive');
-		JToolBarHelper::trash('templates.trash');
-		JToolBarHelper::deleteList('Are you sure you want to delete this Site Table?', 'templates.delete' );
-		JToolBarHelper::divider();
-		JToolBarHelper::preferences('com_jmm');
+		ToolbarHelper::archiveList('templates.archive');
+		ToolbarHelper::trash('templates.trash');
+		ToolbarHelper::deleteList(Text::_('Are you sure you want to delete this Site Table?'), 'templates.delete');
+		ToolbarHelper::divider();
+		ToolbarHelper::preferences('com_jmm');
 	}
-
 }

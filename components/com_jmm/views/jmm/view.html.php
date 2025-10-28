@@ -6,13 +6,23 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die;
+
 use Joomla\CMS\MVC\View\HtmlView;
-('Restricted access');
+
+/**
+ * JMM main view class
+ */
 class JMMViewJMM extends HtmlView
 {
-
-	function display($tmpl=null) 
+	/**
+	 * Display the view
+	 *
+	 * @param   string  $tmpl  The template file to use
+	 *
+	 * @return  void
+	 */
+	function display($tmpl = null) 
 	{
-        parent::display($tmpl);
+		parent::display($tmpl);
 	}
 }

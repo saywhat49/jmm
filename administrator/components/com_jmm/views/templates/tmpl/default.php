@@ -6,40 +6,57 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
-$listOrder=$this->escape($this->state->get('list.ordering'));
-$orderDirn=$this->escape($this->state->get('list.direction'));
-$this -> state -> set('filter.database',JRequest::getVar('dbname'));
+
+use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+
+// Charger les scripts nécessaires pour Joomla 5
+$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+$wa->useScript('table.columns');
+$wa->useScript('multiselect');
+
+// Initialisation des objets nécessaires
+$app = Factory::getApplication();
+$input = $app->input;
+
+// Récupération des paramètres de tri
+$listOrder = $this->escape($this->state->get('list.ordering'));
+$orderDirn = $this->escape($this->state->get('list.direction'));
+
+// Récupération de la base de données sélectionnée et mise à jour de l'état
+$dbname = $input->getString('dbname', '');
+$this->state->set('filter.database', $dbname);
 ?>
 <form action="index.php?option=com_jmm&amp;view=templates" method="post" id="adminForm" name="adminForm">
 	<fieldset id="filter-bar">
 		<div class="filter-search fltlft">
-			<label for="filter_search">Search</label>
+			<label for="filter_search"><?php echo Text::_('Search'); ?></label>
 			<input type="text" name="filter_search" id="filter_search" 
-			value="<?php echo $this->escape($this->state->get('filter.search'));?>" title="Search" />
-			<button type="submit" class="btn">Search</button>
-			<button type="button" onclick="document.id('filter_search').value='';this.form.submit();">
-			Clear
+			value="<?php echo $this->escape($this->state->get('filter.search')); ?>" title="<?php echo Text::_('Search'); ?>" />
+			<button type="submit" class="btn"><?php echo Text::_('Search'); ?></button>
+			<button type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();">
+			<?php echo Text::_('Clear'); ?>
 			</button>
 		</div>
 	</fieldset>
 	<table class="adminlist">
 		<thead>
 			<tr>
-				
 				<th>
-					<input type="checkbox" name="checkall-toggle" value="" onclick="checkAll(this)"/>
+					<?php echo HTMLHelper::_('grid.checkall'); ?>
 				</th>
 				<th>
-					<?php echo JHtml::_('grid.sort','ID','id',$orderDirn,$listOrder);?>
+					<?php echo HTMLHelper::_('grid.sort', 'ID', 'id', $orderDirn, $listOrder); ?>
 				</th>
     			<th>
-					<?php echo JHtml::_('grid.sort','Title','title',$orderDirn,$listOrder);?>
+					<?php echo HTMLHelper::_('grid.sort', 'Title', 'title', $orderDirn, $listOrder); ?>
 				</th>
 				<th>
-					<?php echo JHtml::_('grid.sort','Date Time','pp.datetime',$orderDirn,$listOrder);?>
+					<?php echo HTMLHelper::_('grid.sort', 'Date Time', 'pp.datetime', $orderDirn, $listOrder); ?>
 				</th>	
 				<th>
-					<?php echo JHtml::_('grid.sort','Status','published',$orderDirn,$listOrder);?>
+					<?php echo HTMLHelper::_('grid.sort', 'Status', 'published', $orderDirn, $listOrder); ?>
 				</th>	
 			</tr>
 		</thead>
@@ -47,30 +64,29 @@ $this -> state -> set('filter.database',JRequest::getVar('dbname'));
 			<?php foreach ($this->items as $i => $item): ?>	
 				<tr class="row<?php echo $i % 2?>" id="id<?php echo $i;?>">					
 					<td class="center">
-						<?php echo JHtml::_('grid.id',$i,$item->id);?>
+						<?php echo HTMLHelper::_('grid.id', $i, $item->id); ?>
 					</td>
 					<td class="center">
-						<?php echo $this->escape($item->id);?>
+						<?php echo $this->escape($item->id); ?>
 					</td>
     				<td>
-						<?php echo $this->escape($item->title);?>
+						<?php echo $this->escape($item->title); ?>
 					</td>
 					<td class="center">
-						<?php echo $this->escape($item->datetime);?>
+						<?php echo $this->escape($item->datetime); ?>
 					</td>
 					<td class="center">
 						<?php 
-						echo JHtml::_('jgrid.published',$item->published,'sitetable',true,'cb');
+						echo HTMLHelper::_('jgrid.published', $item->published, $i, 'templates.', true, 'cb');
 						?>
 					</td>
 				</tr>
-				
-			<?php endforeach?>
+			<?php endforeach ?>
 		</tbody>
-			<tfoot>
+		<tfoot>
 			<tr>
-				<td colspan="4">
-					<?php echo $this->pagination->getListFooter();?>
+				<td colspan="5">
+					<?php echo $this->pagination->getListFooter(); ?>
 				</td>
 			</tr>
 		</tfoot>
@@ -78,6 +94,6 @@ $this -> state -> set('filter.database',JRequest::getVar('dbname'));
 	<input type="hidden" name="task" value="" />
 	<input type="hidden" name="boxchecked" value="0" />
 	<input type="hidden" name="filter_order" value="<?php echo $listOrder; ?>" />
-	<input type="hidden" name="filter_order_Dir" value="<?php echo $listDirn; ?>" />
-	<?php echo JHtml::_('form.token');?>
+	<input type="hidden" name="filter_order_Dir" value="<?php echo $orderDirn; ?>" />
+	<?php echo HTMLHelper::_('form.token'); ?>
 </form>

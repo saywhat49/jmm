@@ -1,4 +1,3 @@
-
 <?php
 /**
  * @package		JMM
@@ -7,8 +6,13 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
-jimport('joomla.application.component.jmodel');
+
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+
+/**
+ * JMM Base Model for the component
+ */
 class JMMModelJMM extends BaseDatabaseModel
 {
-  
+  // Model methods can be added here
 }

@@ -6,8 +6,35 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
-$listOrder = $this -> escape($this -> state -> get('list.ordering'));
-$orderDirn = $this -> escape($this -> state -> get('list.direction'));
+
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Factory;
+
+$app = Factory::getApplication();
+$input = $app->input;
+
+$listOrder = $this->escape($this->state->get('list.ordering'));
+$orderDirn = $this->escape($this->state->get('list.direction'));
+
+// Définir les variables pour les tables sélectionnées
+$browsetable = '';
+$structuretable = '';
+
+if ($input->get('action') === 'browse') {
+    $browsetable = $input->getString('tbl', '');
+}
+
+if ($input->get('action') === 'structure') {
+    $structuretable = $input->getString('tbl', '');
+}
+
+// Obtenir la base de données sélectionnée
+$selecteddb = '';
+if ($input->exists('dbname')) {
+    $selecteddb = $input->getString('dbname', '');
+} else {
+    $selecteddb = $app->get('db', '');
+}
 ?>
 <form method="post" id="adminForm" name="adminForm">
 	<fieldset id="filter-bar">
@@ -17,7 +44,7 @@ $orderDirn = $this -> escape($this -> state -> get('list.direction'));
 		<input type="text" name="filter_search" id="filter_search"
 		value="<?php echo $this->escape($this->state->get('filter.search'));?>" title="Search" />
 		<button type="submit" class="btn">Search</button>
-		<button type="button" onclick="document.id('filter_search').value='';this.form.submit();">
+		<button type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();">
 		Clear
 		</button>
 		</div>
@@ -27,92 +54,72 @@ $orderDirn = $this -> escape($this -> state -> get('list.direction'));
 			<select name="filter_chnagedatabase" id="filter_chnagedatabase" class="inputbox" onchange="document.getElementById('filter_browsetable').value='';document.getElementById('filter_tablestructure').value='';this.form.submit()">
 				<option value="">Select Database</option>
 				<?php
-				$selecteddb = '';
-				if (isset($_REQUEST['dbname'])) {
-					$selecteddb = JRequest::getVar('dbname');
-				} else {
-					$selecteddb = Joomla\CMS\Factory::getApplication() -> getCfg('db');
-				}
-
-				echo JHtml::_('select.options', $this -> databases, 'value', 'text', JRequest::getVar('techbang_test', $selecteddb), true);
-
-				if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'browse') {
-					$browsetable = JRequest::getVar('tbl');
-				}
-				if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'structure') {
-					$structuretable = JRequest::getVar('tbl');
-				}
+				echo HTMLHelper::_('select.options', $this->databases, 'value', 'text', $selecteddb, true);
 				?>
 			</select>
 			<label for="filter_browsetable">Browse Table Rows</label>
 			<select name="filter_browsetable" id="filter_browsetable" class="inputbox" onchange="document.getElementById('filter_tablestructure').value='';this.form.submit()">
 				<option value="">Select Table</option>
 				<?php
-				echo JHtml::_('select.options', $this -> tables, 'value', 'text',$browsetable, true);
+				echo HTMLHelper::_('select.options', $this->tables, 'value', 'text', $browsetable, true);
 				?>
 			</select>
 
 			<label for="filter_tablestructure">View Table Structure</label>
 			<select name="filter_tablestructure" id="filter_tablestructure" class="inputbox" onchange="document.getElementById('filter_browsetable').value='';this.form.submit()">
-
 				<option value="">Select Table</option>
-				<?php echo JHtml::_('select.options', $this -> tables, 'value', 'text',$structuretable, true); ?>
+				<?php echo HTMLHelper::_('select.options', $this->tables, 'value', 'text', $structuretable, true); ?>
 			</select>
 		</div>
 	</fieldset>
 	<?php
-if(count($this->items)>0){
+    if(count($this->items) > 0) {
 	?>
 	<table class="adminlist">
 		<thead>
 			<tr>
 				<?php
-foreach($this->items[0] as $col=>$val){
+                foreach($this->items[0] as $col => $val) {
 				?>
-				<th> <?php echo JHtml::_('grid.sort', $col, $col, $orderDirn, $listOrder); ?> </th>
+				<th> <?php echo HTMLHelper::_('grid.sort', $col, $col, $orderDirn, $listOrder); ?> </th>
 				<?php
 				}
 				?>
 			</tr>
 		</thead>
 		<tbody>
-			<?php foreach ($this->items as $i => $item):
+			<?php 
+            foreach ($this->items as $i => $item):
 			?>
-
 			<tr class="row<?php echo $i % 2?>">
-
 				<?php
-$z=0;
-foreach($this->items[$i] as $col=>$val){
+                $z = 0;
+                foreach($this->items[$i] as $col => $val) {
 				?>
 				<?php
-				if (count($this -> items[$i]) > 4 && $z != 0) {
+				if (count($this->items[$i]) > 4 && $z != 0) {
 					echo '<td align="center">';
 				} else {
 					echo '<td>';
 				}
 				?>
-
 				<?php echo $val; ?>
-				</td>
 				</td>
 				<?php
 				$z++;
 				}
 				?>
 			</tr>
-
 			<?php endforeach ?>
 		</tbody>
 		<?php
-if(isset($_REQUEST['action']) && $_REQUEST['action']=='browse'){
+        if($input->get('action') === 'browse') {
 		?>
 		<tfoot>
 			<tr>
-				<td colspan="<?php echo count($this->items[0]);?>"> <?php echo $this -> pagination -> getListFooter(); ?> </td>
+				<td colspan="<?php echo count($this->items[0]);?>"> <?php echo $this->pagination->getListFooter(); ?> </td>
 			</tr>
 		</tfoot>
-
 		<?php
 		}
 		?>
@@ -123,6 +130,6 @@ if(isset($_REQUEST['action']) && $_REQUEST['action']=='browse'){
 	<input type="hidden" name="task" value="" />
 	<input type="hidden" name="boxchecked" value="0" />
 	<input type="hidden" name="filter_order" value="<?php echo $listOrder; ?>" />
-	<input type="hidden" name="filter_order_Dir" value="<?php echo $listDirn; ?>" />
-	<?php echo JHtml::_('form.token'); ?>
+	<input type="hidden" name="filter_order_Dir" value="<?php echo $orderDirn; ?>" />
+	<?php echo HTMLHelper::_('form.token'); ?>
 </form>

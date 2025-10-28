@@ -6,37 +6,72 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
-jimport('joomla.application.component.controllerform');
-class JMMControllerInsert extends JControllerForm
+
+use Joomla\CMS\MVC\Controller\FormController;
+use Joomla\CMS\Factory;
+
+/**
+ * Insert Controller for JMM component
+ */
+class JMMControllerInsert extends FormController
 {	
-	protected $view_list='insert';
+	/**
+	 * The URL view list variable.
+	 *
+	 * @var    string
+	 */
+	protected $view_list = 'insert';
 
-	function save(){
-		$jform=JRequest::getVar('jform',null,null,'validation type',JREQUEST_ALLOWRAW);
-		$dbname=JRequest::getVar('dbname',Joomla\CMS\Factory::getApplication() -> getCfg('db'));
-		$tbl=JRequest::getVar('tbl');
-		$db=JMMCommon::getDBInstance();
-		$query='INSERT INTO `'.$tbl.'`';
-		$fields='';
-		$values='';
-		foreach($jform as $key=>$value){
-			$fields.='`'.$key.'`,';
-			$values.=$db->quote($value).',';		
+	/**
+	 * Method to save a record.
+	 *
+	 * @return  void
+	 */
+	function save()
+	{
+		$app = Factory::getApplication();
+		$input = $app->input;
+		
+		// Get form data with raw filter for HTML content
+		$jform = $input->get('jform', array(), 'array', JREQUEST_ALLOWRAW);
+		$dbname = $input->getString('dbname', $app->get('db'));
+		$tbl = $input->getString('tbl');
+		
+		// CORRECTION : Utiliser Factory::getDbo() au lieu de JMMCommon::getDBInstance()
+		$db = Factory::getDbo();
+		$query = 'INSERT INTO `' . $tbl . '`';
+		$fields = '';
+		$values = '';
+		
+		foreach ($jform as $key => $value) {
+			$fields .= '`' . $key . '`,';
+			$values .= $db->quote($value) . ',';		
 		}
-		$fields=rtrim($fields,',');
-		$values=rtrim($values,',');
-		$query.='('.$fields.') VALUES('.$values.')';
+		
+		$fields = rtrim($fields, ',');
+		$values = rtrim($values, ',');
+		$query .= '(' . $fields . ') VALUES(' . $values . ')';
+		
 		$db->setQuery($query);
-		$redirectUrl='index.php?option=com_jmm&view=insert&tbl='.$tbl.'&dbname='.$dbname;
-		if($db->query()){
-			Joomla\CMS\Factory::getApplication()->redirect($redirectUrl,"Record Inserted Sucessfully");
-		}else{			
-			Joomla\CMS\Factory::getApplication()->redirect($redirectUrl,$db->getErrorMsg(),'error');
+		$redirectUrl = 'index.php?option=com_jmm&view=insert&tbl=' . $tbl . '&dbname=' . $dbname;
+		
+		try {
+			$db->execute();
+			$app->enqueueMessage('Record Inserted Successfully');
+			$app->redirect($redirectUrl);
+		} catch (Exception $e) {			
+			$app->enqueueMessage($e->getMessage(), 'error');
+			$app->redirect($redirectUrl);
 		}
-		
 	}
-	function apply(){
-		
+	
+	/**
+	 * Method to apply changes.
+	 *
+	 * @return  void
+	 */
+	function apply()
+	{
+		// Implementation needed
 	}
-
 }

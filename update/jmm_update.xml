@@ -4,7 +4,7 @@
 		<description>This is com_jmm 5</description>
 		<element>com_jmm</element>
 		<type>component</type>
-		<version>5.0.1/version>
+		<version>5.0.2/version>
 		<downloads>
 			<downloadurl type="full" format="zip">https://github.com/saywhat49/jmm/blob/master/com_jmm.zip</downloadurl>
 		</downloads>

@@ -6,8 +6,17 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
+
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Factory;
+
+// Charger les assets JavaScript pour Joomla 5
+$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+$wa->useScript('form.validate');
+$wa->useScript('keepalive');
 ?>
-<form action="index.php?option=com_jmm&amp;layout=edit&amp;id=<?php echo $this->item->id;?>" method="POST" name="adminForm" class="form-validate">
+<form action="<?php echo Route::_('index.php?option=com_jmm&view=cannedquery&layout=edit&id=' . (int) $this->item->id); ?>" method="post" name="adminForm" id="adminForm" class="form-validate">
 <div class="width-60 fltlft">
 	<fieldset class="adminform">
 		<ul class="adminformList">
@@ -15,14 +24,11 @@ defined('_JEXEC') or die('Restricted access');
 			<li>
 				<?php echo $field->label;?>
 				<?php echo $field->input;?>
-				
 			</li>
-			
-			<?php endforeach ?>
+		<?php endforeach ?>
 		</ul>
 	</fieldset>
-	
 </div>
-<input type="hidden" name="task" value="cannedquery.edit">
-<?php echo JHtml::_('form.token');?>
+<input type="hidden" name="task" value="" />
+<?php echo HTMLHelper::_('form.token');?>
 </form>

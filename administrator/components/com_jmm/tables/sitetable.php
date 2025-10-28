@@ -6,10 +6,21 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
-class JMMTableSiteTable extends JTable
+
+use Joomla\CMS\Table\Table;
+
+/**
+ * SiteTable Table class for JMM component
+ */
+class JMMTableSiteTable extends Table
 {
+	/**
+	 * Constructor
+	 *
+	 * @param   \Joomla\Database\DatabaseDriver  $db  A database connector object
+	 */
 	public function __construct(&$db)
 	{
-		parent::__construct('#__jmm_sitetables','id',$db);
+		parent::__construct('#__jmm_sitetables', 'id', $db);
 	}
 }

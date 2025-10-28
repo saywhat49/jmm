@@ -6,21 +6,39 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
-jimport('joomla.application.component.jmodel');
+
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\HTML\HTMLHelper;
+
+/**
+ * SQL Model for JMM component
+ */
 class JMMModelSQL extends BaseDatabaseModel {
 
+    /**
+     * Method to get query results
+     *
+     * @return  array|boolean  Results or false if no query
+     */
 	function getItems() {
 		$db = JMMCommon::getDBInstance();
-		$query = JRequest::getVar('query', '');
-		if (isset($query) && $query!='') {
-			$db -> setQuery($query);
-			if (!$db -> query()) {
-				Joomla\CMS\Factory::getApplication() -> enqueueMessage($db -> getErrorMsg(), 'error');
+		$app = Factory::getApplication();
+		$input = $app->input;
+		
+		$query = $input->getString('query', '');
+		
+		if (!empty($query)) {
+			$db->setQuery($query);
+			
+			if (!$db->execute()) {
+				$app->enqueueMessage($db->getErrorMsg(), 'error');
 				return false;
 			} else {
-				$rows = $db -> loadAssocList();
+				$rows = $db->loadAssocList();
 				$total = count($rows);
-				Joomla\CMS\Factory::getApplication() -> enqueueMessage('SQL Statement "' . $query . '" Executed Sucessfully,' . $total . ' rows found');
+				$app->enqueueMessage('SQL Statement "' . $query . '" Executed Sucessfully, ' . $total . ' rows found');
 				return $rows;
 			}
 		} else {
@@ -28,83 +46,135 @@ class JMMModelSQL extends BaseDatabaseModel {
 		}
 	}
 
+    /**
+     * Save a canned query
+     *
+     * @param   array  $data  The data to save
+     *
+     * @return  array  Response with status and message
+     */
 	function saveCannedQuery($data) {
+		$app = Factory::getApplication();
+		$input = $app->input;
 		$response = array();
-		$row = JTable::getInstance('CannedQuery', 'JMMTable');
-		if (!$row -> bind($data)) {
+		
+		$row = Table::getInstance('CannedQuery', 'JMMTable');
+		
+		if (!$row->bind($data)) {
 			$response['status'] = false;
-			$response['msg'] = $this -> _db -> getErrorMsg();
+			$response['msg'] = $this->_db->getErrorMsg();
 			return $response;
 		}
-		if (!$row -> check()) {
+		
+		if (!$row->check()) {
 			$response['status'] = false;
-			$response['msg'] = $this -> _db -> getErrorMsg();
+			$response['msg'] = $this->_db->getErrorMsg();
 			return $response;
 		}
-		if (!$row -> store()) {
+		
+		if (!$row->store()) {
 			$response['status'] = false;
-			$response['msg'] = $this -> _db -> getErrorMsg();
+			$response['msg'] = $this->_db->getErrorMsg();
 			return $response;
 		}
+		
 		$response['status'] = true;
 		$response['msg'] = 'Canned Query Added Sucessfully';
-		$response['row']=array('title'=>JRequest::getVar('title'),'query'=>JRequest::getVar('query'));
+		$response['row'] = array(
+			'title' => $input->getString('title'),
+			'query' => $input->getString('query')
+		);
 
 		return $response;
 	}
 
+    /**
+     * Save a site table
+     *
+     * @param   array  $data  The data to save
+     *
+     * @return  array  Response with status and message
+     */
 	function saveSiteTable($data) {
+		$app = Factory::getApplication();
+		$input = $app->input;
 		$response = array();
-		$row = JTable::getInstance('SiteTable', 'JMMTable');
-		if (!$row -> bind($data)) {
+		
+		$row = Table::getInstance('SiteTable', 'JMMTable');
+		
+		if (!$row->bind($data)) {
 			$response['status'] = false;
-			$response['msg'] = $this -> _db -> getErrorMsg();
+			$response['msg'] = $this->_db->getErrorMsg();
 			return $response;
 		}
-		if (!$row -> check()) {
+		
+		if (!$row->check()) {
 			$response['status'] = false;
-			$response['msg'] = $this -> _db -> getErrorMsg();
+			$response['msg'] = $this->_db->getErrorMsg();
 			return $response;
 		}
-		if (!$row -> store()) {
+		
+		if (!$row->store()) {
 			$response['status'] = false;
-			$response['msg'] = $this -> _db -> getErrorMsg();
+			$response['msg'] = $this->_db->getErrorMsg();
 			return $response;
 		}
+		
 		$response['status'] = true;
 		$response['msg'] = 'Site Table Added Sucessfully';  
-		$response['row']=array('title'=>JRequest::getVar('title'),'query'=>JRequest::getVar('query'));
+		$response['row'] = array(
+			'title' => $input->getString('title'),
+			'query' => $input->getString('query')
+		);
+		
 		return $response;
 	}
 
+    /**
+     * Get the databases
+     *
+     * @return  array  List of databases
+     */
 	function getDatabases() {
 		$rows = JMMCommon::getDataBaseLists();
 		$databases = array();
+		
 		for ($i = 0; $i < count($rows); $i++) {
-			$databases[] = JHTML::_('select.option', $rows[$i], $rows[$i]);
+			$databases[] = HTMLHelper::_('select.option', $rows[$i], $rows[$i]);
 		}
+		
 		return $databases;
 	}
 	
-	function getCannedQueries(){
+    /**
+     * Get canned queries
+     *
+     * @return  array  List of canned queries
+     */
+	function getCannedQueries() {
 		$rows = JMMCommon::listCannedQueries();
 		$queries = array();
-		for ($i = 0; $i < count($rows); $i++) {
-			$queries[] = JHTML::_('select.option', $rows[$i]->query, $rows[$i]->title);
-		}
-		return $queries;
 		
+		for ($i = 0; $i < count($rows); $i++) {
+			$queries[] = HTMLHelper::_('select.option', $rows[$i]->query, $rows[$i]->title);
+		}
+		
+		return $queries;
 	}
-	function getSiteTables(){
+	
+    /**
+     * Get site tables
+     *
+     * @return  array  List of site tables
+     */
+	function getSiteTables() {
 		$rows = JMMCommon::listSiteTables();
 		$queries = array();
-		for ($i = 0; $i < count($rows); $i++) {
-			$queries[] = JHTML::_('select.option', $rows[$i]->query, $rows[$i]->title);
-		}
-		return $queries;
 		
+		for ($i = 0; $i < count($rows); $i++) {
+			$queries[] = HTMLHelper::_('select.option', $rows[$i]->query, $rows[$i]->title);
+		}
+		
+		return $queries;
 	}
- 
-
-
 }

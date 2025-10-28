@@ -6,9 +6,20 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
-class JMM{
 
-	public static function baseURL(){
-		return JURI::root().'/components/com_jmm';
+use Joomla\CMS\Uri\Uri;
+
+/**
+ * JMM component helper class
+ */
+class JMM {
+
+	/**
+	 * Get the base URL for the component
+	 *
+	 * @return  string  Base URL
+	 */
+	public static function baseURL() {
+		return Uri::root() . '/components/com_jmm';
 	}
 }

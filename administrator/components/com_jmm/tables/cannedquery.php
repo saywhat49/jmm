@@ -6,10 +6,21 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
-class JMMTableCannedQuery extends JTable
+
+use Joomla\CMS\Table\Table;
+
+/**
+ * CannedQuery Table class for JMM component
+ */
+class JMMTableCannedQuery extends Table
 {
+	/**
+	 * Constructor
+	 *
+	 * @param   \Joomla\Database\DatabaseDriver  $db  A database connector object
+	 */
 	public function __construct(&$db)
 	{
-		parent::__construct('#__jmm_canned_queries','id',$db);
+		parent::__construct('#__jmm_canned_queries', 'id', $db);
 	}
 }

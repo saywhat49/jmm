@@ -6,15 +6,33 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
-jimport('joomla.application.component.controlleradmin');
-class JMMControllerTemplates extends JControllerAdmin
+
+use Joomla\CMS\MVC\Controller\AdminController;
+
+/**
+ * Templates Controller for JMM component
+ */
+class JMMControllerTemplates extends AdminController
 {
-	protected $text_prefix='COM_JMM_TEMPLATES';
+	/**
+	 * The prefix to use with controller messages.
+	 *
+	 * @var    string
+	 */
+	protected $text_prefix = 'COM_JMM_TEMPLATES';
 	
-	public function getModel($name='Template',$prefix='JMMModel',$config=array('ignore_request'=>true))
+	/**
+	 * Method to get a model object, loading it if required.
+	 *
+	 * @param   string  $name    The model name. Optional.
+	 * @param   string  $prefix  The class prefix. Optional.
+	 * @param   array   $config  Configuration array for model. Optional.
+	 *
+	 * @return  object  The model.
+	 */
+	public function getModel($name = 'Template', $prefix = 'JMMModel', $config = array('ignore_request' => true))
 	{
-		$model=parent::getModel($name,$prefix,$config);
+		$model = parent::getModel($name, $prefix, $config);
 		return $model;
 	}
-	
 }

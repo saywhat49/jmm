@@ -2,18 +2,22 @@
 <extension type="component" version="5.0" method="upgrade" client="administrator" legacy="1">
     <name>com_jmm</name>
     <author>Saywhat49</author>
-    <creationDate>2025-05-19</creationDate>
+    <creationDate>2025-10-28</creationDate>
     <copyright>saywhat49@gmail.com</copyright>
     <license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
     <authorEmail>saywhat49@gmail.com</authorEmail>
     <authorUrl>http://saywhat49.github.com/jmm/index.html</authorUrl>
-    <version>5.0.1</version>
+    <version>5.0.2</version>
     <description>JMM - Joomla MySQL Manager updated for Joomla 5</description>
 
     <administration>
 		<languages folder="administrator/language/en-GB">
 			<language tag="en-GB">en-GB.com_jmm.sys.ini</language>
 			<language tag="en-GB">en-GB.com_jmm.ini</language>
+		</languages>
+		<languages folder="administrator/language/fr-FR">
+			<language tag="fr-FR">fr-FR.com_jmm.sys.ini</language>
+			<language tag="fr-FR">fr-FR.com_jmm.ini</language>
 		</languages>
 
 		<menu link="option=com_jmm&amp;view=lists" img="../media/com_jmm/images/database-16x16.png">Joomla MySQL Manager</menu>
@@ -47,6 +51,9 @@
 
 	<languages folder="language/en-GB">
 		<language tag="en-GB">en-GB.com_jmm.ini</language>
+	</languages>
+	<languages folder="language/fr-FR">
+			<language tag="fr-FR">fr-FR.com_jmm.ini</language>
 	</languages>
 	
 	<files folder="components/com_jmm">

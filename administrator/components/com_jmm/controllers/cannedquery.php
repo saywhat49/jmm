@@ -6,9 +6,18 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
-jimport('joomla.application.component.controllerform');
-class JMMControllerCannedQuery extends JControllerForm
-{	
-	protected $view_list='cannedqueries';
 
+use Joomla\CMS\MVC\Controller\FormController;
+
+/**
+ * CannedQuery Controller for JMM component
+ */
+class JMMControllerCannedQuery extends FormController
+{	
+	/**
+	 * The URL view list variable.
+	 *
+	 * @var    string
+	 */
+	protected $view_list = 'cannedqueries';
 }

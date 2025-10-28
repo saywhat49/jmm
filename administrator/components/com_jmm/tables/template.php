@@ -1,6 +1,4 @@
 <?php
-error_reporting(-1);
-ini_set('display_errors',1);
 /**
  * @package		JMM
  * @link		http://adidac.github.com/jmm/index.html
@@ -8,78 +6,57 @@ ini_set('display_errors',1);
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
-class JMMTableTemplate extends JTable
+
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Filter\OutputFilter;
+
+/**
+ * Template Table class for JMM component
+ */
+class JMMTableTemplate extends Table
 {
+	/**
+	 * Constructor
+	 *
+	 * @param   \Joomla\Database\DatabaseDriver  $db  A database connector object
+	 */
 	public function __construct(&$db)
 	{
-		parent::__construct('#__jmm_templates','id',$db);
+		parent::__construct('#__jmm_templates', 'id', $db);
 	}
 
-	function check(){
-		$jinput=Joomla\CMS\Factory::getApplication()->input;
-		$data=$jinput->get('jform',array(),'ARRAY');
-		$id=$data['id'];
-		$title=$data['title'];
-		$php=$data['php'];
-		$css=$data['css'];
-		$js=$data['js'];
-		$templateFolder=JPATH_SITE.'/components/com_jmm/templates/'.$title;
-		if(isset($id) && $id>0){
-				
-				$oldTitle=$this->getTitle($id);	
-				if($oldTitle!=$title){
-					$oldTemplateFolder=JPATH_SITE.'/components/com_jmm/templates/'.$oldTitle;
-					//$this->deleteDirectory($oldTemplateFolder);
-					JFolder::move($oldTemplateFolder,$templateFolder);
-				}
-		}else{
-			if(!is_dir($templateFolder)){				
-				JFolder::create($templateFolder);
-			}
+	/**
+	 * Method to perform sanity checks on the JTable instance properties to ensure
+	 * they are safe to store in the database.
+	 *
+	 * @return  boolean  True if the instance is sane and able to be stored in the database.
+	 */
+	public function check()
+	{
+		// Check if title exists
+		if (trim($this->title) == '') {
+			$this->setError(Text::_('COM_JMM_ERROR_TEMPLATE_TITLE_REQUIRED'));
+			return false;
 		}
-		if(!is_dir($templateFolder.'/js')){				
-				JFolder::create($templateFolder.'/js');
+
+		// Generate a valid alias
+		if (trim($this->title) != '') {
+			// Automatically create an alias
+			$this->title = OutputFilter::stringURLSafe($this->title);
 		}
-		if(!is_dir($templateFolder.'/css')){				
-			JFolder::create($templateFolder.'/css');
+
+		// Set published to 1 if not set
+		if (!(int) $this->published) {
+			$this->published = 1;
 		}
-		if(!is_dir($templateFolder.'/images')){				
-			JFolder::create($templateFolder.'/images');
+
+		// Set datetime if not set
+		if (empty($this->datetime)) {
+			$this->datetime = date('Y-m-d H:i:s');
 		}
-		$phpFile=$templateFolder.'/index.php';
-		$jsFile=$templateFolder.'/js/custom.js';
-		$cssFile=$templateFolder.'/css/default.css';
-		$this->createFile($phpFile,$php);
-		$this->createFile($cssFile,$css);
-		$this->createFile($jsFile,$js);
+
 		return true;
 	}
-
-	function getTitle($id){
-		$id=(INT)$id;
-		$db=Joomla\CMS\Factory::getDBO();
-		$db->setQuery("SELECT title FROM `#__jmm_templates` WHERE `id`=$id LIMIT 1");
-		$row=$db->loadObject();
-		return $row->title;
-	}
-
-	function deleteDirectory($dir) { 
-	    if (!file_exists($dir)) return true; 
-	    if (!is_dir($dir) || is_link($dir)) return unlink($dir); 
-	        foreach (scandir($dir) as $item) { 
-	            if ($item == '.' || $item == '..') continue; 
-	            if (!$this->deleteDirectory($dir . "/" . $item)) { 
-	                chmod($dir . "/" . $item, 0777); 
-	                if (!$this->deleteDirectory($dir . "/" . $item)) return false; 
-	            }; 
-	        } 
-	        return rmdir($dir); 
-    } 
-
-
-    function createFile($file,$data){
-    	file_put_contents($file, $data);
-    }
-
-
 }

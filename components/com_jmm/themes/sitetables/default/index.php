@@ -11,24 +11,21 @@ defined('_JEXEC') or die('Restricted access');
 	<thead>
 		<tr>
 			<?php
-			foreach($cols as $col){
-				echo '<th>'.$col.'</th>';
+			foreach ($cols as $col) {
+				echo '<th>' . htmlspecialchars($col, ENT_QUOTES, 'UTF-8') . '</th>';
 			}
 			?>
 		</tr>
 	</thead>
 	<tbody>
 		<?php foreach ($rows as $i => $row): ?>
-
-		<tr class="row<?php echo $i % 2?>">
-
+		<tr class="row<?php echo $i % 2 ?>">
 			<?php
 			foreach ($row as $col => $val) {
-				echo '<td>' . $val . '</td>';
+				echo '<td>' . htmlspecialchars($val, ENT_QUOTES, 'UTF-8') . '</td>';
 			}
 			?>
 		</tr>
-
-		<?php endforeach ?>
+		<?php endforeach; ?>
 	</tbody>
 </table>

@@ -6,9 +6,18 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
-jimport('joomla.application.component.controllerform');
-class JMMControllerSiteTable extends JControllerForm
-{	
-	protected $view_list='sitetables';
 
+use Joomla\CMS\MVC\Controller\FormController;
+
+/**
+ * SiteTable Controller for JMM component
+ */
+class JMMControllerSiteTable extends FormController
+{	
+	/**
+	 * The URL view list variable.
+	 *
+	 * @var    string
+	 */
+	protected $view_list = 'sitetables';
 }

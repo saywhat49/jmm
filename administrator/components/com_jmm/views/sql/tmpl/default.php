@@ -6,11 +6,26 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
-if(isset($_GET['dbname'])){
-	$dbname=JRequest::getVar('dbname');
-}else{
-	$dbname = Joomla\CMS\Factory::getApplication() -> getCfg('db');
+
+use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
+
+// Initialisation des objets nécessaires
+$app = Factory::getApplication();
+$input = $app->input;
+
+// Récupération de la base de données sélectionnée
+if($input->exists('dbname')) {
+	$dbname = $input->getString('dbname');
+} else {
+	$dbname = $app->get('db');
 }
+
+// Récupérer d'autres valeurs d'entrée
+$query = $input->getString('query', '');
+$filter_cannedqueries = $input->getString('filter_cannedqueries', '');
+$selecteddb = $input->getString('dbname', $app->get('db'));
+$filter_chnagedatabase = $input->getString('filter_chnagedatabase', $selecteddb, 'get');
 ?>
 <form method="post" id="adminForm" name="adminForm">
 <fieldset id="filter-bar">
@@ -20,36 +35,32 @@ if(isset($_GET['dbname'])){
 				<option value="">Select Query</option>
 				 <optgroup label="-- Canned Queries -- " id="opt-canned">
 				<?php
-				echo JHtml::_('select.options', $this -> cannedQueries, 'value', 'text', JRequest::getVar('filter_cannedqueries',''), true);
+				echo HTMLHelper::_('select.options', $this->cannedQueries, 'value', 'text', $filter_cannedqueries, true);
 				?>
 				</optgroup>
 				
 				 <optgroup label="-- Site Tables Queries -- " id="opt-stbl">
 				<?php
-				echo JHtml::_('select.options', $this->siteTables, 'value', 'text', JRequest::getVar('filter_cannedqueries',''), true);
+				echo HTMLHelper::_('select.options', $this->siteTables, 'value', 'text', $filter_cannedqueries, true);
 				?>
 				</optgroup>
-				
-				
-				
 			</select>	
 	</div>
-		<div class="filter-select fltrt">
-			<label for="filter_chnagedatabase">Select DataBase</label>
-			<select name="filter_chnagedatabase" id="filter_chnagedatabase" class="inputbox" onchange="document.getElementById('query').value='';this.form.submit()">
-				<option value="">Select Database</option>
-				<?php
-				$selecteddb=JRequest::getVar('dbname',Joomla\CMS\Factory::getApplication() -> getCfg('db'));
-				echo JHtml::_('select.options', $this -> databases, 'value', 'text', JRequest::getVar('filter_chnagedatabase', $selecteddb,'get'), true);
-				?>
-			</select>			
-		</div>
-	</fieldset>
-<textarea placeholder="Enter your SQL Quiries......" rows="10" cols="150" id="query" name="query"><?php echo JRequest::getVar('query','');?></textarea><br>
+	<div class="filter-select fltrt">
+		<label for="filter_chnagedatabase">Select DataBase</label>
+		<select name="filter_chnagedatabase" id="filter_chnagedatabase" class="inputbox" onchange="document.getElementById('query').value='';this.form.submit()">
+			<option value="">Select Database</option>
+			<?php
+			echo HTMLHelper::_('select.options', $this->databases, 'value', 'text', $filter_chnagedatabase, true);
+			?>
+		</select>			
+	</div>
+</fieldset>
+<textarea placeholder="Enter your SQL Quiries......" rows="10" cols="150" id="query" name="query"><?php echo $query; ?></textarea><br>
 <input type="submit" class="btn_runquery large" value="Run Query">
-<input type="hidden" id="currentdb" name="currentdb" value="<?php echo $dbname;?>">
+<input type="hidden" id="currentdb" name="currentdb" value="<?php echo $dbname; ?>">
 <?php
-if(isset($_POST['query'])){
+if($input->getMethod() === 'POST' && $input->exists('query')) {
 ?>
 <input type="button" class="btn_runquery large" id="save_as_canned_query" value="Save as Canned Query">
 <input type="button" class="btn_runquery large" id="save_as_site_table" value="Save as Site Table">
@@ -59,17 +70,17 @@ if(isset($_POST['query'])){
 ?>
 <div id="loading-icon" class="loading-icon"></div>
 	<?php
-	if($this->items && count($this->items)>0){
+	if($this->items && count($this->items) > 0) {
 		?>
 		<hr>
 	<table class="adminlist">
 		<thead>
 			<tr>
 				<?php
-				foreach($this->items[0] as $col=>$val){
+				foreach($this->items[0] as $col => $val) {
 				?>
 				<th>
-					<?php echo $col;?>
+					<?php echo $col; ?>
 				</th>
 				<?php
 				}
@@ -83,19 +94,18 @@ if(isset($_POST['query'])){
 				<tr class="row<?php echo $i % 2?>">
 					
 					<?php
-					$z=0;
-					foreach($this->items[$i] as $col=>$val){
+					$z = 0;
+					foreach($this->items[$i] as $col => $val) {
 					?>
 					<?php
-					if(count($this->items[$i])>4 && $z!=0){
+					if(count($this->items[$i]) > 4 && $z != 0) {
 						echo '<td align="center">';
-					}else{						
+					} else {						
 						echo '<td>';
 					}
 					?>
 					
-						<?php echo $val;?>
-					</td>
+						<?php echo $val; ?>
 					</td>
 					<?php
 					$z++;
@@ -104,7 +114,7 @@ if(isset($_POST['query'])){
 					
 				</tr>
 				
-			<?php endforeach?>
+			<?php endforeach ?>
 		</tbody>
 	</table>
 	<?php
@@ -112,5 +122,5 @@ if(isset($_POST['query'])){
 	?>
 	<input type="hidden" name="task" value="" />
 	<input type="hidden" name="boxchecked" value="0" />
-	<?php echo JHtml::_('form.token');?>
+	<?php echo HTMLHelper::_('form.token'); ?>
 </form>
