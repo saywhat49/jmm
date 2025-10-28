@@ -5,8 +5,10 @@
  * @license		GNU/GPL
  * @copyright	Biswarup Adhikari
 */
-defined('_JEXEC') or die('Restricted access');
-class JMMViewJMM extends JViewLegacy
+defined('_JEXEC') or die;
+use Joomla\CMS\MVC\View\HtmlView;
+('Restricted access');
+class JMMViewJMM extends HtmlView
 {
 
 	function display($tmpl=null) 

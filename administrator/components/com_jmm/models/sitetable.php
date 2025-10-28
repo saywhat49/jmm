@@ -6,6 +6,7 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
+jimport('joomla.application.component.modeladmin');
 class JMMModelSiteTable extends JModelAdmin
 {
 	public function getTable($type='SiteTable',$prefix='JMMTable',$config=array())
@@ -15,7 +16,7 @@ class JMMModelSiteTable extends JModelAdmin
 	
 	protected function loadFormData()
 	{
-		$data=JFactory::getApplication()->getUserState('com_jmm.edit.sitetbl.data',array());
+		$data=Joomla\CMS\Factory::getApplication()->getUserState('com_jmm.edit.sitetbl.data',array());
 		
 		if(empty($data)){
 			$data=$this->getItem();

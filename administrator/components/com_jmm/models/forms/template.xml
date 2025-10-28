@@ -3,14 +3,13 @@
 	<fieldset>
 		<field
 			name="id"
-			type="hidden" 
-		/>
+			type="hidden" />
+
 		<field
 			name="title"
 			type="text" 
 			label="Template Name"
-			required="true"
-		/>
+			/>
 
 		<field
 			name="php"
@@ -20,11 +19,7 @@
 			label="PHP Code"
 			description="Write your PHP Code"
 			default=""
-			filter="raw" 
-			class="span10"
-			height="250"
-			required="true"
-			/>
+			filter="raw" />
 
 		<field
 			name="css"
@@ -33,9 +28,10 @@
 			buttons="no"
 			label="CSS Code"
 			description="Style your template using css"
-			filter="raw" 
-			class="span10"
-			 />
+			rows="500"
+			cols="80"
+			height="500px"
+			filter="raw" />
 
 		<field
 			name="js"
@@ -44,8 +40,13 @@
 			buttons="no"
 			label="JS Code"
 			description="Write your Javascript Codes"
-			filter="raw" 
-			class="span10"
-			 />
+			rows="500"
+			height="500px"
+			cols="80"
+			filter="raw" />
+		<field 
+			name="images" 
+			type="media" 
+			directory="stories" />
 	</fieldset>
 </form>

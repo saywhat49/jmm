@@ -5,8 +5,10 @@
  * @license		GNU/GPL
  * @copyright	Biswarup Adhikari
 */
-defined('_JEXEC') or die('Restricted access');
-class JMMViewSql extends JViewLegacy {
+defined('_JEXEC') or die;
+use Joomla\CMS\MVC\View\HtmlView;
+('Restricted access');
+class JMMViewSql extends HtmlView {
 
 	protected $items;
 	protected $databases;
@@ -14,9 +16,9 @@ class JMMViewSql extends JViewLegacy {
 	protected $siteTables;
 
 	function display($tmpl = null) {
-		$document=JFactory::getDocument();
-		$document->addScript(JURI::root().'media'.DS.'com_jmm'.DS.'js'.DS.'jquery-1.7.2.min.js');
-		$document->addScript(JURI::root().'media'.DS.'com_jmm'.DS.'js'.DS.'sql.js');
+		$document=Joomla\CMS\Factory::getDocument();
+		$document->addScript(JURI::root().'media/com_jmm/js/jquery-1.7.2.min.js');
+		$document->addScript(JURI::root().'media/com_jmm/js/sql.js');
 		$this -> items=$this->get('Items');
 		$this->databases=$this->get('Databases');
 		$this->cannedQueries=$this->get('CannedQueries');
@@ -25,17 +27,15 @@ class JMMViewSql extends JViewLegacy {
 		$filter_chnagedatabase=JRequest::getVar('filter_chnagedatabase','');
 		$query=JRequest::getVar('query','');
 		if($filter_chnagedatabase!='' && $query==''){
-			JFactory::getApplication()->redirect('index.php?option=com_jmm&view=sql&dbname='.$filter_chnagedatabase,'Database Changed to '.$filter_chnagedatabase);
+			Joomla\CMS\Factory::getApplication()->redirect('index.php?option=com_jmm&view=sql&dbname='.$filter_chnagedatabase,'Database Changed to '.$filter_chnagedatabase);
 		}
-		
 		$this->addToolbar();
-		$this->sidebar = JHtmlSidebar::render();
 		parent::display($tmpl);
 	}
 
 	public function addToolbar() {
 		JToolBarHelper::title('Run SQL Queries', 'sql.png');
-		JToolBarHelper::preferences('com_jmm');		
+		JToolBarHelper::preferences('com_jmm');
 	}
 
 }

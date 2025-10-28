@@ -6,35 +6,23 @@ defined('_JEXEC') or die('Restricted access');
  * @license		GNU/GPL
  * @copyright	Biswarup Adhikari
 */
-JHtml::_('behavior.tooltip');
-JHtml::_('behavior.formvalidation');
-JHtml::_('formbehavior.chosen', 'select');
 ?>
-<script type="text/javascript">
-	Joomla.submitbutton = function(task)
-	{
-		if (task == 'sitetable.cancel' || document.formvalidator.isValid(document.id('site-table-form')))
-		{
-			Joomla.submitform(task, document.getElementById('site-table-form'));
-		}
-	}
-</script>
-<form action="<?php echo JRoute::_('index.php?option=com_jmm&view=sitetable&layout=edit&id='.(int) $this->item->id); ?>" method="POST" name="adminForm" id="site-table-form" class="form-validate form-horizontal">
-<div class="span10 form-horizontal">
-	<fieldset>
+<form action="index.php?option=com_jmm&amp;layout=edit&amp;id=<?php echo $this->item->id;?>" method="POST" name="adminForm" class="form-validate">
+<div class="width-60 fltlft">
+	<fieldset class="adminform">
+		<ul class="adminformList">
 		<?php foreach($this->form->getFieldset() as $field):?>
-			<div class="control-group">
-				<div class="control-label">
-					<?php echo $field->label;?>
-				</div>
-				<div class="controls">
-					<?php echo $field->input;?>
-					
-				</div>
-			</div>			
-		<?php endforeach ?>
+			<li>
+				<?php echo $field->label;?>
+				<?php echo $field->input;?>
+				
+			</li>
+			
+			<?php endforeach ?>
+		</ul>
 	</fieldset>
-	<input type="hidden" name="task" value="sitetable.edit">
+	
+</div>
+<input type="hidden" name="task" value="sitetable.edit">
 <?php echo JHtml::_('form.token');?>
 </form>
-</div>

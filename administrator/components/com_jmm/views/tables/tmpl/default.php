@@ -8,22 +8,21 @@
 defined('_JEXEC') or die('Restricted access');
 $listOrder = $this -> escape($this -> state -> get('list.ordering'));
 $orderDirn = $this -> escape($this -> state -> get('list.direction'));
-JHtml::_('bootstrap.tooltip');
-JHtml::_('behavior.multiselect');
-JHtml::_('dropdown.init');
-JHtml::_('formbehavior.chosen', 'select');
 ?>
 <form method="post" id="adminForm" name="adminForm">
-<?php if (!empty( $this->sidebar)) : ?>
-	<div id="j-sidebar-container" class="span2">
-		<?php echo $this->sidebar; ?>
-	</div>
-	<div id="j-main-container" class="span10">
-<?php else : ?>
-	<div id="j-main-container">
-<?php endif;?>
-<div id="filter-bar" class="btn-toolbar">
-	<div class="btn-group pull-left">
+	<fieldset id="filter-bar">
+		<!--
+		<div class="filter-search fltlft">
+		<label for="filter_search">Search</label>
+		<input type="text" name="filter_search" id="filter_search"
+		value="<?php echo $this->escape($this->state->get('filter.search'));?>" title="Search" />
+		<button type="submit" class="btn">Search</button>
+		<button type="button" onclick="document.id('filter_search').value='';this.form.submit();">
+		Clear
+		</button>
+		</div>
+		-->
+		<div class="filter-select fltrt">
 			<label for="filter_chnagedatabase">Select DataBase</label>
 			<select name="filter_chnagedatabase" id="filter_chnagedatabase" class="inputbox" onchange="document.getElementById('filter_browsetable').value='';document.getElementById('filter_tablestructure').value='';this.form.submit()">
 				<option value="">Select Database</option>
@@ -32,7 +31,7 @@ JHtml::_('formbehavior.chosen', 'select');
 				if (isset($_REQUEST['dbname'])) {
 					$selecteddb = JRequest::getVar('dbname');
 				} else {
-					$selecteddb = JFactory::getApplication() -> getCfg('db');
+					$selecteddb = Joomla\CMS\Factory::getApplication() -> getCfg('db');
 				}
 
 				echo JHtml::_('select.options', $this -> databases, 'value', 'text', JRequest::getVar('techbang_test', $selecteddb), true);
@@ -45,31 +44,26 @@ JHtml::_('formbehavior.chosen', 'select');
 				}
 				?>
 			</select>
-	</div>
-	<div class="btn-group pull-left">
-		<label for="filter_browsetable">Browse Table Rows</label>
+			<label for="filter_browsetable">Browse Table Rows</label>
 			<select name="filter_browsetable" id="filter_browsetable" class="inputbox" onchange="document.getElementById('filter_tablestructure').value='';this.form.submit()">
 				<option value="">Select Table</option>
 				<?php
 				echo JHtml::_('select.options', $this -> tables, 'value', 'text',$browsetable, true);
 				?>
 			</select>
-	</div>
-	<div class="btn-group pull-left">
-		<label for="filter_tablestructure">View Table Structure</label>
+
+			<label for="filter_tablestructure">View Table Structure</label>
 			<select name="filter_tablestructure" id="filter_tablestructure" class="inputbox" onchange="document.getElementById('filter_browsetable').value='';this.form.submit()">
 
 				<option value="">Select Table</option>
 				<?php echo JHtml::_('select.options', $this -> tables, 'value', 'text',$structuretable, true); ?>
 			</select>
-	</div>
-</div>
-<br>
-<div class="clearfix"> </div>
+		</div>
+	</fieldset>
 	<?php
 if(count($this->items)>0){
 	?>
-	<table class="table table-bordered table-hover">
+	<table class="adminlist">
 		<thead>
 			<tr>
 				<?php
@@ -131,5 +125,4 @@ if(isset($_REQUEST['action']) && $_REQUEST['action']=='browse'){
 	<input type="hidden" name="filter_order" value="<?php echo $listOrder; ?>" />
 	<input type="hidden" name="filter_order_Dir" value="<?php echo $listDirn; ?>" />
 	<?php echo JHtml::_('form.token'); ?>
-</div>
 </form>

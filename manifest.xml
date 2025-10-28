@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="component" version="5.0" method="upgrade" client="administrator" legacy="1">
+    <name>com_jmm</name>
+    <author>Saywhat49</author>
+    <creationDate>2025-05-19</creationDate>
+    <copyright>saywhat49@gmail.com</copyright>
+    <license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
+    <authorEmail>saywhat49@gmail.com</authorEmail>
+    <authorUrl>http://saywhat49.github.com/jmm/index.html</authorUrl>
+    <version>5.0.1</version>
+    <description>JMM - Joomla MySQL Manager updated for Joomla 5</description>
+
+    <administration>
+		<languages folder="administrator/language/en-GB">
+			<language tag="en-GB">en-GB.com_jmm.sys.ini</language>
+			<language tag="en-GB">en-GB.com_jmm.ini</language>
+		</languages>
+
+		<menu link="option=com_jmm&amp;view=lists" img="../media/com_jmm/images/database-16x16.png">Joomla MySQL Manager</menu>
+		<submenu>
+			<menu link="option=com_jmm&amp;view=databases" alt="COM_JMM_DATABASES" img="../media/com_jmm/images/database-16x16.png">COM_JMM_DATABASES</menu>
+			<menu link="option=com_jmm&amp;view=tables" alt="COM_JMM_TABLES" img="../media/com_jmm/images/table-16x16.png">COM_JMM_TABLES</menu>
+			<menu link="option=com_jmm&amp;view=sql" alt="COM_JMM_SQL_QUERY" img="../media/com_jmm/images/sql-16x16.png">COM_JMM_SQL_QUERY</menu>
+			<menu link="option=com_jmm&amp;view=cannedqueries" alt="COM_JMM_CANNED_QUERY" img="../media/com_jmm/images/can-16x16.png">COM_JMM_CANNED_QUERY</menu>
+			<menu link="option=com_jmm&amp;view=sitetables" alt="COM_JMM_SITE_TABLES" img="../media/com_jmm/images/sitetable-16x16.png">COM_JMM_SITE_TABLES</menu>
+			<menu link="option=com_jmm&amp;view=createtable" alt="COM_JMM_CREATE_TABLE" img="../media/com_jmm/images/createtable-16x16.png">COM_JMM_CREATE_TABLE</menu>
+			<menu link="option=com_jmm&amp;view=insert" alt="COM_JMM_INSERT_DATA" img="../media/com_jmm/images/insert-16x16.png">COM_JMM_INSERT_DATA</menu>
+			<menu link="option=com_jmm&amp;view=templates" alt="COM_JMM_TEMPLATES" img="../media/com_jmm/images/template-16x16.png">COM_JMM_TEMPLATES</menu>
+		</submenu>
+		
+        <files folder="administrator/components/com_jmm">
+            <folder>controllers</folder>
+            <folder>exported</folder>
+            <folder>helpers</folder>
+            <folder>models</folder>
+            <folder>tables</folder>
+            <folder>views</folder>
+            <filename>config.xml</filename>
+            <filename>controller.php</filename>
+            <filename>index.html</filename>            
+            <filename>jmm.php</filename>
+            <filename>install.mysql.sql</filename>
+            <filename>uninstall.mysql.sql</filename>
+            <filename>update.mysql.sql</filename>
+        </files>
+    </administration>
+
+	<languages folder="language/en-GB">
+		<language tag="en-GB">en-GB.com_jmm.ini</language>
+	</languages>
+	
+	<files folder="components/com_jmm">
+		<folder>controllers</folder>
+		<folder>helpers</folder>
+		<folder>models</folder>
+		<folder>templates</folder>
+		<folder>themes</folder>
+		<folder>views</folder>
+		<filename>controller.php</filename>
+		<folder>controllers</folder>
+		<filename>jmm.php</filename>
+		<filename>index.html</filename>
+	</files>
+
+    <media folder="media/com_jmm" destination="com_jmm">
+        <folder>js</folder>
+        <folder>css</folder>
+        <folder>images</folder>
+    </media>
+    
+	<install>
+		<sql>
+			<file charset="utf8" driver="mysql">install.mysql.sql</file>
+		</sql>
+	</install>
+	<uninstall>
+		<sql>
+			<file charset="utf8" driver="mysql">uninstall.mysql.sql</file>
+		</sql>
+	</uninstall>
+        <update> 
+			<sql>
+				<file charset="utf8" driver="mysql">update.mysql.sql</file>
+			</sql>
+        </update>
+        
+	 <updateservers>
+                <!-- Note: No spaces or linebreaks allowed between the server tags -->
+        <server type="extension" priority="1" name="JMM Update Site">https://github.com/saywhat49/jmm/update/jmm-update.xml</server>
+        </updateservers>
+    
+</extension>

@@ -6,6 +6,7 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
+jimport('joomla.application.component.modellist');
 class JMMModelCannedQueries extends JModelList {
 
 	public function __construct($config = array()) {
@@ -17,9 +18,8 @@ class JMMModelCannedQueries extends JModelList {
 
 	function getItems() {
 		$items = parent::getItems();
-		foreach ($items as &$item) {			
-			$editURL= JRoute::_('index.php?option=com_jmm&view=cannedquery&task=cannedquery.edit&id='.(int) $item->id); 
-			$item->title='<a href="'.$editURL.'">'.$item->title.'</a>';
+		foreach ($items as &$item) {
+
 		}
 		return $items;
 	}
@@ -49,7 +49,7 @@ class JMMModelCannedQueries extends JModelList {
 		$orderCol = $this -> getState('list.ordering');
 		$orderDirn = $this -> getState('list.direction');
 		if (isset($orderCol)) {
-			$query -> order($orderCol . ' ' . $orderDirn);
+			$query -> order($db -> getEscaped($orderCol . ' ' . $orderDirn));
 		} else { 
 			$query -> order('id desc');
 		}

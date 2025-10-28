@@ -5,8 +5,10 @@
  * @license		GNU/GPL
  * @copyright	Biswarup Adhikari
 */
-defined('_JEXEC') or die('Restricted access');
-class JMMViewCannedQuery extends JViewLegacy {
+defined('_JEXEC') or die;
+use Joomla\CMS\MVC\View\HtmlView;
+('Restricted access');
+class JMMViewCannedQuery extends HtmlView {
 	
 	protected $item;
 	protected $form;

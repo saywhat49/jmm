@@ -6,13 +6,14 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
+jimport('joomla.application.component.controllerform');
 class JMMControllerInsert extends JControllerForm
 {	
 	protected $view_list='insert';
 
 	function save(){
 		$jform=JRequest::getVar('jform',null,null,'validation type',JREQUEST_ALLOWRAW);
-		$dbname=JRequest::getVar('dbname',JFactory::getApplication() -> getCfg('db'));
+		$dbname=JRequest::getVar('dbname',Joomla\CMS\Factory::getApplication() -> getCfg('db'));
 		$tbl=JRequest::getVar('tbl');
 		$db=JMMCommon::getDBInstance();
 		$query='INSERT INTO `'.$tbl.'`';
@@ -28,9 +29,9 @@ class JMMControllerInsert extends JControllerForm
 		$db->setQuery($query);
 		$redirectUrl='index.php?option=com_jmm&view=insert&tbl='.$tbl.'&dbname='.$dbname;
 		if($db->query()){
-			JFactory::getApplication()->redirect($redirectUrl,"Record Inserted Sucessfully");
+			Joomla\CMS\Factory::getApplication()->redirect($redirectUrl,"Record Inserted Sucessfully");
 		}else{			
-			JFactory::getApplication()->redirect($redirectUrl,$db->getErrorMsg(),'error');
+			Joomla\CMS\Factory::getApplication()->redirect($redirectUrl,$db->getErrorMsg(),'error');
 		}
 		
 	}

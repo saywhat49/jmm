@@ -6,26 +6,11 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
-JHtml::_('bootstrap.tooltip');
-JHtml::_('behavior.multiselect');
-JHtml::_('dropdown.init');
-JHtml::_('formbehavior.chosen', 'select');
 ?>
-<form action="index.php?option=com_jmm&amp;view=templates" method="post" id="adminForm" name="adminForm">
-<?php if (!empty( $this->sidebar)) : ?>
-	<div id="j-sidebar-container" class="span2">
-		<?php echo $this->sidebar; ?>
-	</div>
-	<div id="j-main-container" class="span10">
-<?php else : ?>
-	<div id="j-main-container">
-<?php endif;?>
-
-<div class="clearfix"> </div>
 <div id="query-status">
 </div>
 <form action="index.php" method="post" id="adminForm" name="adminForm">
-	<table class="table table-bordered table-hover">
+	<table>
 			<tr>
 				<td>
 					<b>Table Name</b> <input type="text" name="tbl_name" id="tbl_name" placeholder="Enter Table Name">
@@ -33,7 +18,7 @@ JHtml::_('formbehavior.chosen', 'select');
 				</td>
 			</tr>			
 	</table>
-	<table class="table table-bordered table-hover" id="createtable">
+	<table class="bordered" id="createtable">
 		<thead>
 			<tr>
 				<td><b>Column</b></td>
@@ -61,7 +46,7 @@ JHtml::_('formbehavior.chosen', 'select');
 		</tbody>			
 	</table>
 	
-	<table class="table table-bordered table-hover">
+	<table>
 			<tr>
 				<td valign="top">
 					<b>Table comments: </b>
@@ -107,5 +92,4 @@ JHtml::_('formbehavior.chosen', 'select');
 	<input type="hidden" name="filter_order" value="<?php echo $listOrder; ?>" />
 	<input type="hidden" name="filter_order_Dir" value="<?php echo $listDirn; ?>" />
 	<?php echo JHtml::_('form.token'); ?>
-</div>
 </form>

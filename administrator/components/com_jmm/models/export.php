@@ -6,7 +6,8 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
-class JMMModelExport extends JModelLegacy {
+jimport('joomla.application.component.jmodel');
+class JMMModelExport extends BaseDatabaseModel {
 	/**
 	 * Save as CSV File
 	 */
@@ -22,7 +23,7 @@ class JMMModelExport extends JModelLegacy {
 			}
 			$lists[]=$tmp;
 		}
-		$fp = fopen(JPATH_COMPONENT.DS.'exported'.DS.$fileName, 'w');
+		$fp = fopen(JPATH_COMPONENT.'/exported/'.$fileName, 'w');
 		foreach ($lists as $fields) {
 		    fputcsv($fp, $fields);
 		}

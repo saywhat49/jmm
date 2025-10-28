@@ -5,12 +5,9 @@
  * @license		GNU/GPL
  * @copyright	Biswarup Adhikari
 */
+defined('_JEXEC') or die('Restricted access');
 error_reporting(E_ALL);
 ini_set('display_errors',1);
-defined('_JEXEC') or die('Restricted access');
-if(!defined('DS')){
-	define('DS',DIRECTORY_SEPARATOR);
-}
 //set_error_handler("JMMErrorHandler");
 function JMMErrorHandler($errno, $errstr, $errfile, $errline){
 	/**
@@ -28,10 +25,10 @@ function dd($obj){
 	print_r($obj);
 	echo '</pre>';
 }
-
 defined('_JEXEC') or die('Restricted access');
-JLoader::register('JMMCommon',JPATH_ADMINISTRATOR .DS.'components'. DS .'com_jmm'.DS. 'models' . DS . 'jmmcommon.php');
-JLoader::register('JMM',JPATH_COMPONENT .DS.'helpers'. DS . 'jmm.php');
-$controller = JControllerLegacy::getInstance('JMM');
+JLoader::register('JMMCommon',JPATH_ADMINISTRATOR .'/components/com_jmm/models/jmmcommon.php');
+JLoader::register('JMM',JPATH_COMPONENT .'/helpers/jmm.php');
+jimport('joomla.application.component.controller');
+$controller = BaseController::getInstance('JMM');
 $controller->execute(JRequest::getCmd('task'));
 $controller->redirect();

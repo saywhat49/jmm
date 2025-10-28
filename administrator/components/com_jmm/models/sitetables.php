@@ -6,6 +6,7 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
+jimport('joomla.application.component.modellist');
 class JMMModelSiteTables extends JModelList {
 
 	public function __construct($config = array()) {
@@ -18,44 +19,41 @@ class JMMModelSiteTables extends JModelList {
 	function getItems() {
 		$items = parent::getItems();
 		foreach ($items as &$item) {
-			$editURL= JRoute::_('index.php?option=com_jmm&view=sitetable&task=sitetable.edit&id='.(int) $item->id); 
-			$item->title='<a href="'.$editURL.'">'.$item->title.'</a>';
+
 		}
 		return $items;
 	}
 
 	public function getListQuery() {
 		$query = parent::getListQuery();
-		$query -> select('st.*');
-		$query -> from('#__jmm_sitetables as st');
+		$query -> select('*');
+		$query -> from('#__jmm_sitetables');
 		$published = $this -> getState('filter.published');
 		if ($published == '') {
-			$query -> where('st.published IN(1,0)');
+			$query -> where('published IN(1,0)');
 		} else if ($published != '*') {
 			$published = (int)$published;
-			$query -> where("st.published='$published'");
+			$query -> where("published='$published'");
 		}		
 		$search = $this -> getState('filter.search');
 		$database = $this -> getState('filter.database');
 		if ($database!='') {
-			$query -> where("st.dbname='$database'");
+			$query -> where("dbname='$database'");
 		}
 		$db = $this -> getDbo();
 
 		if (!empty($search)) {
 			$search = '%' . $db -> getEscaped($search, true) . '%';
-			$field_searches = "(st.title LIKE '{$search}' OR st.dbname LIKE '{$search}' OR st.query LIKE '{$search}')";
+			$field_searches = "(title LIKE '{$search}' OR dbname LIKE '{$search}' OR query LIKE '{$search}')";
 			$query -> where($field_searches);
 		}
-		$query->select('vl.title as access_level');
-		$query->join('LEFT','#__viewlevels as vl ON vl.id=st.access_level');
 		$orderCol = $this -> getState('list.ordering');
 		$orderDirn = $this -> getState('list.direction');
 		if (isset($orderCol)) {
-			$query -> order($orderCol . ' ' . $orderDirn);
+			$query -> order($db -> getEscaped($orderCol . ' ' . $orderDirn));
 		} else { 
-			$query -> order('st.id desc');
-		}		
+			$query -> order('id desc');
+		}
 		return $query;
 	}
 	function getDatabases() {

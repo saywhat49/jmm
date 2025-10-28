@@ -7,7 +7,8 @@
  * @copyright Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
-class JMMModelTable extends JModelLegacy
+jimport('joomla.application.component.jmodel');
+class JMMModelTable extends BaseDatabaseModel
 {
 
 	var $_total = null;
@@ -17,7 +18,7 @@ class JMMModelTable extends JModelLegacy
 	 */
 	  function __construct(){
         parent::__construct();
-        $mainframe = JFactory::getApplication();
+        $mainframe = Joomla\CMS\Factory::getApplication();
         $limit = $mainframe->getUserStateFromRequest('global.list.limit', 'limit', $mainframe->getCfg('list_limit'), 'int');
         $limitstart = JRequest::getVar('limitstart', 0, '', 'int');
         $limitstart = ($limit != 0 ? (floor($limitstart / $limit) * $limit) : 0);
@@ -33,13 +34,13 @@ class JMMModelTable extends JModelLegacy
     if(isset($siteTableId)){
       $siteTableId=intval($siteTableId);
     }else{
-      $params=JFactory::getApplication()->getParams();
+      $params=Joomla\CMS\Factory::getApplication()->getParams();
       $siteTableId=(int)$params->get('site_table_id');
       if(!isset($siteTableId)){
         $siteTableId=JRequest::getInt('site_table_id');
       }
     }  	
-  	$db=JFactory::getDBO();
+  	$db=Joomla\CMS\Factory::getDBO();
   	$db->setQuery("SELECT * FROM #__jmm_sitetables WHERE `id`='$siteTableId' AND `published`='1'");
   	$row = $db -> loadObject();
   	return $row;
@@ -51,17 +52,14 @@ class JMMModelTable extends JModelLegacy
 	 */
     function getTotal(){
       if (empty($this->_total)) {
-  			$params=JFactory::getApplication()->getParams();
-      if((int)$params->get('site_table_id')){
+  			$params=Joomla\CMS\Factory::getApplication()->getParams();
         $siteTableId=(int)$params->get('site_table_id');
-      }        
       if(!isset($siteTableId)){
         $siteTableId=JRequest::getInt('site_table_id');
       }
       $siteTableDetails=$this->getSiteTableDetails($siteTableId);
 		  $dbname=$siteTableDetails->dbname;
 			$query=$siteTableDetails->query;
-			$query=rtrim($query,';');
 			$db=JMMCommon::getDBInstance(null,null,null,null, $dbname,null);
 			$db->setQuery($query);	
             $this->_total =count($db->loadObjectList());      
@@ -86,10 +84,8 @@ class JMMModelTable extends JModelLegacy
    * @return [type] [description]
    */
   function getItems(){
-  $params=JFactory::getApplication()->getParams();
-	if((int)$params->get('site_table_id')){
-    $siteTableId=(int)$params->get('site_table_id');
-  }        
+  	$params=Joomla\CMS\Factory::getApplication()->getParams();
+	$siteTableId=(int)$params->get('site_table_id');
   if(!isset($siteTableId)){
     $siteTableId=JRequest::getInt('site_table_id');
   }
@@ -103,9 +99,8 @@ class JMMModelTable extends JModelLegacy
   }
 	$this->setState('limit',$no_record_per_page);
 	$siteTableDetails=$this->getSiteTableDetails($siteTableId);
-  $dbname=$siteTableDetails->dbname;
+  	$dbname=$siteTableDetails->dbname;
 	$query=$siteTableDetails->query;
-	$query=rtrim($query,';');
 	$db=JMMCommon::getDBInstance(null,null,null,null, $dbname,null);
 
 	if($table_pagination){

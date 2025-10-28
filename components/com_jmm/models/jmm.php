@@ -7,7 +7,8 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
-class JMMModelJMM extends JModelLegacy
+jimport('joomla.application.component.jmodel');
+class JMMModelJMM extends BaseDatabaseModel
 {
   
 }

@@ -16,23 +16,19 @@ class JMMTableTemplate extends JTable
 	}
 
 	function check(){
-
-		$jinput=JFactory::getApplication()->input;
+		$jinput=Joomla\CMS\Factory::getApplication()->input;
 		$data=$jinput->get('jform',array(),'ARRAY');
 		$id=$data['id'];
 		$title=$data['title'];
-		$title=JApplication::stringURLSafe($title);
-		$this->title=$title;
 		$php=$data['php'];
 		$css=$data['css'];
 		$js=$data['js'];
-		$templateFolder=JPATH_SITE.DS.'components'.DS.'com_jmm'.DS.'templates'.DS.$title;
-		jimport('joomla.filesystem.folder');
+		$templateFolder=JPATH_SITE.'/components/com_jmm/templates/'.$title;
 		if(isset($id) && $id>0){
 				
 				$oldTitle=$this->getTitle($id);	
 				if($oldTitle!=$title){
-					$oldTemplateFolder=JPATH_SITE.DS.'components'.DS.'com_jmm'.DS.'templates'.DS.$oldTitle;
+					$oldTemplateFolder=JPATH_SITE.'/components/com_jmm/templates/'.$oldTitle;
 					//$this->deleteDirectory($oldTemplateFolder);
 					JFolder::move($oldTemplateFolder,$templateFolder);
 				}
@@ -41,18 +37,18 @@ class JMMTableTemplate extends JTable
 				JFolder::create($templateFolder);
 			}
 		}
-		if(!is_dir($templateFolder.DS.'js')){				
-				JFolder::create($templateFolder.DS.'js');
+		if(!is_dir($templateFolder.'/js')){				
+				JFolder::create($templateFolder.'/js');
 		}
-		if(!is_dir($templateFolder.DS.'css')){				
-			JFolder::create($templateFolder.DS.'css');
+		if(!is_dir($templateFolder.'/css')){				
+			JFolder::create($templateFolder.'/css');
 		}
-		if(!is_dir($templateFolder.DS.'images')){				
-			JFolder::create($templateFolder.DS.'images');
+		if(!is_dir($templateFolder.'/images')){				
+			JFolder::create($templateFolder.'/images');
 		}
-		$phpFile=$templateFolder.DS.'index.php';
-		$jsFile=$templateFolder.DS.'js'.DS.'custom.js';
-		$cssFile=$templateFolder.DS.'css'.DS.'default.css';
+		$phpFile=$templateFolder.'/index.php';
+		$jsFile=$templateFolder.'/js/custom.js';
+		$cssFile=$templateFolder.'/css/default.css';
 		$this->createFile($phpFile,$php);
 		$this->createFile($cssFile,$css);
 		$this->createFile($jsFile,$js);
@@ -61,7 +57,7 @@ class JMMTableTemplate extends JTable
 
 	function getTitle($id){
 		$id=(INT)$id;
-		$db=JFactory::getDBO();
+		$db=Joomla\CMS\Factory::getDBO();
 		$db->setQuery("SELECT title FROM `#__jmm_templates` WHERE `id`=$id LIMIT 1");
 		$row=$db->loadObject();
 		return $row->title;

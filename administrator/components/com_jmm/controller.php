@@ -1,42 +1,48 @@
 <?php
 /**
- * @package		JMM
- * @link		http://adidac.github.com/jmm/index.html
- * @license		GNU/GPL
- * @copyright	Biswarup Adhikari
-*/
-error_reporting(E_ALL);
-ini_set('display_errors',1);
-defined('_JEXEC') or die('Restricted access');
-class JMMController extends JControllerLegacy
+ * @package     Joomla.Component
+ * @subpackage  com_jmm
+ */
+
+defined('_JEXEC') or die;
+use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Controller\BaseController;
+
+
+require_once JPATH_COMPONENT . '/helpers/jmm.php';
+
+class JmmController extends BaseController
 {
+    public function display($cachable = false, $urlparams = [])
+    {
+        parent::display($cachable, $urlparams);
 
-	function display($cachable = false, $urlparams = false) 
-	{
-		
-		parent::display($cachable);
-		$viewName=JRequest::getCmd('view');
-		JMMHelper::addSubmenu($viewName);		
-	}
+        $input = Joomla\CMS\Factory::getApplication()->input;
+        $viewName = $input->getCmd('view', '');
+        JMMHelper::addSubmenu($viewName);
+    }
 
-	function saveCannedQuery(){
-		$mainframe=JFactory::getApplication();
-		$title=JRequest::getString('title');
-		$dbname=JRequest::getVar('dbname');
-		$query=JRequest::getVar('query');
-		$model=&$this->getModel('SQL');
-		$response=$model->saveCannedQuery(JRequest::get( 'post' ));
-		echo json_encode($response);
-		$mainframe->close();
-	}
-	function saveSiteTable(){		
-		$mainframe=JFactory::getApplication();
-		$title=JRequest::getString('title');
-		$dbname=JRequest::getVar('dbname');
-		$query=JRequest::getVar('query');
-		$model=&$this->getModel('SQL');
-		$response=$model->saveSiteTable(JRequest::get( 'post' ));
-		echo json_encode($response);
-		$mainframe->close();
-	}
+    public function saveCannedQuery()
+    {
+        $app = Joomla\CMS\Factory::getApplication();
+        $input = $app->input;
+
+        $model = $this->getModel('SQL');
+        $response = $model->saveCannedQuery($input->post->getArray());
+
+        echo json_encode($response);
+        $app->close();
+    }
+
+    public function saveSiteTable()
+    {
+        $app = Joomla\CMS\Factory::getApplication();
+        $input = $app->input;
+
+        $model = $this->getModel('SQL');
+        $response = $model->saveSiteTable($input->post->getArray());
+
+        echo json_encode($response);
+        $app->close();
+    }
 }

@@ -6,12 +6,13 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
+jimport('joomla.application.component.controlleradmin');
 class JMMControllerCreateTable extends JControllerAdmin
 {
 	private $posts=array();
 	function createTableStructure(){
 		$result=array();
-		$mainframe=JFactory::getApplication();
+		$mainframe=Joomla\CMS\Factory::getApplication();
 		$this->posts=$_POST;
 		$totalfields=count($_POST['field_name']);
 		$query='CREATE TABLE IF NOT EXISTS `'.$this->getTableName().'` (';

@@ -6,6 +6,7 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
+jimport('joomla.application.component.modeladmin');
 class JMMModelInsert extends JModelAdmin
 {
 	public function getTable($type='Insert',$prefix='JMMTable',$config=array())
@@ -15,7 +16,7 @@ class JMMModelInsert extends JModelAdmin
 	
 	protected function loadFormData()
 	{
-		$data=JFactory::getApplication()->getUserState('com_jmm.edit.insert.data',array());
+		$data=Joomla\CMS\Factory::getApplication()->getUserState('com_jmm.edit.insert.data',array());
 		
 		if(empty($data)){
 			$data=$this->getItem();

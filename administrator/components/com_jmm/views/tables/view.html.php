@@ -5,8 +5,10 @@
  * @license		GNU/GPL
  * @copyright	Biswarup Adhikari
 */
-defined('_JEXEC') or die('Restricted access');
-class JMMViewTables extends JViewLegacy {
+defined('_JEXEC') or die;
+use Joomla\CMS\MVC\View\HtmlView;
+('Restricted access');
+class JMMViewTables extends HtmlView {
 
 	protected $items;
 	protected $state;
@@ -14,9 +16,9 @@ class JMMViewTables extends JViewLegacy {
 	protected $tables;
 	protected $databases;
 	function display($tmpl = null) {
-		$document=JFactory::getDocument();
-		$document->addScript(JURI::root().'media'.DS.'com_jmm'.DS.'js'.DS.'jquery-1.7.2.min.js');
-		$document->addScript(JURI::root().'media'.DS.'com_jmm'.DS.'js'.DS.'export.js');
+		$document=Joomla\CMS\Factory::getDocument();
+		$document->addScript(JURI::root().'media/com_jmm/js/jquery-1.7.2.min.js');
+		$document->addScript(JURI::root().'media/com_jmm/js/export.js');
 		$action = JRequest::getString('action', '');
 		$limit = JRequest::getInt('limit',15);
 		$limitstart = JRequest::getInt('limitstart',0);
@@ -35,31 +37,31 @@ class JMMViewTables extends JViewLegacy {
 			$urlString='';
 		}
 		if($filter_browsetable!=''){
-			JFactory::getApplication()->redirect('index.php?option=com_jmm&view=tables&action=browse&tbl='.$filter_browsetable.$urlString.$pagination,'Table Data of '.$filter_browsetable);
+			Joomla\CMS\Factory::getApplication()->redirect('index.php?option=com_jmm&view=tables&action=browse&tbl='.$filter_browsetable.$urlString.$pagination,'Table Data of '.$filter_browsetable);
 		}
 		$filter_tablestructure=JRequest::getVar('filter_tablestructure');
 		if($filter_tablestructure!=''){			
-			JFactory::getApplication()->redirect('index.php?option=com_jmm&view=tables&action=structure&tbl='.$filter_tablestructure.$urlString,'Table Structure of '.$filter_tablestructure);
+			Joomla\CMS\Factory::getApplication()->redirect('index.php?option=com_jmm&view=tables&action=structure&tbl='.$filter_tablestructure.$urlString,'Table Structure of '.$filter_tablestructure);
 		}
 		$filter_chnagedatabase=JRequest::getVar('filter_chnagedatabase','');
 		if($filter_chnagedatabase!=''){
-			JFactory::getApplication()->redirect('index.php?option=com_jmm&view=tables&dbname='.$filter_chnagedatabase,'Database Switched to  '.$filter_chnagedatabase);
+			Joomla\CMS\Factory::getApplication()->redirect('index.php?option=com_jmm&view=tables&dbname='.$filter_chnagedatabase,'Database Switched to  '.$filter_chnagedatabase);
 		}
 		
 		
 		switch ($action) {
 			case 'structure' :
 				$this -> items = JMMCommon::showTableStructure($tbl);
-				JFactory::getApplication()->enqueueMessage('Table Structure of '.$tbl, 'message');
+				Joomla\CMS\Factory::getApplication()->enqueueMessage('Table Structure of '.$tbl, 'message');
 				break;
 			case 'browse' :
 				$this -> items =  $this -> get('Items');
-				JFactory::getApplication()->enqueueMessage('Table Data of '.$tbl, 'message');
+				Joomla\CMS\Factory::getApplication()->enqueueMessage('Table Data of '.$tbl, 'message');
 				break;
 
 			default :
 				$this -> items = JMMCommon::showTableLists();
-				JFactory::getApplication()->enqueueMessage('Table Lists', 'message');
+				Joomla\CMS\Factory::getApplication()->enqueueMessage('Table Lists', 'message');
 				break;
 		}
 		$this->tables=$this->get('Tables');
@@ -67,7 +69,6 @@ class JMMViewTables extends JViewLegacy {
 		$this -> pagination = $this -> get('Pagination');
 		$this -> state = $this -> get('State');
 		$this -> addToolbar();
-		$this->sidebar = JHtmlSidebar::render();
 		parent::display($tmpl);
 	}
 

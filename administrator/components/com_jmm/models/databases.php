@@ -6,6 +6,7 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
+jimport('joomla.application.component.modellist');
 class JMMModelDatabases extends JModelList {
 
 	public function __construct($config = array()) {
@@ -16,7 +17,7 @@ class JMMModelDatabases extends JModelList {
 	}
 
 	function getItems() {
-		$db=JFactory::getDBO();
+		$db=Joomla\CMS\Factory::getDBO();
 		$db->setQuery($this->getListQuery());
 		$items=$db->loadAssocList();
 		foreach($items as &$item){

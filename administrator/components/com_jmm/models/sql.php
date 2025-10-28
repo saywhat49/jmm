@@ -6,7 +6,8 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
-class JMMModelSQL extends JModelItem {
+jimport('joomla.application.component.jmodel');
+class JMMModelSQL extends BaseDatabaseModel {
 
 	function getItems() {
 		$db = JMMCommon::getDBInstance();
@@ -14,12 +15,12 @@ class JMMModelSQL extends JModelItem {
 		if (isset($query) && $query!='') {
 			$db -> setQuery($query);
 			if (!$db -> query()) {
-				JFactory::getApplication() -> enqueueMessage($db -> getErrorMsg(), 'error');
+				Joomla\CMS\Factory::getApplication() -> enqueueMessage($db -> getErrorMsg(), 'error');
 				return false;
 			} else {
 				$rows = $db -> loadAssocList();
 				$total = count($rows);
-				JFactory::getApplication() -> enqueueMessage('SQL Statement "' . $query . '" Executed Sucessfully,' . $total . ' rows found');
+				Joomla\CMS\Factory::getApplication() -> enqueueMessage('SQL Statement "' . $query . '" Executed Sucessfully,' . $total . ' rows found');
 				return $rows;
 			}
 		} else {

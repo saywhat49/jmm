@@ -5,8 +5,10 @@
  * @license		GNU/GPL
  * @copyright	Biswarup Adhikari
 */
-defined('_JEXEC') or die('Restricted access');
-class JMMViewInsert extends JViewLegacy {
+defined('_JEXEC') or die;
+use Joomla\CMS\MVC\View\HtmlView;
+('Restricted access');
+class JMMViewInsert extends HtmlView {
 	
 	protected $item;
 	protected $form;
@@ -17,24 +19,25 @@ class JMMViewInsert extends JViewLegacy {
 	{
 		$dbname=JRequest::getVar('dbname',null);
 		if(!isset($dbname)){
-			$defaultdbname=JFactory::getApplication() -> getCfg('db');
+			$defaultdbname=Joomla\CMS\Factory::getApplication() -> getCfg('db');
 			$redirectUrl='index.php?option=com_jmm&view=insert';
 			$redirectUrl.='&dbname='.$defaultdbname;
 			$message.='Default Joomla Database  '.$defaultdbname.' Selected';
-			JFactory::getApplication()->redirect($redirectUrl,$message);
+			Joomla\CMS\Factory::getApplication()->redirect($redirectUrl,$message);
 		}
 		
-		
+		$this->item=$this->get('Item');
+		$this->form=$this->get('Form');
+
 		$this->addToolbar();
-		$this->sidebar = JHtmlSidebar::render();
-		$document=JFactory::getDocument();
+		$document=Joomla\CMS\Factory::getDocument();
 		$document->addStyleSheet('http://code.jquery.com/ui/1.10.0/themes/base/jquery-ui.css');
-		$document->addStyleSheet(JURI::root().'media'.DS.'com_jmm'.DS.'css'.DS.'jquery-ui-timepicker-addon.css');
-		$document->addStyleSheet(JURI::root().'media'.DS.'com_jmm'.DS.'css'.DS.'createtable.css');
-		$document->addScript(JURI::root().'media'.DS.'com_jmm'.DS.'js'.DS.'jquery-1.7.2.min.js');
+		$document->addStyleSheet(JURI::root().'media/com_jmm/css/jquery-ui-timepicker-addon.css');
+		$document->addStyleSheet(JURI::root().'media/com_jmm/css/createtable.css');
+		$document->addScript(JURI::root().'media/com_jmm/js/jquery-1.7.2.min.js');
 		$document->addScript('http://code.jquery.com/ui/1.10.0/jquery-ui.js');
-		$document->addScript(JURI::root().'media'.DS.'com_jmm'.DS.'js'.DS.'jquery-ui-timepicker-addon.js');
-		$document->addScript(JURI::root().'media'.DS.'com_jmm'.DS.'js'.DS.'insert.js');
+		$document->addScript(JURI::root().'media/com_jmm/js/jquery-ui-timepicker-addon.js');
+		$document->addScript(JURI::root().'media/com_jmm/js/insert.js');
 
 			
 
@@ -53,10 +56,8 @@ class JMMViewInsert extends JViewLegacy {
 			$message.='Database Switched to  '.$filter_chnagedatabase;
 		}
 		if($filter_chnagetable!='' || $filter_chnagedatabase!=''){
-			JFactory::getApplication()->redirect($redirectUrl,$message);
+			Joomla\CMS\Factory::getApplication()->redirect($redirectUrl,$message);
 		}
-		$this->item=$this->get('Item');
-		$this->form=$this->get('Form');
 
 		$this->databases=$this->get('Databases');
 		$this->Tables=$this->get('Tables');	

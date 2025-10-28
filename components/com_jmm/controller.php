@@ -6,7 +6,8 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
-class JMMController extends JControllerLegacy {
+jimport('joomla.application.component.controller');
+class JMMController extends BaseController {
 
 	public function getItems(){		
 		$arr=array();
@@ -16,11 +17,6 @@ class JMMController extends JControllerLegacy {
 		$siteTableId=JRequest::getInt('site_table_id',0);
 		$model=$this->getModel('Table');
 		$siteTableDetails=$model->getSiteTableDetails($siteTableId);
-		$user_access_levels=JFactory::getUser()->getAuthorisedViewLevels();
-		if($siteTableDetails->access_level && !in_array($siteTableDetails->access_level, $user_access_levels)){
-			echo json_encode($arr);
-			JFactory::getApplication()->close();
-		}
 		$jtStartIndex=JRequest::getInt('jtStartIndex',0);
 		$jtPageSize=JRequest::getInt('jtPageSize',25);
 		$jtSorting=JRequest::getString('jtSorting',null);	
@@ -42,7 +38,7 @@ class JMMController extends JControllerLegacy {
 			$arr['Records']=$items;
 		}
 		echo json_encode($arr);
-		JFactory::getApplication()->close();
+		Joomla\CMS\Factory::getApplication()->close();
 	}
 
 }

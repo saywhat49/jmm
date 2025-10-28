@@ -1,40 +1,27 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors',1);
 /**
- * @package		JMM
- * @link		http://adidac.github.com/jmm/index.html
- * @license		GNU/GPL
- * @copyright	Biswarup Adhikari
-*/
-defined('_JEXEC') or die('Restricted access');
-if(!defined('DS')){
-	define('DS',DIRECTORY_SEPARATOR);
-}
-set_error_handler("JMMErrorHandler");
-function JMMErrorHandler(){
-	/**
-	 * Do not Display Any Errors Warning
-	 */
-}
-function printobj($obj){
-	echo '<pre>';
-	print_r($obj);
-	echo '</pre>';
-}
-function dd($obj){
-	echo '<pre>';
-	print_r($obj);
-	echo '</pre>';
-}
+ * @package     Joomla.Component
+ * @subpackage  com_jmm
+ *
+ * @copyright   Copyright (C) Biswarup Adhikari
+ * @license     GNU General Public License version 2 or later
+ */
 
-JLoader::register('JMMHelper', dirname(__FILE__) . DS . 'helpers' . DS . 'jmm.php');
-JLoader::register('JMMCommon', dirname(__FILE__) . DS . 'models' . DS . 'jmmcommon.php');
+defined('_JEXEC') or die;
+use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Controller\BaseController;
 
-JMMHelper::addSubmenu(JFactory::getApplication()->input->get('view'));
-$document=JFactory::getDocument();
-//$document->addStyleSheet(JURI::root().'media'.DS.'com_jmm'.DS.'css'.DS.'bootstrap.min.css');
-$document->addStyleSheet(JURI::root().'media'.DS.'com_jmm'.DS.'css'.DS.'jmm.css');
-$controller = JControllerLegacy::getInstance('JMM');
-$controller->execute(JRequest::getCmd('task'));
+
+
+JLoader::register('JMMHelper', dirname(__FILE__) . '/helpers/jmm.php');
+JLoader::register('JMMCommon', dirname(__FILE__) . '/models/jmmcommon.php');
+
+// Get an instance of the controller prefixed by Jmm
+$controller = \Joomla\CMS\MVC\Controller\BaseController::getInstance('Jmm');
+
+// Perform the Request task
+$input = \Joomla\CMS\Factory::getApplication()->input;
+$controller->execute($input->getCmd('task'));
+
+// Redirect if set by the controller
 $controller->redirect();

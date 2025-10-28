@@ -9,22 +9,23 @@ defined('_JEXEC') or die('Restricted access');
 $rows=$this->rows;
 $cols=$this->columns;
 $params=$this->params;
-$document =JFactory::getDocument();
-$themeFile=JPATH_COMPONENT.DS.'templates'.DS.$this->theme.DS.'index.php';
-$themeCSSFile=JPATH_COMPONENT.DS.'templates'.DS.$this->theme.DS.'css'.DS.'default.css';
-$themeJSFile=JPATH_COMPONENT.DS.'templates'.DS.$this->theme.DS.'js'.DS.'custom.js';
+$document =Joomla\CMS\Factory::getDocument();
+$themeFile=JPATH_COMPONENT.'/templates/'.$this->theme.'/index.php';
+$themeCSSFile=JPATH_COMPONENT.'/templates/'.$this->theme.'/css/default.css';
+$themeJSFile=JPATH_COMPONENT.'/templates/'.$this->theme.'/js/custom.js';
 if(file_exists($themeCSSFile)){
-	$document->addStyleSheet($this->templateBaseURL.'/css/default.css');
+	$document->addStyleSheet($this->themeBaseURL.'/css/default.css');
+}
+if(file_exists($themeJSFile)){
+	$document->addScript($this->themeBaseURL.'/js/custom.js');
 }
 if(file_exists($themeFile)){
 	require_once($themeFile);
 }else{
-	$themeFile=JPATH_COMPONENT.DS.'templates'.DS.'default'.DS.'index.php';	
+	$themeFile=JPATH_COMPONENT.'/templates/default/index.php';	
 	require_once($themeFile);
 }
-if(file_exists($themeJSFile)){
-	$document->addScript($this->templateBaseURL.'/js/custom.js');
-}
+
 ?>
 <?php
 if($this->defaultPagination){

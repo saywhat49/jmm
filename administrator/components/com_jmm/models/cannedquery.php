@@ -6,6 +6,7 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
+jimport('joomla.application.component.modeladmin');
 class JMMModelCannedQuery extends JModelAdmin
 {
 	public function getTable($type='CannedQuery',$prefix='JMMTable',$config=array())
@@ -15,7 +16,7 @@ class JMMModelCannedQuery extends JModelAdmin
 	
 	protected function loadFormData()
 	{
-		$data=JFactory::getApplication()->getUserState('com_jmm.edit.cannedquery.data',array());
+		$data=Joomla\CMS\Factory::getApplication()->getUserState('com_jmm.edit.cannedquery.data',array());
 		
 		if(empty($data)){
 			$data=$this->getItem();
