@@ -1,0 +1,63 @@
+name: Build Joomla Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Extract version
+        id: version
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=$GITHUB_REF_NAME" >> "$GITHUB_OUTPUT"
+
+      - name: Build Joomla install ZIP
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          ZIP_NAME="com_jmm-${VERSION}.zip"
+
+          mkdir -p build/com_jmm
+
+          rsync -av \
+            --exclude=".git" \
+            --exclude=".github" \
+            --exclude="build" \
+            --exclude="*.zip" \
+            ./ build/com_jmm/
+
+          cd build/com_jmm
+          zip -r "../${ZIP_NAME}" .
+          cd ../..
+
+          echo "ZIP_NAME=${ZIP_NAME}" >> "$GITHUB_ENV"
+
+      - name: Compute SHA256
+        run: |
+          cd build
+          sha256sum "${ZIP_NAME}" | awk '{print $1}' > "${ZIP_NAME}.sha256"
+          cat "${ZIP_NAME}.sha256"
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          TAG="${{ steps.version.outputs.tag }}"
+
+          gh release create "$TAG" \
+            "build/${ZIP_NAME}" \
+            "build/${ZIP_NAME}.sha256" \
+            --title "JMM ${VERSION}" \
+            --notes "Release automatique de JMM ${VERSION}"
