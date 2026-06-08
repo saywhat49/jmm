@@ -7,7 +7,7 @@
     <license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
     <authorEmail>saywhat49@gmail.com</authorEmail>
     <authorUrl>http://saywhat49.github.com/jmm/index.html</authorUrl>
-    <version>5.0.2</version>
+    <version>5.0.3</version>
     <description>JMM - Joomla MySQL Manager updated for Joomla 5</description>
 
     <administration>
@@ -93,7 +93,7 @@
         
 	 <updateservers>
                 <!-- Note: No spaces or linebreaks allowed between the server tags -->
-        <server type="extension" priority="1" name="JMM Update Site">https://github.com/saywhat49/jmm/update/jmm-update.xml</server>
+        <server type="extension" priority="1" name="JMM Update Site">https://github.com/saywhat49/jmm/tree/master/update/jmm_update.xml</server>
         </updateservers>
     
 </extension>

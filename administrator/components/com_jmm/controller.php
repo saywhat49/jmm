@@ -1,392 +1,257 @@
 <?php
 /**
- * @package     Joomla.Component
+ * @package     Joomla.Administrator
  * @subpackage  com_jmm
+ *
+ * Corrected administrator controller.
  */
 
 defined('_JEXEC') or die;
+
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Log\Log;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Router\Route;
-use Joomla\CMS\Language\Text;
+use Joomla\CMS\Session\Session;
 
-require_once JPATH_COMPONENT . '/helpers/jmm.php';
-
-class JmmController extends BaseController
+class JMMController extends BaseController
 {
-    /**
-     * Post data storage pour createTable
-     * 
-     * @var    array
-     */
-    private $posts = array();
+    private array $posts = [];
 
     public function display($cachable = false, $urlparams = [])
     {
-        parent::display($cachable, $urlparams);
-
         $input = Factory::getApplication()->input;
         $viewName = $input->getCmd('view', '');
-        JMMHelper::addSubmenu($viewName);
+
+        if (class_exists('JMMHelper')) {
+            JMMHelper::addSubmenu($viewName);
+        }
+
+        return parent::display($cachable, $urlparams);
     }
 
     public function saveCannedQuery()
     {
-        $app = Factory::getApplication();
-        $input = $app->input;
+        if (!Session::checkToken()) {
+            $this->sendJson(['status' => false, 'msg' => Text::_('JINVALID_TOKEN')]);
+        }
 
         try {
             $model = $this->getModel('SQL');
-            $response = $model->saveCannedQuery($input->post->getArray());
-            
-            // AMÉLIORATION : En-têtes JSON appropriés
-            $app->setHeader('Content-Type', 'application/json; charset=utf-8');
-            echo json_encode($response);
-        } catch (Exception $e) {
-            // AMÉLIORATION : Gestion d'erreur robuste
-            $app->setHeader('Content-Type', 'application/json; charset=utf-8');
-            echo json_encode(array(
-                'status' => false,
-                'msg' => 'Error: ' . $e->getMessage()
-            ));
+            $response = $model->saveCannedQuery(Factory::getApplication()->input->post->getArray());
+            $this->sendJson($response);
+        } catch (Throwable $e) {
+            Log::add($e->getMessage(), Log::ERROR, 'com_jmm');
+            $this->sendJson(['status' => false, 'msg' => 'Erreur lors de l’enregistrement de la requête.']);
         }
-        
-        $app->close();
     }
 
     public function saveSiteTable()
     {
-        $app = Factory::getApplication();
-        $input = $app->input;
+        if (!Session::checkToken()) {
+            $this->sendJson(['status' => false, 'msg' => Text::_('JINVALID_TOKEN')]);
+        }
 
         try {
             $model = $this->getModel('SQL');
-            $response = $model->saveSiteTable($input->post->getArray());
-            
-            // AMÉLIORATION : En-têtes JSON appropriés
-            $app->setHeader('Content-Type', 'application/json; charset=utf-8');
-            echo json_encode($response);
-        } catch (Exception $e) {
-            // AMÉLIORATION : Gestion d'erreur robuste
-            $app->setHeader('Content-Type', 'application/json; charset=utf-8');
-            echo json_encode(array(
-                'status' => false,
-                'msg' => 'Error: ' . $e->getMessage()
-            ));
+            $response = $model->saveSiteTable(Factory::getApplication()->input->post->getArray());
+            $this->sendJson($response);
+        } catch (Throwable $e) {
+            Log::add($e->getMessage(), Log::ERROR, 'com_jmm');
+            $this->sendJson(['status' => false, 'msg' => 'Erreur lors de l’enregistrement de la table site.']);
         }
-        
+    }
+
+    public function createTableStructure()
+    {
+        if (!Session::checkToken()) {
+            $this->sendResponse(['status' => false, 'msg' => Text::_('JINVALID_TOKEN')]);
+            return;
+        }
+
+        $this->posts = Factory::getApplication()->input->post->getArray();
+
+        $tableName = $this->cleanIdentifier($this->posts['tbl_name'] ?? '');
+        if ($tableName === '') {
+            $this->sendResponse(['status' => false, 'msg' => Text::_('COM_JMM_INVALID_TABLE_NAME')]);
+            return;
+        }
+        $this->posts['tbl_name'] = $tableName;
+
+        if (empty($this->posts['field_name']) || !is_array($this->posts['field_name'])) {
+            $this->sendResponse(['status' => false, 'msg' => Text::_('COM_JMM_AT_LEAST_ONE_FIELD')]);
+            return;
+        }
+
+        try {
+            $db = Factory::getDbo();
+            $query = 'CREATE TABLE IF NOT EXISTS ' . $db->quoteName($this->getTableName()) . " (\n";
+
+            $fields = [];
+            foreach ($this->posts['field_name'] as $i => $rawFieldName) {
+                $fieldName = $this->cleanIdentifier($rawFieldName);
+                if ($fieldName === '') {
+                    continue;
+                }
+
+                $fields[] = $db->quoteName($fieldName)
+                    . $this->getFieldType($i)
+                    . $this->getFieldLength($i)
+                    . $this->getNull($i)
+                    . $this->getAutoIncrements($i)
+                    . $this->getFieldComments($i);
+            }
+
+            if (empty($fields)) {
+                $this->sendResponse(['status' => false, 'msg' => Text::_('COM_JMM_AT_LEAST_ONE_FIELD')]);
+                return;
+            }
+
+            $query .= implode(",\n", $fields);
+            $query .= $this->getTableKeys($db);
+            $query .= "\n) ENGINE=" . $this->getTableType()
+                . ' DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci'
+                . $this->getTableComment()
+                . $this->getAutoIncrementCounter();
+
+            $db->setQuery($query)->execute();
+
+            $this->sendResponse([
+                'status' => true,
+                'msg' => Text::sprintf('COM_JMM_TABLE_CREATED_SUCCESS_WITH_NAME', $this->getTableName()),
+            ]);
+        } catch (Throwable $e) {
+            Log::add($e->getMessage(), Log::ERROR, 'com_jmm');
+            $this->sendResponse(['status' => false, 'msg' => Text::_('COM_JMM_TABLE_CREATION_ERROR')]);
+        }
+    }
+
+    private function sendJson(array $result): void
+    {
+        $app = Factory::getApplication();
+        $app->setHeader('Content-Type', 'application/json; charset=utf-8', true);
+        echo json_encode($result);
         $app->close();
     }
 
-    /**
-     * Method to create a table structure
-     *
-     * @return  void
-     */
-    public function createTableStructure()
-    {
-        $result = array();
-        $app = Factory::getApplication();
-        $input = $app->input;
-        
-        try {
-            // Vérifier le token CSRF
-            if (!Factory::getSession()->checkToken()) {
-                $result['status'] = false;
-                $result['msg'] = Text::_('JINVALID_TOKEN');
-                $this->sendResponse($result);
-                return;
-            }
-            
-            // Get form data
-            $this->posts = $input->post->getArray();
-            
-            // Validation des données
-            if (empty($this->posts['tbl_name'])) {
-                $result['status'] = false;
-                $result['msg'] = Text::_('COM_JMM_FIELD_REQUIRED');
-                $this->sendResponse($result);
-                return;
-            }
-            
-            if (empty($this->posts['field_name']) || !is_array($this->posts['field_name'])) {
-                $result['status'] = false;
-                $result['msg'] = Text::_('COM_JMM_AT_LEAST_ONE_FIELD');
-                $this->sendResponse($result);
-                return;
-            }
-            
-            // Nettoyer le nom de table
-            $tableName = preg_replace('/[^a-zA-Z0-9_]/', '', $this->posts['tbl_name']);
-            if (empty($tableName)) {
-                $result['status'] = false;
-                $result['msg'] = Text::_('COM_JMM_INVALID_TABLE_NAME');
-                $this->sendResponse($result);
-                return;
-            }
-            
-            $this->posts['tbl_name'] = $tableName;
-            
-            $totalfields = count($this->posts['field_name']);
-            $query = 'CREATE TABLE IF NOT EXISTS `' . $this->getTableName() . '` (';
-            $query .= "\n";
-            
-            $validFields = 0;
-            for ($i = 0; $i < $totalfields; $i++) {
-                $fieldName = trim($this->posts['field_name'][$i]);
-                if (empty($fieldName)) {
-                    continue; // Ignorer les champs vides
-                }
-                
-                if ($validFields > 0) {
-                    $query .= ',';
-                }
-                $validFields++;
-                $query .= '`' . $this->getFieldName($i) . '`' . $this->getFieldType($i) . $this->getFieldLength($i) . $this->getNull($i) . $this->getAutoIncrements($i) . $this->getFieldComments($i);
-            }
-            
-            if ($validFields === 0) {
-                $result['status'] = false;
-                $result['msg'] = Text::_('COM_JMM_AT_LEAST_ONE_FIELD');
-                $this->sendResponse($result);
-                return;
-            }
-            
-            $query .= $this->getTableKeys();
-            $query .= ')' . ' ENGINE=' . $this->getTableType() . ' DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci' . $this->getTableComment() . $this->getAutoIncrementCounter();
-            
-            // Utiliser Factory::getDbo()
-            $db = Factory::getDbo();
-            $db->setQuery($query);
-            
-            $db->execute();
-            $result['status'] = true;
-            $result['msg'] = Text::sprintf('COM_JMM_TABLE_CREATED_SUCCESS_WITH_NAME', $this->getTableName());
-            
-        } catch (Exception $e) {
-            // Log l'erreur pour le débogage
-            Factory::getApplication()->enqueueMessage(Text::_('COM_JMM_TABLE_CREATION_ERROR') . ': ' . $e->getMessage(), 'error');
-            
-            $result['status'] = false;
-            $result['msg'] = Text::_('COM_JMM_TABLE_CREATION_ERROR') . ': ' . $e->getMessage();
-        }
-        
-        $this->sendResponse($result);
-    }
-    
-    /**
-     * Send JSON response
-     *
-     * @param   array  $result  The result array
-     *
-     * @return  void
-     */
-    private function sendResponse($result)
+    private function sendResponse(array $result): void
     {
         $app = Factory::getApplication();
         $input = $app->input;
-        
-        // Si la requête demande du JSON ou si c'est une requête AJAX
-        if ($input->get('format') === 'json' || $input->server->get('HTTP_X_REQUESTED_WITH') === 'XMLHttpRequest') {
-            // Format Joomla 5 standard pour les réponses JSON
-            $response = array(
-                'success' => $result['status'],
-                'message' => null,
-                'messages' => null,
-                'data' => $result
-            );
-            
-            // Définir les en-têtes appropriés
-            $app->setHeader('Content-Type', 'application/json; charset=utf-8');
-            echo json_encode($response);
-            $app->close();
-        } else {
-            // Redirection normale pour les requêtes non-AJAX
-            $this->setRedirect(
-                Route::_('index.php?option=com_jmm&view=createTable', false),
-                $result['msg'],
-                $result['status'] ? 'message' : 'error'
-            );
-        }
-    }
 
-    // Méthodes helper pour createTable (même code que précédemment)
-    private function getNull($fieldIndex)
-    {
-        if (isset($this->posts['field_null'][$fieldIndex])) {
-            return ' NULL';
-        } else {
-            return ' NOT NULL';
+        if ($input->getCmd('format') === 'json' || $input->server->getString('HTTP_X_REQUESTED_WITH') === 'XMLHttpRequest') {
+            $this->sendJson([
+                'success' => (bool) $result['status'],
+                'message' => $result['msg'] ?? null,
+                'data' => $result,
+            ]);
         }
-    }
 
-    private function getAutoIncrements($fieldIndex)
-    {
-        if (isset($this->posts['field_extra'][$fieldIndex]) && $this->posts['field_extra'][$fieldIndex] === 'AUTO_INCREMENT') {
-            return ' AUTO_INCREMENT';
-        }
-        return '';
-    }
-    
-    private function getAutoIncrementCounter()
-    {
-        if (isset($this->posts['field_extra']) && is_array($this->posts['field_extra'])) {
-            foreach ($this->posts['field_extra'] as $extra) {
-                if ($extra === 'AUTO_INCREMENT') {
-                    return ' AUTO_INCREMENT=1';
-                }
-            }
-        }
-        return '';
-    }
-    
-    private function getFieldName($fieldIndex)
-    {
-        $fieldName = trim($this->posts['field_name'][$fieldIndex]);
-        return preg_replace('/[^a-zA-Z0-9_]/', '', $fieldName);
-    }
-    
-    private function getFieldLength($fieldIndex)
-    {
-        if (isset($this->posts['field_length'][$fieldIndex]) && 
-            !empty($this->posts['field_length'][$fieldIndex]) && 
-            is_numeric($this->posts['field_length'][$fieldIndex]) && 
-            $this->posts['field_length'][$fieldIndex] > 0) {
-            return '(' . intval($this->posts['field_length'][$fieldIndex]) . ')';
-        }
-        return '';
-    }
-    
-    private function getFieldType($fieldIndex)
-    {
-        $allowedTypes = array(
-            'TINYINT', 'SMALLINT', 'MEDIUMINT', 'INT', 'BIGINT',
-            'DECIMAL', 'FLOAT', 'DOUBLE', 'REAL', 'BIT', 'BOOLEAN', 'SERIAL',
-            'DATE', 'DATETIME', 'TIMESTAMP', 'TIME', 'YEAR',
-            'CHAR', 'VARCHAR', 'TINYTEXT', 'TEXT', 'MEDIUMTEXT', 'LONGTEXT',
-            'BINARY', 'VARBINARY', 'TINYBLOB', 'MEDIUMBLOB', 'BLOB', 'LONGBLOB',
-            'ENUM', 'SET',
-            'GEOMETRY', 'POINT', 'LINESTRING', 'POLYGON', 'MULTIPOINT',
-            'MULTILINESTRING', 'MULTIPOLYGON', 'GEOMETRYCOLLECTION'
+        $this->setRedirect(
+            Route::_('index.php?option=com_jmm&view=createTable', false),
+            $result['msg'] ?? '',
+            !empty($result['status']) ? 'message' : 'error'
         );
-        
-        $fieldType = strtoupper($this->posts['field_type'][$fieldIndex]);
-        
-        if (in_array($fieldType, $allowedTypes)) {
-            return ' ' . $fieldType;
-        }
-        return ' VARCHAR';
     }
-    
-    private function getFieldComments($fieldIndex)
+
+    private function cleanIdentifier($value): string
     {
-        if (isset($this->posts['field_comments'][$fieldIndex]) && 
-            !empty(trim($this->posts['field_comments'][$fieldIndex]))) {
-            $comment = $this->posts['field_comments'][$fieldIndex];
-            $comment = str_replace("'", "''", $comment);
-            return ' COMMENT \'' . $comment . '\'';
+        return preg_replace('/[^A-Za-z0-9_]/', '', trim((string) $value));
+    }
+
+    private function getNull(int $fieldIndex): string
+    {
+        return isset($this->posts['field_null'][$fieldIndex]) ? ' NULL' : ' NOT NULL';
+    }
+
+    private function getAutoIncrements(int $fieldIndex): string
+    {
+        return (($this->posts['field_extra'][$fieldIndex] ?? '') === 'AUTO_INCREMENT') ? ' AUTO_INCREMENT' : '';
+    }
+
+    private function getAutoIncrementCounter(): string
+    {
+        foreach (($this->posts['field_extra'] ?? []) as $extra) {
+            if ($extra === 'AUTO_INCREMENT') {
+                return ' AUTO_INCREMENT=1';
+            }
         }
         return '';
     }
-    
-    private function getTableName()
+
+    private function getFieldLength(int $fieldIndex): string
+    {
+        $length = $this->posts['field_length'][$fieldIndex] ?? '';
+        return (is_numeric($length) && (int) $length > 0) ? '(' . (int) $length . ')' : '';
+    }
+
+    private function getFieldType(int $fieldIndex): string
+    {
+        $allowedTypes = [
+            'TINYINT','SMALLINT','MEDIUMINT','INT','BIGINT','DECIMAL','FLOAT','DOUBLE','REAL','BIT','BOOLEAN','SERIAL',
+            'DATE','DATETIME','TIMESTAMP','TIME','YEAR','CHAR','VARCHAR','TINYTEXT','TEXT','MEDIUMTEXT','LONGTEXT',
+            'BINARY','VARBINARY','TINYBLOB','MEDIUMBLOB','BLOB','LONGBLOB','GEOMETRY','POINT','LINESTRING','POLYGON',
+            'MULTIPOINT','MULTILINESTRING','MULTIPOLYGON','GEOMETRYCOLLECTION'
+        ];
+
+        $type = strtoupper((string) ($this->posts['field_type'][$fieldIndex] ?? 'VARCHAR'));
+        return ' ' . (in_array($type, $allowedTypes, true) ? $type : 'VARCHAR');
+    }
+
+    private function getFieldComments(int $fieldIndex): string
+    {
+        $comment = trim((string) ($this->posts['field_comments'][$fieldIndex] ?? ''));
+        return $comment !== '' ? " COMMENT '" . str_replace("'", "''", $comment) . "'" : '';
+    }
+
+    private function getTableName(): string
     {
         return $this->posts['tbl_name'];
     }
-    
-    private function getTableType()
+
+    private function getTableType(): string
     {
-        $allowedEngines = array(
-            'MEMORY', 'CSV', 'MRG_MYISAM', 'BLACKHOLE', 'MyISAM', 
-            'InnoDB', 'ARCHIVE', 'PERFORMANCE_SCHEMA'
-        );
-        
-        if (!isset($this->posts['tbl_type'])) {
-            return 'InnoDB';
-        }
-        
-        $engine = strtoupper($this->posts['tbl_type']);
-        
-        if (in_array($engine, $allowedEngines)) {
-            return $engine;
-        }
-        return 'InnoDB';
+        $allowedEngines = ['MEMORY', 'CSV', 'MRG_MYISAM', 'BLACKHOLE', 'MYISAM', 'INNODB', 'ARCHIVE'];
+        $engine = strtoupper((string) ($this->posts['tbl_type'] ?? 'INNODB'));
+        return in_array($engine, $allowedEngines, true) ? $engine : 'INNODB';
     }
-    
-    private function getTableComment()
+
+    private function getTableComment(): string
     {
-        if (isset($this->posts['tbl_comments']) && !empty(trim($this->posts['tbl_comments']))) {
-            $comment = trim($this->posts['tbl_comments']);
-            $comment = str_replace("'", "''", $comment);
-            return ' COMMENT \'' . $comment . '\'';
-        }
-        return '';
+        $comment = trim((string) ($this->posts['tbl_comments'] ?? ''));
+        return $comment !== '' ? " COMMENT '" . str_replace("'", "''", $comment) . "'" : '';
     }
-    
-    private function getTableKeys()
+
+    private function getTableKeys($db): string
     {
-        if (!isset($this->posts['field_key']) || !is_array($this->posts['field_key'])) {
+        if (empty($this->posts['field_key']) || !is_array($this->posts['field_key'])) {
             return '';
         }
-        
+
+        $groups = ['primary' => [], 'unique' => [], 'index' => [], 'fulltext' => []];
+
+        foreach ($this->posts['field_key'] as $index => $value) {
+            $fieldName = $this->cleanIdentifier($this->posts['field_name'][$index] ?? '');
+            if ($fieldName !== '' && isset($groups[$value])) {
+                $groups[$value][] = $db->quoteName($fieldName);
+            }
+        }
+
         $keys = '';
-        $primaryFields = array();
-        $uniqueFields = array();
-        $indexFields = array();
-        $fulltextFields = array();
-        
-        foreach ($this->posts['field_key'] as $key => $value) {
-            if (empty(trim($this->posts['field_name'][$key]))) {
-                continue;
-            }
-            
-            switch ($value) {
-                case 'primary':
-                    $primaryFields[] = $key;
-                    break;
-                case 'unique':
-                    $uniqueFields[] = $key;
-                    break;
-                case 'index':
-                    $indexFields[] = $key;
-                    break;
-                case 'fulltext':
-                    $fulltextFields[] = $key;
-                    break;
-            }
+        if ($groups['primary']) {
+            $keys .= ', PRIMARY KEY (' . implode(',', $groups['primary']) . ')';
         }
-        
-        if (!empty($primaryFields)) {
-            $keys .= ', PRIMARY KEY (' . $this->getFields($primaryFields) . ')';
+        if ($groups['unique']) {
+            $keys .= ', UNIQUE KEY ' . $db->quoteName('uk_' . substr(md5(implode(',', $groups['unique'])), 0, 8)) . ' (' . implode(',', $groups['unique']) . ')';
         }
-        
-        if (!empty($uniqueFields)) {
-            $fieldNames = $this->getFields($uniqueFields);
-            $keys .= ', UNIQUE KEY uk_' . substr(md5($fieldNames), 0, 8) . ' (' . $fieldNames . ')';
+        if ($groups['index']) {
+            $keys .= ', KEY ' . $db->quoteName('idx_' . substr(md5(implode(',', $groups['index'])), 0, 8)) . ' (' . implode(',', $groups['index']) . ')';
         }
-        
-        if (!empty($indexFields)) {
-            $fieldNames = $this->getFields($indexFields);
-            $keys .= ', KEY idx_' . substr(md5($fieldNames), 0, 8) . ' (' . $fieldNames . ')';
-        }
-        
-        if (!empty($fulltextFields)) {
-            $fieldNames = $this->getFields($fulltextFields);
-            $keys .= ', FULLTEXT KEY ft_' . substr(md5($fieldNames), 0, 8) . ' (' . $fieldNames . ')';
+        if ($groups['fulltext']) {
+            $keys .= ', FULLTEXT KEY ' . $db->quoteName('ft_' . substr(md5(implode(',', $groups['fulltext'])), 0, 8)) . ' (' . implode(',', $groups['fulltext']) . ')';
         }
 
         return $keys;
-    }
-
-    private function getFields($arr)
-    {
-        $fields = '';
-        foreach ($arr as $index) {
-            $fieldName = $this->getFieldName($index);
-            if (!empty($fieldName)) {
-                $fields .= '`' . $fieldName . '`,';
-            }
-        }
-        return rtrim($fields, ',');
     }
 }
