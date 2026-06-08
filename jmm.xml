@@ -91,9 +91,10 @@
 			</sql>
         </update>
         
-	 <updateservers>
-                <!-- Note: No spaces or linebreaks allowed between the server tags -->
-        <server type="extension" priority="1" name="JMM Update Site">https://github.com/saywhat49/jmm/tree/master/update/jmm_update.xml</server>
-        </updateservers>
+	<updateservers>
+    	<server type="extension" priority="1" name="JMM Update Site">
+        	https://raw.githubusercontent.com/saywhat49/jmm/master/update/jmm_update.xml
+    	</server>
+	</updateservers>
     
 </extension>
