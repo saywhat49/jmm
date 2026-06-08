@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension type="component" version="5.0" method="upgrade" client="administrator" legacy="1">
+<extension type="component" version="5.0" method="upgrade" client="administrator">
     <name>com_jmm</name>
     <author>Saywhat49</author>
-    <creationDate>2025-10-28</creationDate>
+    <creationDate>2026-06-08</creationDate>
     <copyright>saywhat49@gmail.com</copyright>
     <license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
     <authorEmail>saywhat49@gmail.com</authorEmail>
     <authorUrl>https://github.com/saywhat49/jmm</authorUrl>
-    <version>5.0.3</version>
-    <description>JMM - Joomla MySQL Manager updated for Joomla 5</description>
+    <version>5.0.4</version>
+    <description>JMM - Joomla MySQL Manager updated for Joomla 5 with PSR-4 namespace and MVC Factory</description>
+
+    <namespace path="src">Saywhat49\Component\Jmm</namespace>
 
     <administration>
         <languages folder="administrator/language/en-GB">
@@ -24,23 +26,24 @@
         <menu link="option=com_jmm&amp;view=lists" img="../media/com_jmm/images/database-16x16.png">Joomla MySQL Manager</menu>
 
         <submenu>
+            <menu link="option=com_jmm&amp;view=lists" alt="COM_JMM_LISTS" img="../media/com_jmm/images/database-16x16.png">COM_JMM_LISTS</menu>
             <menu link="option=com_jmm&amp;view=databases" alt="COM_JMM_DATABASES" img="../media/com_jmm/images/database-16x16.png">COM_JMM_DATABASES</menu>
             <menu link="option=com_jmm&amp;view=tables" alt="COM_JMM_TABLES" img="../media/com_jmm/images/table-16x16.png">COM_JMM_TABLES</menu>
             <menu link="option=com_jmm&amp;view=sql" alt="COM_JMM_SQL_QUERY" img="../media/com_jmm/images/sql-16x16.png">COM_JMM_SQL_QUERY</menu>
-            <menu link="option=com_jmm&amp;view=cannedqueries" alt="COM_JMM_CANNED_QUERY" img="../media/com_jmm/images/can-16x16.png">COM_JMM_CANNED_QUERY</menu>
-            <menu link="option=com_jmm&amp;view=sitetables" alt="COM_JMM_SITE_TABLES" img="../media/com_jmm/images/sitetable-16x16.png">COM_JMM_SITE_TABLES</menu>
-            <menu link="option=com_jmm&amp;view=createtable" alt="COM_JMM_CREATE_TABLE" img="../media/com_jmm/images/createtable-16x16.png">COM_JMM_CREATE_TABLE</menu>
-            <menu link="option=com_jmm&amp;view=insert" alt="COM_JMM_INSERT_DATA" img="../media/com_jmm/images/insert-16x16.png">COM_JMM_INSERT_DATA</menu>
-            <menu link="option=com_jmm&amp;view=templates" alt="COM_JMM_TEMPLATES" img="../media/com_jmm/images/template-16x16.png">COM_JMM_TEMPLATES</menu>
         </submenu>
 
         <files folder="administrator/components/com_jmm">
+            <folder>services</folder>
+            <folder>src</folder>
+            <folder>tmpl</folder>
+
             <folder>controllers</folder>
             <folder>exported</folder>
             <folder>helpers</folder>
             <folder>models</folder>
             <folder>tables</folder>
             <folder>views</folder>
+
             <filename>config.xml</filename>
             <filename>controller.php</filename>
             <filename>index.html</filename>
