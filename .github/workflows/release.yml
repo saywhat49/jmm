@@ -1,4 +1,4 @@
-name: Build Joomla Release
+﻿name: Build Joomla Release
 
 on:
   push:
@@ -34,6 +34,8 @@ jobs:
             --exclude=".git" \
             --exclude=".github" \
             --exclude="build" \
+            --exclude="update" \
+            --exclude="README.md" \
             --exclude="*.zip" \
             ./ build/com_jmm/
 
@@ -60,4 +62,4 @@ jobs:
             "build/${ZIP_NAME}" \
             "build/${ZIP_NAME}.sha256" \
             --title "JMM ${VERSION}" \
-            --notes "Release automatique de JMM ${VERSION}"
+            --notes "Release automatique de JMM ${VERSION} compatible Joomla 5, Joomla 6 et PHP 8.3"

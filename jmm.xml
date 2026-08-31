@@ -1,103 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension type="component" version="5.0" method="upgrade" client="administrator" legacy="1">
+<extension type="component" version="5.0" method="upgrade">
     <name>com_jmm</name>
     <author>Saywhat49</author>
-    <creationDate>2025-10-28</creationDate>
-    <copyright>saywhat49@gmail.com</copyright>
-    <license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
+    <creationDate>2026-08-31</creationDate>
+    <copyright>Copyright (C) 2013-2026 Open Source Matters, Inc. All rights reserved.</copyright>
+    <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
     <authorEmail>saywhat49@gmail.com</authorEmail>
     <authorUrl>https://github.com/saywhat49/jmm</authorUrl>
-    <version>5.0.3</version>
-    <description>JMM - Joomla MySQL Manager updated for Joomla 5</description>
+    <version>5.2.0</version>
+    <description>COM_JMM_XML_DESCRIPTION</description>
 
-    <administration>
-        <languages folder="administrator/language/en-GB">
-            <language tag="en-GB">en-GB.com_jmm.sys.ini</language>
-            <language tag="en-GB">en-GB.com_jmm.ini</language>
-        </languages>
+    <namespace path="src">Saywhat49\Component\Jmm</namespace>
 
-        <languages folder="administrator/language/fr-FR">
-            <language tag="fr-FR">fr-FR.com_jmm.sys.ini</language>
-            <language tag="fr-FR">fr-FR.com_jmm.ini</language>
-        </languages>
+    <scriptfile>script.php</scriptfile>
 
-        <menu link="option=com_jmm&amp;view=lists" img="../media/com_jmm/images/database-16x16.png">Joomla MySQL Manager</menu>
-
-        <submenu>
-            <menu link="option=com_jmm&amp;view=databases" alt="COM_JMM_DATABASES" img="../media/com_jmm/images/database-16x16.png">COM_JMM_DATABASES</menu>
-            <menu link="option=com_jmm&amp;view=tables" alt="COM_JMM_TABLES" img="../media/com_jmm/images/table-16x16.png">COM_JMM_TABLES</menu>
-            <menu link="option=com_jmm&amp;view=sql" alt="COM_JMM_SQL_QUERY" img="../media/com_jmm/images/sql-16x16.png">COM_JMM_SQL_QUERY</menu>
-            <menu link="option=com_jmm&amp;view=cannedqueries" alt="COM_JMM_CANNED_QUERY" img="../media/com_jmm/images/can-16x16.png">COM_JMM_CANNED_QUERY</menu>
-            <menu link="option=com_jmm&amp;view=sitetables" alt="COM_JMM_SITE_TABLES" img="../media/com_jmm/images/sitetable-16x16.png">COM_JMM_SITE_TABLES</menu>
-            <menu link="option=com_jmm&amp;view=createtable" alt="COM_JMM_CREATE_TABLE" img="../media/com_jmm/images/createtable-16x16.png">COM_JMM_CREATE_TABLE</menu>
-            <menu link="option=com_jmm&amp;view=insert" alt="COM_JMM_INSERT_DATA" img="../media/com_jmm/images/insert-16x16.png">COM_JMM_INSERT_DATA</menu>
-            <menu link="option=com_jmm&amp;view=templates" alt="COM_JMM_TEMPLATES" img="../media/com_jmm/images/template-16x16.png">COM_JMM_TEMPLATES</menu>
-        </submenu>
-
-        <files folder="administrator/components/com_jmm">
-            <folder>controllers</folder>
-            <folder>exported</folder>
-            <folder>helpers</folder>
-            <folder>models</folder>
-            <folder>tables</folder>
-            <folder>views</folder>
-            <filename>config.xml</filename>
-            <filename>controller.php</filename>
-            <filename>index.html</filename>
-            <filename>jmm.php</filename>
-            <filename>install.mysql.sql</filename>
-            <filename>uninstall.mysql.sql</filename>
-            <filename>update.mysql.sql</filename>
-        </files>
-    </administration>
-
-    <languages folder="language/en-GB">
-        <language tag="en-GB">en-GB.com_jmm.ini</language>
-    </languages>
-
-    <languages folder="language/fr-FR">
-        <language tag="fr-FR">fr-FR.com_jmm.ini</language>
-    </languages>
-
-    <files folder="components/com_jmm">
-        <folder>controllers</folder>
-        <folder>helpers</folder>
-        <folder>models</folder>
-        <folder>templates</folder>
-        <folder>themes</folder>
-        <folder>views</folder>
-        <filename>controller.php</filename>
-        <filename>jmm.php</filename>
-        <filename>index.html</filename>
+    <files folder="site">
+        <folder>src</folder>
+        <folder>tmpl</folder>
     </files>
 
-    <media folder="media/com_jmm" destination="com_jmm">
-        <folder>js</folder>
+    <languages folder="site/language">
+        <language tag="en-GB">en-GB/com_jmm.ini</language>
+        <language tag="fr-FR">fr-FR/com_jmm.ini</language>
+    </languages>
+
+    <administration>
+        <menu link="option=com_jmm&amp;view=databases" img="class:database">COM_JMM_MENU_TITLE</menu>
+        <submenu>
+            <menu link="option=com_jmm&amp;view=databases" alt="COM_JMM_DATABASES" img="class:database">COM_JMM_DATABASES</menu>
+            <menu link="option=com_jmm&amp;view=tables" alt="COM_JMM_TABLES" img="class:table">COM_JMM_TABLES</menu>
+            <menu link="option=com_jmm&amp;view=sql" alt="COM_JMM_SQL_QUERY" img="class:code">COM_JMM_SQL_QUERY</menu>
+            <menu link="option=com_jmm&amp;view=cannedqueries" alt="COM_JMM_CANNED_QUERY" img="class:bookmark">COM_JMM_CANNED_QUERY</menu>
+            <menu link="option=com_jmm&amp;view=sitetables" alt="COM_JMM_SITE_TABLES" img="class:globe">COM_JMM_SITE_TABLES</menu>
+            <menu link="option=com_jmm&amp;view=createtable" alt="COM_JMM_CREATE_TABLE" img="class:plus">COM_JMM_CREATE_TABLE</menu>
+            <menu link="option=com_jmm&amp;view=insert" alt="COM_JMM_INSERT_DATA" img="class:pencil">COM_JMM_INSERT_DATA</menu>
+            <menu link="option=com_jmm&amp;view=templates" alt="COM_JMM_TEMPLATES" img="class:color-palette">COM_JMM_TEMPLATES</menu>
+        </submenu>
+
+        <files folder="administrator">
+            <folder>forms</folder>
+            <folder>services</folder>
+            <folder>sql</folder>
+            <folder>src</folder>
+            <folder>tmpl</folder>
+            <filename>access.xml</filename>
+            <filename>config.xml</filename>
+        </files>
+
+        <languages folder="administrator/language">
+            <language tag="en-GB">en-GB/com_jmm.ini</language>
+            <language tag="en-GB">en-GB/com_jmm.sys.ini</language>
+            <language tag="fr-FR">fr-FR/com_jmm.ini</language>
+            <language tag="fr-FR">fr-FR/com_jmm.sys.ini</language>
+        </languages>
+    </administration>
+
+    <media destination="com_jmm" folder="media">
+        <filename>joomla.asset.json</filename>
         <folder>css</folder>
+        <folder>js</folder>
         <folder>images</folder>
     </media>
 
     <install>
         <sql>
-            <file charset="utf8" driver="mysql">install.mysql.sql</file>
+            <file charset="utf8mb4" driver="mysql">sql/install.mysql.sql</file>
         </sql>
     </install>
 
     <uninstall>
         <sql>
-            <file charset="utf8" driver="mysql">uninstall.mysql.sql</file>
+            <file charset="utf8mb4" driver="mysql">sql/uninstall.mysql.sql</file>
         </sql>
     </uninstall>
 
     <update>
-        <sql>
-            <file charset="utf8" driver="mysql">update.mysql.sql</file>
-        </sql>
+        <schemas>
+            <schemapath type="mysql">sql/updates/mysql</schemapath>
+        </schemas>
     </update>
 
     <updateservers>
-        <server type="extension" priority="1" name="JMM Update Site">
-            https://raw.githubusercontent.com/saywhat49/jmm/master/update/jmm_update.xml
-        </server>
+        <server type="extension" priority="1" name="JMM Updates">https://raw.githubusercontent.com/saywhat49/jmm/master/update/jmm_update.xml</server>
     </updateservers>
 </extension>

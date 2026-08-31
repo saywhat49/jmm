@@ -1,61 +1,63 @@
-var JQ = jQuery.noConflict();
-JQ('document').ready(function(){
-JQ('.loading-icon').hide();
-/**	
- * On Click Export to CSV
+/**
+ * JMM CSV Export Handler (Vanilla ES6)
  */
-JQ('#export_as_csv').live('click',(function(){
-	var id=JQ(this).parent().parent().attr('id');
-	var filename=JQ('#'+id+' td:eq(2)').html();
-	var dbname=JQ('#'+id+' td:eq(3)').html();
-	var query=JQ('#'+id+' td:eq(4)').html();
-		JQ('.loading-icon').show();
-		var r=Math.random();
-		JQ.post('index.php',{option:'com_jmm',task:'export.csv',filename:filename,dbname:dbname,query:query,r:r},function(response){
-			JQ('.loading-icon').hide();
-			try{				
-				var data=JSON.parse(response);
-			}catch(e){
-				alert("Exception is Parsing JSON");
-				return false;
-			}
-			if(data.status){
-				var downloadURL=decodeURI(data.download_url);
-				window.location=downloadURL;
-				console.log(downloadURL);
-			}else{
-				alert(data.msg);				
-			}
-		});
-}));
-/**	
- * On Click Export to CSV
- */
-JQ('#export_as_csv_from_table').live('click',(function(){
-	var filename=JQ(this).attr('filename');
-	var dbname=JQ(this).attr('dbname');
-	var query=JQ(this).attr('query');
-		JQ('.loading-icon').show();
-		var r=Math.random();
-		JQ.post('index.php',{option:'com_jmm',task:'export.csv',filename:filename,dbname:dbname,query:query,r:r},function(response){
-			JQ('.loading-icon').hide();
-			try{				
-				var data=JSON.parse(response);
-			}catch(e){
-				alert("Exception is Parsing JSON");
-				return false;
-			}
-			if(data.status){
-				var downloadURL=decodeURI(data.download_url);
-				window.location=downloadURL;
-				console.log(downloadURL);
-			}else{
-				alert(data.msg);				
-			}
-		});
-}));
+document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('click', (e) => {
+        const btn = e.target.closest('.jmm-export-btn');
+        if (!btn) return;
 
+        const query = btn.dataset.query || '';
+        const filename = btn.dataset.filename || 'export';
+        const dbname = btn.dataset.dbname || '';
 
+        if (!query) {
+            alert('No query specified for export.');
+            return;
+        }
 
+        let csrfToken = Joomla.getOptions('csrf.token', '');
+        if (!csrfToken) {
+            const hiddenToken = document.querySelector('#adminForm input[type="hidden"][value="1"]');
+            if (hiddenToken) {
+                csrfToken = hiddenToken.name;
+            }
+        }
 
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = 'index.php?option=com_jmm&task=export.csv';
+        form.target = '_blank';
+
+        const queryInput = document.createElement('input');
+        queryInput.type = 'hidden';
+        queryInput.name = 'query';
+        queryInput.value = query;
+        form.appendChild(queryInput);
+
+        const filenameInput = document.createElement('input');
+        filenameInput.type = 'hidden';
+        filenameInput.name = 'filename';
+        filenameInput.value = filename;
+        form.appendChild(filenameInput);
+
+        if (dbname) {
+            const dbInput = document.createElement('input');
+            dbInput.type = 'hidden';
+            dbInput.name = 'dbname';
+            dbInput.value = dbname;
+            form.appendChild(dbInput);
+        }
+
+        if (csrfToken) {
+            const tokenInput = document.createElement('input');
+            tokenInput.type = 'hidden';
+            tokenInput.name = csrfToken;
+            tokenInput.value = '1';
+            form.appendChild(tokenInput);
+        }
+
+        document.body.appendChild(form);
+        form.submit();
+        form.remove();
+    });
 });

@@ -1,0 +1,37 @@
+{
+  "$schema": "https://developer.joomla.org/schemas/json-meta/web_assets.json",
+  "name": "com_jmm",
+  "version": "5.2.0",
+  "description": "Joomla MySQL Manager Web Assets",
+  "license": "GPL-2.0-or-later",
+  "assets": [
+    {
+      "name": "com_jmm.admin",
+      "type": "style",
+      "uri": "com_jmm/jmm.css"
+    },
+    {
+      "name": "com_jmm.site",
+      "type": "style",
+      "uri": "com_jmm/jmm.css"
+    },
+    {
+      "name": "com_jmm.sql",
+      "type": "script",
+      "uri": "com_jmm/sql.js",
+      "dependencies": ["core"]
+    },
+    {
+      "name": "com_jmm.createtable",
+      "type": "script",
+      "uri": "com_jmm/createtable.js",
+      "dependencies": ["core"]
+    },
+    {
+      "name": "com_jmm.export",
+      "type": "script",
+      "uri": "com_jmm/export.js",
+      "dependencies": ["core"]
+    }
+  ]
+}
