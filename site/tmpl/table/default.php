@@ -1,51 +1,42 @@
 <?php
 defined('_JEXEC') or die;
 
-use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Router\Route;
 
+$layout = $this->params->get('display_layout', 'table');
 ?>
-<div class="com-jmm-table py-3">
+<div class="com-jmm-container py-3">
     <?php if (!empty($this->siteTable)): ?>
-        <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
             <h1 class="h2 mb-0"><?php echo $this->escape($this->siteTable->title); ?></h1>
+            <?php if (!empty($this->items)): ?>
+                <span class="badge bg-primary fs-6"><?php echo count($this->items); ?> <?php echo Text::_('COM_JMM_RECORDS'); ?></span>
+            <?php endif; ?>
         </div>
 
         <?php if (!empty($this->items)): ?>
-            <div class="table-responsive shadow-sm rounded mb-3">
-                <table class="table table-striped table-hover table-bordered align-middle mb-0">
-                    <thead class="table-primary">
-                        <tr>
-                            <?php foreach ($this->columns as $col): ?>
-                                <th scope="col"><?php echo $this->escape(ucwords(str_replace('_', ' ', $col))); ?></th>
-                            <?php endforeach; ?>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($this->items as $row): ?>
-                            <tr>
-                                <?php foreach ($row as $val): ?>
-                                    <td><?php echo htmlspecialchars((string) $val, ENT_QUOTES, 'UTF-8'); ?></td>
-                                <?php endforeach; ?>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
+            <?php if ($layout === 'cards'): ?>
+                <?php echo $this->loadTemplate('cards'); ?>
+            <?php elseif ($layout === 'chart'): ?>
+                <?php echo $this->loadTemplate('chart'); ?>
+            <?php else: ?>
+                <?php echo $this->loadTemplate('table'); ?>
+            <?php endif; ?>
 
-            <?php if ($this->pagination && $this->pagination->pagesTotal > 1): ?>
-                <div class="d-flex justify-content-center mt-3">
+            <?php if ($layout !== 'chart' && $this->pagination && $this->pagination->pagesTotal > 1): ?>
+                <div class="d-flex justify-content-center mt-4">
                     <?php echo $this->pagination->getPagesLinks(); ?>
                 </div>
             <?php endif; ?>
         <?php else: ?>
-            <div class="alert alert-info">
+            <div class="alert alert-info shadow-sm">
+                <span class="icon-info-circle me-2" aria-hidden="true"></span>
                 <?php echo Text::_('COM_JMM_NO_RECORDS_FOUND'); ?>
             </div>
         <?php endif; ?>
     <?php else: ?>
-        <div class="alert alert-warning">
+        <div class="alert alert-warning shadow-sm">
+            <span class="icon-exclamation-triangle me-2" aria-hidden="true"></span>
             <?php echo Text::_('COM_JMM_SITE_TABLE_NOT_SPECIFIED'); ?>
         </div>
     <?php endif; ?>
