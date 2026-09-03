@@ -101,17 +101,20 @@ class JmmHelper
         if (!empty($targetDb)) {
             $safeDb = self::cleanIdentifier($targetDb);
             if ($safeDb !== '') {
-                $currentDb = method_exists($db, 'getDatabase') ? (string) $db->getDatabase() : '';
-                // Only attempt switch if target is different from the currently active database
+                $currentDb = '';
+                if (is_object($db) && method_exists($db, 'getOption')) {
+                    $currentDb = (string) $db->getOption('database', '');
+                }
+                if ($currentDb === '') {
+                    $currentDb = (string) Factory::getApplication()->get('db', '');
+                }
+
+                // Only switch if target is different from active database
                 if ($currentDb === '' || strcasecmp($safeDb, $currentDb) !== 0) {
                     try {
-                        if (method_exists($db, 'select')) {
-                            $db->select($safeDb);
-                        } else {
-                            $db->setQuery('USE ' . $db->quoteName($safeDb))->execute();
-                        }
+                        $db->setQuery('USE ' . $db->quoteName($safeDb))->execute();
                     } catch (\Throwable $e) {
-                        // Silent fail if same connection or log warning only if debug enabled
+                        // Silently ignore if already on database or insufficient switch rights
                     }
                 }
             }
