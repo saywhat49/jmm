@@ -1,0 +1,1 @@
+-- JMM 5.2.3 Update Schema - Added missing language strings
