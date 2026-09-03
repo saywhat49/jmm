@@ -9,6 +9,7 @@
         <downloads>
             <downloadurl type="full" format="zip">https://github.com/saywhat49/jmm/releases/download/v5.2.2/com_jmm-5.2.2.zip</downloadurl>
         </downloads>
+        <sha256>255bda3f5375d9b121c9f25185eba98b1def3d3fa114a721049c02ef790c211b</sha256>
         <maintainer>Saywhat49</maintainer>
         <maintainerurl>https://github.com/saywhat49/jmm</maintainerurl>
         <section>Updates</section>
