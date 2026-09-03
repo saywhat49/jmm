@@ -7,7 +7,7 @@
     <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
     <authorEmail>saywhat49@gmail.com</authorEmail>
     <authorUrl>https://github.com/saywhat49/jmm</authorUrl>
-    <version>5.2.0</version>
+    <version>5.2.1</version>
     <description>COM_JMM_XML_DESCRIPTION</description>
 
     <namespace path="src">Saywhat49\Component\Jmm</namespace>
