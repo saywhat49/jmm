@@ -101,10 +101,18 @@ class JmmHelper
         if (!empty($targetDb)) {
             $safeDb = self::cleanIdentifier($targetDb);
             if ($safeDb !== '') {
-                try {
-                    $db->setQuery('USE ' . $db->quoteName($safeDb))->execute();
-                } catch (\Throwable $e) {
-                    $app->enqueueMessage(Text::sprintf('COM_JMM_SELECT_DB_ERROR', $safeDb), 'warning');
+                $currentDb = method_exists($db, 'getDatabase') ? (string) $db->getDatabase() : '';
+                // Only attempt switch if target is different from the currently active database
+                if ($currentDb === '' || strcasecmp($safeDb, $currentDb) !== 0) {
+                    try {
+                        if (method_exists($db, 'select')) {
+                            $db->select($safeDb);
+                        } else {
+                            $db->setQuery('USE ' . $db->quoteName($safeDb))->execute();
+                        }
+                    } catch (\Throwable $e) {
+                        // Silent fail if same connection or log warning only if debug enabled
+                    }
                 }
             }
         }
