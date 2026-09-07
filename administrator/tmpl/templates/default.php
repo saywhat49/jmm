@@ -7,6 +7,12 @@ use Joomla\CMS\Router\Route;
 
 $listOrder = $this->escape($this->state->get('list.ordering', 'id'));
 $listDirn  = $this->escape($this->state->get('list.direction', 'DESC'));
+
+$layoutLabels = [
+    'table' => '<span class="badge bg-primary"><span class="icon-list me-1"></span>' . Text::_('COM_JMM_LAYOUT_TABLE') . '</span>',
+    'cards' => '<span class="badge bg-success"><span class="icon-th me-1"></span>' . Text::_('COM_JMM_LAYOUT_CARDS') . '</span>',
+    'chart' => '<span class="badge bg-warning text-dark"><span class="icon-chart-pie me-1"></span>' . Text::_('COM_JMM_LAYOUT_CHART') . '</span>',
+];
 ?>
 <form action="<?php echo Route::_('index.php?option=com_jmm&view=templates'); ?>" method="post" name="adminForm" id="adminForm">
     <div class="row">
@@ -45,6 +51,9 @@ $listDirn  = $this->escape($this->state->get('list.direction', 'DESC'));
                                 <th scope="col">
                                     <?php echo HTMLHelper::_('grid.sort', 'COM_JMM_TITLE', 'title', $listDirn, $listOrder); ?>
                                 </th>
+                                <th scope="col" style="width: 200px;">
+                                    <?php echo Text::_('COM_JMM_TEMPLATE_LAYOUT_TYPE'); ?>
+                                </th>
                                 <th scope="col" style="width: 160px;">
                                     <?php echo HTMLHelper::_('grid.sort', 'COM_JMM_DATETIME', 'datetime', $listDirn, $listOrder); ?>
                                 </th>
@@ -66,6 +75,9 @@ $listDirn  = $this->escape($this->state->get('list.direction', 'DESC'));
                                                 <?php echo $this->escape($item->title); ?>
                                             </a>
                                         </td>
+                                        <td>
+                                            <?php echo $layoutLabels[$item->layout_type ?? 'table'] ?? $layoutLabels['table']; ?>
+                                        </td>
                                         <td><?php echo $this->escape($item->datetime); ?></td>
                                         <td class="text-center">
                                             <?php echo HTMLHelper::_('jgrid.published', $item->published, $i, 'templates.', true, 'cb'); ?>
@@ -74,7 +86,7 @@ $listDirn  = $this->escape($this->state->get('list.direction', 'DESC'));
                                 <?php endforeach; ?>
                             <?php else: ?>
                                 <tr>
-                                    <td colspan="5" class="text-center text-muted py-4">
+                                    <td colspan="6" class="text-center text-muted py-4">
                                         <?php echo Text::_('COM_JMM_NO_TEMPLATES_FOUND'); ?>
                                     </td>
                                 </tr>
@@ -83,7 +95,7 @@ $listDirn  = $this->escape($this->state->get('list.direction', 'DESC'));
                         <?php if ($this->pagination): ?>
                             <tfoot>
                                 <tr>
-                                    <td colspan="5">
+                                    <td colspan="6">
                                         <?php echo $this->pagination->getListFooter(); ?>
                                     </td>
                                 </tr>

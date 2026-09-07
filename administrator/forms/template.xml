@@ -3,6 +3,43 @@
     <fieldset name="details">
         <field name="id" type="text" default="0" label="JGLOBAL_FIELD_ID_LABEL" readonly="true" class="readonly" />
         <field name="title" type="text" label="COM_JMM_FIELD_TITLE_LABEL" description="COM_JMM_FIELD_TEMPLATE_TITLE_DESC" size="40" class="input-xxlarge" required="true" />
+
+        <field
+            name="layout_type"
+            type="list"
+            label="COM_JMM_TEMPLATE_LAYOUT_TYPE"
+            description="COM_JMM_TEMPLATE_LAYOUT_TYPE_DESC"
+            default="table"
+        >
+            <option value="table">COM_JMM_LAYOUT_TABLE</option>
+            <option value="cards">COM_JMM_LAYOUT_CARDS</option>
+            <option value="chart">COM_JMM_LAYOUT_CHART</option>
+        </field>
+
+        <field
+            name="chart_type"
+            type="list"
+            label="COM_JMM_CHART_TYPE"
+            description="COM_JMM_TEMPLATE_CHART_TYPE_DESC"
+            default="PieChart"
+            showon="layout_type:chart"
+        >
+            <option value="PieChart">COM_JMM_CHART_PIE</option>
+            <option value="ColumnChart">COM_JMM_CHART_COLUMN</option>
+            <option value="BarChart">COM_JMM_CHART_BAR</option>
+        </field>
+
+        <field
+            name="custom_css"
+            type="textarea"
+            label="COM_JMM_TEMPLATE_CUSTOM_CSS"
+            description="COM_JMM_TEMPLATE_CUSTOM_CSS_DESC"
+            rows="8"
+            cols="80"
+            class="input-xxlarge font-monospace"
+            filter="raw"
+        />
+
         <field name="published" type="list" label="JSTATUS" description="JFIELD_PUBLISHED_DESC" class="form-select" default="1">
             <option value="1">JPUBLISHED</option>
             <option value="0">JUNPUBLISHED</option>

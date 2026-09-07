@@ -10,7 +10,7 @@ class TemplatesModel extends ListModel
     public function __construct($config = [])
     {
         if (empty($config['filter_fields'])) {
-            $config['filter_fields'] = ['id', 'title', 'datetime', 'published'];
+            $config['filter_fields'] = ['id', 'title', 'layout_type', 'datetime', 'published'];
         }
         parent::__construct($config);
     }
@@ -19,7 +19,7 @@ class TemplatesModel extends ListModel
     {
         $db = $this->getDbo();
         $query = $db->getQuery(true)
-            ->select($db->quoteName(['id', 'title', 'datetime', 'published']))
+            ->select($db->quoteName(['id', 'title', 'layout_type', 'chart_type', 'custom_css', 'datetime', 'published']))
             ->from($db->quoteName('#__jmm_templates'));
 
         $published = $this->getState('filter.published');
