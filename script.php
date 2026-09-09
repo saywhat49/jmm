@@ -43,6 +43,37 @@ class Com_JmmInstallerScript extends InstallerScript
         $this->cleanupLegacyFiles();
     }
 
+/**
+ * Safely add a column if it doesn't exist (MySQL 8 compatible)
+ */
+private function addColumnIfNotExists($db, $table, $column, $definition): void
+{
+    try {
+        $columns = $db->getTableColumns($table);
+        if (!array_key_exists($column, $columns)) {
+            $db->setQuery("ALTER TABLE " . $db->quoteName($table) . " ADD COLUMN " . $db->quoteName($column) . " " . $definition);
+            $db->execute();
+        }
+    } catch (\Throwable $e) {
+        // Column may already exist, silently ignore
+    }
+}
+
+/**
+ * Ensure template table has the new columns (safe for MySQL 8)
+ */
+private function migrateTemplatesTable(): void
+{
+    try {
+        $db = \Joomla\CMS\Factory::getContainer()->get('DatabaseDriver');
+        $table = $db->getPrefix() . 'jmm_templates';
+        $this->addColumnIfNotExists($db, $table, 'layout_type', "varchar(20) NOT NULL DEFAULT 'table' AFTER `title`");
+        $this->addColumnIfNotExists($db, $table, 'chart_type', "varchar(20) NOT NULL DEFAULT 'PieChart' AFTER `layout_type`");
+        $this->addColumnIfNotExists($db, $table, 'custom_css', "text DEFAULT NULL AFTER `chart_type`");
+    } catch (\Throwable $e) {
+        // Non-fatal
+    }
+}
     public function postflight($type, $parent): void
     {
         $this->cleanupLegacyFiles();
