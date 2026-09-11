@@ -1,0 +1,1 @@
+-- JMM 5.4.2 : connexion dediee par base de donnees

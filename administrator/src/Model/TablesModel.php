@@ -21,7 +21,10 @@ class TablesModel extends ListModel
         $this->action = $input->getCmd('action', '');
 
         if (empty($config['filter_fields']) && !empty($this->activeTable)) {
-            $config['filter_fields'] = JmmHelper::getColumnsFromTable($this->activeTable);
+            $config['filter_fields'] = JmmHelper::getColumnsFromTable(
+                $this->activeTable,
+                JmmHelper::getDatabaseConnection($this->activeDb)
+            );
         }
 
         parent::__construct($config);

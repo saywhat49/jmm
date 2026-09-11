@@ -72,55 +72,111 @@ class JmmHelper
         return preg_replace('/[^A-Za-z0-9_$-]/', '', trim($identifier));
     }
 
+    /** Connexions dediees deja ouvertes, indexees par nom de base. */
+    private static array $connections = [];
+
+    /**
+     * Retourne une connexion pointant reellement sur $targetDb.
+     *
+     * On n'emet PAS "USE <base>" sur le DatabaseDriver partage de Joomla :
+     * la bascule n'est pas reversible pour le reste de la requete (session,
+     * menus, journaux passeraient sur la mauvaise base) et elle echoue en
+     * silence quand l'utilisateur MySQL n'a pas de droits sur la base cible.
+     * On ouvre a la place une connexion distincte, mise en cache.
+     */
     public static function getDatabaseConnection(?string $targetDb = null): DatabaseDriver
     {
-        $app = Factory::getApplication();
+        $app    = Factory::getApplication();
+        $config = $app->getConfig();
         $params = ComponentHelper::getParams('com_jmm');
+        $safeDb = $targetDb ? self::cleanIdentifier($targetDb) : '';
+
         $useCustom = (int) $params->get('dbsettings', 0) === 1;
 
         if ($useCustom) {
             $options = [
-                'driver'   => 'mysql',
+                'driver'   => 'mysqli',
                 'host'     => (string) $params->get('dbhost', 'localhost'),
                 'user'     => (string) $params->get('dbusername', ''),
                 'password' => (string) $params->get('dbpass', ''),
-                'database' => $targetDb ? self::cleanIdentifier($targetDb) : (string) $params->get('dbname', ''),
+                'database' => $safeDb !== '' ? $safeDb : (string) $params->get('dbname', ''),
                 'prefix'   => (string) $params->get('dbprefix', ''),
             ];
 
-            try {
-                $factory = new DatabaseFactory();
-                return $factory->getDriver('mysql', $options);
-            } catch (\Throwable $e) {
-                $app->enqueueMessage(Text::sprintf('COM_JMM_CUSTOM_DB_CONNECT_ERROR', $e->getMessage()), 'warning');
+            $driver = self::openConnection($options);
+
+            if ($driver !== null) {
+                return $driver;
             }
         }
 
-        $db = Factory::getContainer()->get('DatabaseDriver');
+        $shared = Factory::getContainer()->get('DatabaseDriver');
 
-        if (!empty($targetDb)) {
-            $safeDb = self::cleanIdentifier($targetDb);
-            if ($safeDb !== '') {
-                $currentDb = '';
-                if (is_object($db) && method_exists($db, 'getOption')) {
-                    $currentDb = (string) $db->getOption('database', '');
-                }
-                if ($currentDb === '') {
-                    $currentDb = (string) Factory::getApplication()->get('db', '');
-                }
-
-                // Only switch if target is different from active database
-                if ($currentDb === '' || strcasecmp($safeDb, $currentDb) !== 0) {
-                    try {
-                        $db->setQuery('USE ' . $db->quoteName($safeDb))->execute();
-                    } catch (\Throwable $e) {
-                        // Silently ignore if already on database or insufficient switch rights
-                    }
-                }
-            }
+        // Pas de base demandee, ou base identique a celle de Joomla.
+        if ($safeDb === '' || strcasecmp($safeDb, (string) $config->get('db', '')) === 0) {
+            return $shared;
         }
 
-        return $db;
+        $options = [
+            'driver'   => (string) $config->get('dbtype', 'mysqli'),
+            'host'     => (string) $config->get('host', 'localhost'),
+            'user'     => (string) $config->get('user', ''),
+            'password' => (string) $config->get('password', ''),
+            'database' => $safeDb,
+            'prefix'   => (string) $config->get('dbprefix', ''),
+        ];
+
+        $driver = self::openConnection($options);
+
+        if ($driver !== null) {
+            return $driver;
+        }
+
+        // Echec explicite : l'utilisateur doit savoir pourquoi il voit
+        // les tables de la base de Joomla et non celles qu'il a demandees.
+        $app->enqueueMessage(
+            Text::sprintf('COM_JMM_DB_SWITCH_FAILED', $safeDb),
+            'warning'
+        );
+
+        return $shared;
+    }
+
+    /**
+     * Ouvre (et met en cache) une connexion, ou null en cas d'echec.
+     */
+    private static function openConnection(array $options): ?DatabaseDriver
+    {
+        $key = ($options['driver'] ?? '') . '|' . ($options['host'] ?? '')
+            . '|' . ($options['user'] ?? '') . '|' . ($options['database'] ?? '');
+
+        if (isset(self::$connections[$key])) {
+            return self::$connections[$key];
+        }
+
+        if (($options['database'] ?? '') === '') {
+            return null;
+        }
+
+        $driverName = $options['driver'] ?: 'mysqli';
+
+        if ($driverName === 'mysql') {
+            $driverName = 'mysqli';
+        }
+
+        $options['driver'] = $driverName;
+
+        try {
+            $factory = new DatabaseFactory();
+            $driver  = $factory->getDriver($driverName, $options);
+            $driver->connect();
+        } catch (\Throwable $e) {
+            return null;
+        }
+
+        self::$connections[$key] = $driver;
+
+        return $driver;
     }
 
     public static function getDataBaseLists(?DatabaseDriver $db = null): array

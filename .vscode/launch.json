@@ -1,0 +1,45 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "JMM — simulation (-WhatIf)",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "${workspaceFolder}/Deploy-Jmm.ps1",
+            "args": ["-WhatIf"],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "name": "JMM — construire et pousser, sans release",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "${workspaceFolder}/Deploy-Jmm.ps1",
+            "args": ["-SkipRelease"],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "name": "JMM — publier",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "${workspaceFolder}/Deploy-Jmm.ps1",
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "name": "JMM — publier (version demandée)",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "${workspaceFolder}/Deploy-Jmm.ps1",
+            "args": ["-Version", "${input:version}"],
+            "cwd": "${workspaceFolder}"
+        }
+    ],
+    "inputs": [
+        {
+            "id": "version",
+            "type": "promptString",
+            "description": "Version à publier (X.Y.Z)",
+            "default": "5.4.2"
+        }
+    ]
+}

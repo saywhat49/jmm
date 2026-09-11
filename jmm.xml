@@ -2,12 +2,12 @@
 <extension type="component" version="5.0" method="upgrade">
     <name>com_jmm</name>
     <author>Saywhat49</author>
-    <creationDate>2026-09-11</creationDate>
+    <creationDate>2026-08-31</creationDate>
     <copyright>Copyright (C) 2013-2026 Open Source Matters, Inc. All rights reserved.</copyright>
     <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
     <authorEmail>saywhat49@gmail.com</authorEmail>
     <authorUrl>https://github.com/saywhat49/jmm</authorUrl>
-    <version>5.4.1</version>
+    <version>5.4.2</version>
     <description>COM_JMM_XML_DESCRIPTION</description>
 
     <namespace path="src">Saywhat49\Component\Jmm</namespace>
