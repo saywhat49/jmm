@@ -14,6 +14,7 @@
             <option value="table">COM_JMM_LAYOUT_TABLE</option>
             <option value="cards">COM_JMM_LAYOUT_CARDS</option>
             <option value="chart">COM_JMM_LAYOUT_CHART</option>
+            <option value="custom">COM_JMM_LAYOUT_CUSTOM</option>
         </field>
 
         <field
@@ -28,6 +29,39 @@
             <option value="ColumnChart">COM_JMM_CHART_COLUMN</option>
             <option value="BarChart">COM_JMM_CHART_BAR</option>
         </field>
+
+        <field
+            name="php"
+            type="textarea"
+            label="COM_JMM_TEMPLATE_PHP"
+            description="COM_JMM_TEMPLATE_PHP_DESC"
+            rows="24"
+            cols="100"
+            class="input-xxlarge font-monospace"
+            filter="raw"
+        />
+
+        <field
+            name="css_file"
+            type="textarea"
+            label="COM_JMM_TEMPLATE_CSS_FILE"
+            description="COM_JMM_TEMPLATE_CSS_FILE_DESC"
+            rows="12"
+            cols="100"
+            class="input-xxlarge font-monospace"
+            filter="raw"
+        />
+
+        <field
+            name="js"
+            type="textarea"
+            label="COM_JMM_TEMPLATE_JS"
+            description="COM_JMM_TEMPLATE_JS_DESC"
+            rows="12"
+            cols="100"
+            class="input-xxlarge font-monospace"
+            filter="raw"
+        />
 
         <field
             name="custom_css"

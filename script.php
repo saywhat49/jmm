@@ -77,6 +77,113 @@ private function migrateTemplatesTable(): void
     public function postflight($type, $parent): void
     {
         $this->cleanupLegacyFiles();
+        $this->deployTemplates($parent);
+        $this->flagCustomTemplates();
+    }
+
+    /**
+     * Copie les modeles livres dans le paquet vers
+     * /components/com_jmm/templates/<nom>/.
+     *
+     * Un dossier deja present sur le serveur n'est JAMAIS ecrase : les
+     * modifications faites depuis l'administration sont conservees. Pour
+     * forcer le remplacement d'un modele, supprimez son dossier avant
+     * d'installer.
+     */
+    private function deployTemplates($parent): void
+    {
+        try {
+            $source = $parent->getParent()->getPath('source') . '/templates';
+        } catch (\Throwable $e) {
+            return;
+        }
+
+        if (!Folder::exists($source)) {
+            return;
+        }
+
+        $target = JPATH_SITE . '/components/com_jmm/templates';
+
+        if (!Folder::exists($target)) {
+            Folder::create($target);
+        }
+
+        $copied = [];
+        $kept   = [];
+
+        foreach (Folder::folders($source) as $name) {
+            if (Folder::exists($target . '/' . $name)) {
+                $kept[] = $name;
+                continue;
+            }
+
+            try {
+                Folder::copy($source . '/' . $name, $target . '/' . $name, '', true);
+                $copied[] = $name;
+            } catch (\Throwable $e) {
+                // Non bloquant : on continue avec les autres modeles.
+            }
+        }
+
+        foreach (Folder::files($source) as $file) {
+            if (!File::exists($target . '/' . $file)) {
+                File::copy($source . '/' . $file, $target . '/' . $file);
+            }
+        }
+
+        $this->registerTemplates($copied);
+
+        $app = Factory::getApplication();
+
+        if ($copied) {
+            $app->enqueueMessage(
+                'JMM : ' . count($copied) . ' modele(s) installe(s) : ' . implode(', ', $copied),
+                'message'
+            );
+        }
+
+        if ($kept) {
+            $app->enqueueMessage(
+                'JMM : ' . count($kept) . ' modele(s) deja present(s), conserve(s) sans modification : '
+                . implode(', ', $kept),
+                'info'
+            );
+        }
+    }
+
+    /**
+     * Cree l'enregistrement #__jmm_templates manquant pour les modeles copies.
+     */
+    private function registerTemplates(array $names): void
+    {
+        if (!$names) {
+            return;
+        }
+
+        try {
+            $db = Factory::getContainer()->get('DatabaseDriver');
+
+            foreach ($names as $name) {
+                $db->setQuery(
+                    'SELECT COUNT(*) FROM ' . $db->quoteName('#__jmm_templates')
+                    . ' WHERE ' . $db->quoteName('title') . ' = ' . $db->quote($name)
+                );
+
+                if ((int) $db->loadResult() > 0) {
+                    continue;
+                }
+
+                $db->setQuery(
+                    'INSERT INTO ' . $db->quoteName('#__jmm_templates')
+                    . ' (' . $db->quoteName('title') . ', ' . $db->quoteName('layout_type')
+                    . ', ' . $db->quoteName('published') . ', ' . $db->quoteName('datetime') . ')'
+                    . ' VALUES (' . $db->quote($name) . ', ' . $db->quote('custom') . ', 1, NOW())'
+                );
+                $db->execute();
+            }
+        } catch (\Throwable $e) {
+            // Non bloquant.
+        }
     }
 
     private function cleanupLegacyFiles(): void
@@ -106,8 +213,10 @@ private function migrateTemplatesTable(): void
             JPATH_SITE . '/components/com_jmm/controllers',
             JPATH_SITE . '/components/com_jmm/models',
             JPATH_SITE . '/components/com_jmm/views',
-            JPATH_SITE . '/components/com_jmm/templates',
         ];
+
+        // NOTE : /components/com_jmm/templates ne DOIT PAS être supprimé.
+        // Ce dossier contient les modèles PHP créés par l'utilisateur.
 
         foreach ($legacyDirs as $dir) {
             if (Folder::exists($dir)) {
@@ -115,5 +224,60 @@ private function migrateTemplatesTable(): void
                 Folder::delete($dir);
             }
         }
+
+        $this->ensureTemplatesFolder();
+        $this->flagCustomTemplates();
     }
+
+    /**
+     * Passe en layout_type = 'custom' tout modèle dont le dossier contient
+     * déjà un index.php (modèles restaurés depuis une version 5.0.x).
+     */
+    private function flagCustomTemplates(): void
+    {
+        try {
+            $db    = Factory::getContainer()->get('DatabaseDriver');
+            $base  = JPATH_SITE . '/components/com_jmm/templates';
+
+            $db->setQuery('SELECT id, title, layout_type FROM ' . $db->quoteName('#__jmm_templates'));
+            $rows = $db->loadObjectList();
+
+            foreach ((array) $rows as $row) {
+                if ($row->layout_type === 'custom' || empty($row->title)) {
+                    continue;
+                }
+
+                if (!File::exists($base . '/' . $row->title . '/index.php')) {
+                    continue;
+                }
+
+                $db->setQuery(
+                    'UPDATE ' . $db->quoteName('#__jmm_templates')
+                    . ' SET ' . $db->quoteName('layout_type') . ' = ' . $db->quote('custom')
+                    . ' WHERE ' . $db->quoteName('id') . ' = ' . (int) $row->id
+                );
+                $db->execute();
+            }
+        } catch (\Throwable $e) {
+            // Non bloquant.
+        }
+    }
+
+    /**
+     * Cree la racine des modeles utilisateur si elle est absente.
+     * Le modele "default" est fourni par le paquet, pas genere ici.
+     */
+    private function ensureTemplatesFolder(): void
+    {
+        $base = JPATH_SITE . '/components/com_jmm/templates';
+
+        if (!Folder::exists($base)) {
+            Folder::create($base);
+        }
+
+        if (!File::exists($base . '/index.html')) {
+            File::write($base . '/index.html', '<!DOCTYPE html><title></title>');
+        }
+    }
+
 }

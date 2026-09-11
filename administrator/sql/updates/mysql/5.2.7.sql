@@ -1,0 +1,1 @@
+-- JMM 5.2.7 : champ PHP toujours editable dans la fiche modele

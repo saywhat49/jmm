@@ -12,6 +12,7 @@ $layoutLabels = [
     'table' => '<span class="badge bg-primary"><span class="icon-list me-1"></span>' . Text::_('COM_JMM_LAYOUT_TABLE') . '</span>',
     'cards' => '<span class="badge bg-success"><span class="icon-th me-1"></span>' . Text::_('COM_JMM_LAYOUT_CARDS') . '</span>',
     'chart' => '<span class="badge bg-warning text-dark"><span class="icon-chart-pie me-1"></span>' . Text::_('COM_JMM_LAYOUT_CHART') . '</span>',
+    'custom' => '<span class="badge bg-dark"><span class="icon-code me-1"></span>' . Text::_('COM_JMM_LAYOUT_CUSTOM') . '</span>',
 ];
 ?>
 <form action="<?php echo Route::_('index.php?option=com_jmm&view=templates'); ?>" method="post" name="adminForm" id="adminForm">

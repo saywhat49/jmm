@@ -25,11 +25,7 @@ defined('_JEXEC') or die;
                             <li class="list-group-item px-0 py-2 d-flex justify-content-between align-items-center">
                                 <span class="text-muted small fw-semibold"><?php echo $this->escape(ucwords(str_replace('_', ' ', $colName))); ?>:</span>
                                 <div>
-                                    <?php if (preg_match('/^(0[1-9])(?:[ .-]?[0-9]{2}){4}$/', $strVal)): ?>
-                                        <a href="tel:<?php echo $this->escape(preg_replace('/[^0-9+]/', '', $strVal)); ?>" class="btn btn-sm btn-outline-primary py-0">
-                                            <span class="icon-phone me-1" aria-hidden="true"></span><?php echo $this->escape($strVal); ?>
-                                        </a>
-                                    <?php elseif (strtolower($strVal) === 'oui'): ?>
+                                    <?php if (strtolower($strVal) === 'oui'): ?>
                                         <span class="badge bg-success">Oui</span>
                                     <?php elseif (strtolower($strVal) === 'non'): ?>
                                         <span class="badge bg-secondary">Non</span>

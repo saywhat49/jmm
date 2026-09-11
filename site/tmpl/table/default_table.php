@@ -18,16 +18,14 @@ defined('_JEXEC') or die;
                             <?php
                             $strVal = (string) $val;
                             $lower = strtolower($strVal);
-                            if ($lower === 'oui' || $lower === 'yes' || $lower === '1' && strlen($strVal) === 1): ?>
+                            // Les valeurs numeriques 0 et 1 ne sont plus transformees en badge :
+                            // une colonne d'identifiants ou de quantites restait illisible.
+                            if ($lower === 'oui' || $lower === 'yes'): ?>
                                 <span class="badge bg-success"><?php echo $this->escape($strVal); ?></span>
-                            <?php elseif ($lower === 'non' || $lower === 'no' || $lower === '0' && strlen($strVal) === 1): ?>
+                            <?php elseif ($lower === 'non' || $lower === 'no'): ?>
                                 <span class="badge bg-secondary"><?php echo $this->escape($strVal); ?></span>
                             <?php elseif (filter_var($strVal, FILTER_VALIDATE_EMAIL)): ?>
                                 <a href="mailto:<?php echo $this->escape($strVal); ?>" class="text-decoration-none"><?php echo $this->escape($strVal); ?></a>
-                            <?php elseif (preg_match('/^(0[1-9])(?:[ .-]?[0-9]{2}){4}$/', $strVal)): ?>
-                                <a href="tel:<?php echo $this->escape(preg_replace('/[^0-9+]/', '', $strVal)); ?>" class="text-decoration-none font-monospace">
-                                    <span class="icon-phone me-1" aria-hidden="true"></span><?php echo $this->escape($strVal); ?>
-                                </a>
                             <?php else: ?>
                                 <?php echo htmlspecialchars($strVal, ENT_QUOTES, 'UTF-8'); ?>
                             <?php endif; ?>

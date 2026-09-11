@@ -1,0 +1,263 @@
+/* ==========================================================================
+   Modèle JMM « sociétés adhérentes »
+   Tableau responsive : tableau classique sur grand écran,
+   cartes empilées en dessous de 768 px.
+   ========================================================================== */
+
+.jmm-societes {
+    --jmm-border: #dee2e6;
+    --jmm-header-bg: #2c3e50;
+    --jmm-header-color: #ffffff;
+    --jmm-stripe: #f6f8fa;
+    --jmm-hover: #eaf2fb;
+    --jmm-accent: #2c7be5;
+    --jmm-radius: 6px;
+    --jmm-text: #212529;
+    --jmm-muted: #6c757d;
+
+    color: var(--jmm-text);
+}
+
+/* --- Barre d'outils ------------------------------------------------------ */
+
+.jmm-societes .jmm-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: .75rem;
+    margin-bottom: 1rem;
+}
+
+.jmm-societes .jmm-title {
+    margin: 0;
+    font-size: 1.35rem;
+    line-height: 1.3;
+}
+
+.jmm-societes .jmm-search {
+    flex: 0 1 320px;
+}
+
+.jmm-societes .jmm-search-input {
+    width: 100%;
+    padding: .5rem .75rem;
+    border: 1px solid var(--jmm-border);
+    border-radius: var(--jmm-radius);
+    font-size: .95rem;
+    background: #fff;
+}
+
+.jmm-societes .jmm-search-input:focus {
+    outline: none;
+    border-color: var(--jmm-accent);
+    box-shadow: 0 0 0 3px rgba(44, 123, 229, .18);
+}
+
+.jmm-visually-hidden {
+    position: absolute !important;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* --- Tableau ------------------------------------------------------------- */
+
+.jmm-societes .jmm-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border: 1px solid var(--jmm-border);
+    border-radius: var(--jmm-radius);
+}
+
+.jmm-societes .jmm-table {
+    width: 100%;
+    margin: 0;
+    border-collapse: collapse;
+    font-size: .95rem;
+}
+
+.jmm-societes .jmm-table th,
+.jmm-societes .jmm-table td {
+    padding: .65rem .85rem;
+    text-align: left;
+    vertical-align: top;
+    border-bottom: 1px solid var(--jmm-border);
+}
+
+.jmm-societes .jmm-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: var(--jmm-header-bg);
+    color: var(--jmm-header-color);
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+}
+
+.jmm-societes .jmm-table thead th:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: -3px;
+}
+
+.jmm-societes .jmm-sort-icon::after {
+    content: "\2195";
+    margin-left: .4rem;
+    opacity: .45;
+    font-size: .85em;
+}
+
+.jmm-societes .jmm-table thead th[aria-sort="ascending"] .jmm-sort-icon::after {
+    content: "\2191";
+    opacity: 1;
+}
+
+.jmm-societes .jmm-table thead th[aria-sort="descending"] .jmm-sort-icon::after {
+    content: "\2193";
+    opacity: 1;
+}
+
+.jmm-societes .jmm-table tbody tr:nth-child(even) {
+    background: var(--jmm-stripe);
+}
+
+.jmm-societes .jmm-table tbody tr:hover {
+    background: var(--jmm-hover);
+}
+
+.jmm-societes .jmm-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.jmm-societes .jmm-empty {
+    margin-top: 1rem;
+    padding: .9rem 1rem;
+    border-radius: var(--jmm-radius);
+    background: var(--jmm-stripe);
+    color: var(--jmm-muted);
+}
+
+/* --- Mode cartes : moins de 768 px --------------------------------------- */
+
+@media screen and (max-width: 767.98px) {
+
+    .jmm-societes .jmm-table-wrapper {
+        border: 0;
+        border-radius: 0;
+        overflow: visible;
+    }
+
+    .jmm-societes .jmm-table,
+    .jmm-societes .jmm-table tbody,
+    .jmm-societes .jmm-table tr,
+    .jmm-societes .jmm-table td {
+        display: block;
+        width: 100%;
+    }
+
+    /* L'en-tête n'est plus affiché : chaque cellule porte son libellé. */
+    .jmm-societes .jmm-table thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+    }
+
+    .jmm-societes .jmm-table tbody tr {
+        margin-bottom: .85rem;
+        border: 1px solid var(--jmm-border);
+        border-radius: var(--jmm-radius);
+        background: #fff;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, .06);
+        overflow: hidden;
+    }
+
+    .jmm-societes .jmm-table tbody tr:nth-child(even) {
+        background: #fff;
+    }
+
+    .jmm-societes .jmm-table tbody tr td {
+        display: flex;
+        gap: .75rem;
+        align-items: baseline;
+        padding: .55rem .8rem;
+        border-bottom: 1px solid #f0f2f5;
+    }
+
+    .jmm-societes .jmm-table tbody tr td:last-child {
+        border-bottom: 0;
+    }
+
+    .jmm-societes .jmm-table tbody tr td::before {
+        content: attr(data-label);
+        flex: 0 0 40%;
+        max-width: 40%;
+        font-weight: 600;
+        color: var(--jmm-muted);
+        font-size: .82rem;
+        text-transform: uppercase;
+        letter-spacing: .02em;
+    }
+
+    /* Cellule vide : on garde la ligne lisible. */
+    .jmm-societes .jmm-table tbody tr td:empty::after {
+        content: "—";
+        color: var(--jmm-muted);
+    }
+
+    .jmm-societes .jmm-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .jmm-societes .jmm-search {
+        flex: 1 1 auto;
+    }
+}
+
+/* --- Impression ---------------------------------------------------------- */
+
+@media print {
+    .jmm-societes .jmm-search,
+    .jmm-societes .jmm-sort-icon {
+        display: none;
+    }
+
+    .jmm-societes .jmm-table-wrapper {
+        border: 0;
+        overflow: visible;
+    }
+
+    .jmm-societes .jmm-table thead th {
+        position: static;
+        background: #fff;
+        color: #000;
+        border-bottom: 2px solid #000;
+    }
+}
+
+/* --- Thème sombre du gabarit Joomla, si présent -------------------------- */
+
+@media (prefers-color-scheme: dark) {
+    .jmm-societes {
+        --jmm-border: #3a4048;
+        --jmm-stripe: #23272c;
+        --jmm-hover: #2b323a;
+        --jmm-text: #e6e8ea;
+        --jmm-muted: #9aa2ab;
+    }
+
+    .jmm-societes .jmm-search-input,
+    .jmm-societes .jmm-table tbody tr {
+        background: #1c1f23;
+        color: var(--jmm-text);
+    }
+}

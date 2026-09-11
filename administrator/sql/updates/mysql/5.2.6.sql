@@ -1,0 +1,3 @@
+-- JMM 5.2.6 : restauration des modeles PHP a base de fichiers
+-- Aucun changement de schema : le code PHP/CSS/JS est stocke dans
+-- /components/com_jmm/templates/<titre>/

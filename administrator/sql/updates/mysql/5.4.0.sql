@@ -1,0 +1,1 @@
+-- JMM 5.4.0 : modeles fournis avec le paquet, deploiement non destructif

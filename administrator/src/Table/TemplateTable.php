@@ -31,7 +31,7 @@ class TemplateTable extends Table
         }
 
         // Sanitize layout_type whitelist
-        $allowedLayouts = ['table', 'cards', 'chart'];
+        $allowedLayouts = ['table', 'cards', 'chart', 'custom'];
         if (empty($this->layout_type) || !in_array($this->layout_type, $allowedLayouts, true)) {
             $this->layout_type = 'table';
         }

@@ -1,0 +1,1 @@
+-- JMM 5.3.1 : chargement correct du CSS et du JS des modeles personnalises

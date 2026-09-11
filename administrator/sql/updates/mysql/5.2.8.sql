@@ -1,0 +1,1 @@
+-- JMM 5.2.8 : diagnostic frontend des modeles personnalises

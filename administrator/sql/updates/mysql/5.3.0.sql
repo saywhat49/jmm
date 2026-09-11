@@ -1,0 +1,1 @@
+-- JMM 5.3.0 : libelle de page et compteur configurables

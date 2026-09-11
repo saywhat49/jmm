@@ -1,0 +1,1 @@
+-- JMM 5.2.9 : compatibilite des modeles PHP 5.0.x ($document, $this->rows, pagination)
