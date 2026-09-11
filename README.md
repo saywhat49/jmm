@@ -37,7 +37,7 @@
 
 1. Download the latest release from the [Releases](https://github.com/saywhat49/jmm/releases) page.
 2. In your Joomla Administrator, go to **System > Install > Extensions**.
-3. Upload and install the component package (`com_jmm-5.4.10.zip`).
+3. Upload and install the component package (`com_jmm-X.Y.Z.zip`).
 4. Access the component via **Components > Joomla MySQL Manager**.
 
 ---
