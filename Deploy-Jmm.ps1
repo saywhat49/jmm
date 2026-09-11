@@ -113,7 +113,46 @@ function Get-Sha256 {
     return ([System.BitConverter]::ToString($bytes) -replace '-', '').ToLowerInvariant()
 }
 
-Write-Host 'Deploy-Jmm.ps1 - revision 5' -ForegroundColor DarkGray
+function Invoke-Native {
+    <#
+        Appelle un executable externe sans se faire piegier par
+        $ErrorActionPreference = 'Stop'. PowerShell transforme toute sortie
+        sur stderr d'un programme natif en erreur terminante, or git et gh
+        y ecrivent leur fonctionnement normal : "Switched to branch",
+        la progression d'un push, ou "release not found".
+        On neutralise la preference le temps de l'appel, on fusionne stderr
+        dans la sortie standard, et on decide sur le code de retour, qui est
+        le seul indicateur fiable.
+    #>
+    param(
+        [Parameter(Mandatory = $true)][string]   $FilePath,
+        [Parameter(Mandatory = $true)][string[]] $Arguments,
+        [switch] $AllowFailure
+    )
+
+    $previous = $ErrorActionPreference
+    $ErrorActionPreference = 'Continue'
+
+    try {
+        $output = & $FilePath @Arguments 2>&1 | ForEach-Object { [string] $_ }
+        $code   = $LASTEXITCODE
+    }
+    finally {
+        $ErrorActionPreference = $previous
+    }
+
+    if (-not $AllowFailure -and $code -ne 0) {
+        $joined = ($output -join [Environment]::NewLine)
+        throw "$FilePath $($Arguments -join ' ') a echoue (code $code) :$([Environment]::NewLine)$joined"
+    }
+
+    return [pscustomobject]@{
+        ExitCode = $code
+        Output   = @($output)
+    }
+}
+
+Write-Host 'Deploy-Jmm.ps1 - revision 6' -ForegroundColor DarkGray
 
 # ---------------------------------------------------------------------------
 # 1. Environnement
@@ -377,54 +416,61 @@ Push-Location $RepoPath
 try {
     Write-Step "Commit et push sur $Branch"
 
-    $current = (git rev-parse --abbrev-ref HEAD).Trim()
+    $current = (Invoke-Native git @('rev-parse', '--abbrev-ref', 'HEAD')).Output[0].Trim()
+    Write-Host "    Branche courante : $current"
+
     if ($current -ne $Branch) {
         if ($PSCmdlet.ShouldProcess($Branch, 'Basculer de branche')) {
-            git checkout $Branch
-            if ($LASTEXITCODE -ne 0) { throw "Impossible de basculer sur la branche $Branch." }
+            $null = Invoke-Native git @('checkout', $Branch)
         }
     }
 
     if ($PSCmdlet.ShouldProcess($Branch, 'Commiter et pousser')) {
-        git add -A
-        if ($LASTEXITCODE -ne 0) { throw 'git add a echoue.' }
+        $null = Invoke-Native git @('add', '-A')
 
-        $pending = git status --porcelain
-        if ([string]::IsNullOrWhiteSpace($pending)) {
+        $pending = (Invoke-Native git @('status', '--porcelain')).Output
+
+        if ($pending.Count -eq 0) {
             Write-Host '    Aucun changement a commiter.'
         }
         else {
-            git commit -m "Release $tag"
-            if ($LASTEXITCODE -ne 0) { throw 'git commit a echoue.' }
-
-            git push origin $Branch
-            if ($LASTEXITCODE -ne 0) { throw 'git push a echoue.' }
+            Write-Host "    $($pending.Count) fichier(s) modifie(s)"
+            $null = Invoke-Native git @('commit', '-m', "Release $tag")
+            $null = Invoke-Native git @('push', 'origin', $Branch)
+            Write-Host '    Pousse.'
         }
     }
 
     if (-not $SkipRelease -and $PSCmdlet.ShouldProcess($tag, 'Creer la release GitHub')) {
-        Write-Step "Creation de la release $tag"
+        Write-Step "Publication de la release $tag"
 
-        $null = gh release view $tag --repo $RepoSlug 2>$null
+        # -AllowFailure : "release not found" est une reponse valide ici,
+        # pas une panne.
+        $view = Invoke-Native gh @('release', 'view', $tag, '--repo', $RepoSlug) -AllowFailure
 
-        if ($LASTEXITCODE -eq 0) {
+        if ($view.ExitCode -eq 0) {
             Write-Warning "La release $tag existe deja."
             $answer = Read-Host 'Remplacer l''archive qui y est attachee ? (o/N)'
+
             if ($answer -match '^[oOyY]') {
-                gh release upload $tag $zipPath --repo $RepoSlug --clobber
-                if ($LASTEXITCODE -ne 0) { throw 'Televersement de l''archive impossible.' }
+                $null = Invoke-Native gh @('release', 'upload', $tag, $zipPath, '--repo', $RepoSlug, '--clobber')
+                Write-Host '    Archive remplacee.'
             }
             else {
                 Write-Host '    Release inchangee.'
             }
         }
         else {
-            gh release create $tag $zipPath `
-                --repo $RepoSlug `
-                --title "JMM $Version" `
-                --notes "Joomla MySQL Manager $Version`n`nSHA-256 : ``$sha256``" `
-                --target $Branch
-            if ($LASTEXITCODE -ne 0) { throw 'Creation de la release impossible.' }
+            $notes = "Joomla MySQL Manager $Version" + [Environment]::NewLine + [Environment]::NewLine + "SHA-256 : ``$sha256``"
+
+            $null = Invoke-Native gh @(
+                'release', 'create', $tag, $zipPath,
+                '--repo', $RepoSlug,
+                '--title', "JMM $Version",
+                '--notes', $notes,
+                '--target', $Branch
+            )
+            Write-Host '    Release creee.'
         }
     }
 }
