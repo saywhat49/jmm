@@ -21,6 +21,11 @@ class HtmlView extends BaseHtmlView
         $this->pagination = $this->get('Pagination');
         $this->state      = $this->get('State');
 
+        $wa = $this->getDocument()->getWebAssetManager();
+
+        $wa->useStyle('com_jmm.admin');
+
+
         JmmHelper::addSubmenu('databases');
         $this->addToolbar();
 

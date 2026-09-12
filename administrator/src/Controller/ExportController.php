@@ -24,7 +24,10 @@ class ExportController extends BaseController
             throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
         }
 
-        $query = $input->getString('query', '', 'raw');
+        // getString applique le filtre STRING, qui supprime tout ce qui
+        // ressemble a une balise : "WHERE a < 5 AND b > 2" y perdrait un
+        // morceau. Une requete SQL se lit en brut.
+        $query = (string) $input->get('query', '', 'raw');
         $rawFilename = $input->getString('filename', 'export');
         $filename = preg_replace('/[^A-Za-z0-9_-]/', '', $rawFilename) ?: 'export';
         $dbname = $input->getString('dbname', '');

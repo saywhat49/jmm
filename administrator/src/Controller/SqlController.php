@@ -37,7 +37,9 @@ class SqlController extends BaseController
 
         $input = $app->getInput();
         $title = $input->getString('title', '');
-        $query = $input->getString('query', '', 'raw');
+        // getString applique le filtre STRING et supprime tout ce qui
+        // ressemble a une balise : "WHERE a < 5" y perdrait la suite.
+        $query = (string) $input->get('query', '', 'raw');
         $dbname = $input->getString('dbname', '');
 
         /** @var \Saywhat49\Component\Jmm\Administrator\Model\SqlModel $model */
@@ -68,7 +70,9 @@ class SqlController extends BaseController
 
         $input = $app->getInput();
         $title = $input->getString('title', '');
-        $query = $input->getString('query', '', 'raw');
+        // getString applique le filtre STRING et supprime tout ce qui
+        // ressemble a une balise : "WHERE a < 5" y perdrait la suite.
+        $query = (string) $input->get('query', '', 'raw');
         $dbname = $input->getString('dbname', '');
 
         /** @var \Saywhat49\Component\Jmm\Administrator\Model\SqlModel $model */

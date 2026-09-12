@@ -4,6 +4,7 @@ namespace Saywhat49\Component\Jmm\Administrator\Model;
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Saywhat49\Component\Jmm\Administrator\Helper\JmmHelper;
 
@@ -21,12 +22,12 @@ class ExportModel extends BaseDatabaseModel
             $db->setQuery($sqlQuery);
             $rows = $db->loadAssocList();
         } catch (\Throwable $e) {
-            echo "Error executing query: " . $e->getMessage();
+            echo Text::sprintf('COM_JMM_EXPORT_QUERY_ERROR', $e->getMessage());
             return;
         }
 
         if (empty($rows)) {
-            echo "No records to export.";
+            echo Text::_('COM_JMM_EXPORT_NO_RECORDS');
             return;
         }
 
@@ -38,6 +39,17 @@ class ExportModel extends BaseDatabaseModel
         $app->setHeader('Content-Disposition', 'attachment; filename="' . $safeFilename . '"', true);
         $app->setHeader('Pragma', 'no-cache', true);
         $app->setHeader('Expires', '0', true);
+
+        // Sans sendHeaders(), les en-tetes restent dans l'objet reponse et
+        // $app->close() sort du script sans jamais les emettre : le
+        // navigateur affiche le CSV comme du texte au lieu de le telecharger.
+        // On vide aussi les tampons de sortie de Joomla pour que le flux ne
+        // soit pas precede du debut de la page d'administration.
+        while (ob_get_level() > 0) {
+            ob_end_clean();
+        }
+
+        $app->sendHeaders();
 
         echo "\xEF\xBB\xBF";
 

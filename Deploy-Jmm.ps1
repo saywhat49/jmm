@@ -152,7 +152,98 @@ function Invoke-Native {
     }
 }
 
-Write-Host 'Deploy-Jmm.ps1 - revision 6' -ForegroundColor DarkGray
+function New-JoomlaPackage {
+    <#
+        Compresse un dossier en respectant la specification ZIP.
+
+        [System.IO.Compression.ZipFile]::CreateFromDirectory du .NET
+        Framework ecrit les separateurs de chemin avec l'antislash de
+        Windows. La specification (APPNOTE 4.4.17) impose la barre oblique.
+        7-Zip et l'explorateur Windows tolerent l'ecart, mais la classe
+        ZipArchive de PHP prend les noms au pied de la lettre : elle cree
+        des fichiers nommes "administrator\src\...", a plat, au lieu d'une
+        arborescence. Joomla ne retrouve alors plus rien et l'installation
+        echoue.
+
+        On construit donc les entrees une par une, en imposant la barre
+        oblique.
+    #>
+    param(
+        [Parameter(Mandatory = $true)][string] $SourceDir,
+        [Parameter(Mandatory = $true)][string] $ZipPath
+    )
+
+    Add-Type -AssemblyName System.IO.Compression
+    Add-Type -AssemblyName System.IO.Compression.FileSystem
+
+    $root = (Resolve-Path -LiteralPath $SourceDir).Path.TrimEnd('\', '/')
+    $archive = [System.IO.Compression.ZipFile]::Open(
+        $ZipPath,
+        [System.IO.Compression.ZipArchiveMode]::Create
+    )
+
+    $count = 0
+
+    try {
+        foreach ($file in (Get-ChildItem -LiteralPath $SourceDir -Recurse -File -Force)) {
+            $relative = $file.FullName.Substring($root.Length + 1).Replace('\', '/')
+
+            $null = [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile(
+                $archive,
+                $file.FullName,
+                $relative,
+                [System.IO.Compression.CompressionLevel]::Optimal
+            )
+
+            $count++
+        }
+
+        # Dossiers vides : une entree explicite, terminee par une barre oblique.
+        foreach ($dir in (Get-ChildItem -LiteralPath $SourceDir -Recurse -Directory -Force)) {
+            if (-not (Get-ChildItem -LiteralPath $dir.FullName -Force)) {
+                $relative = $dir.FullName.Substring($root.Length + 1).Replace('\', '/') + '/'
+                $null = $archive.CreateEntry($relative)
+            }
+        }
+    }
+    finally {
+        $archive.Dispose()
+    }
+
+    return $count
+}
+
+function Test-JoomlaPackage {
+    <# Verifie qu'aucune entree ne contient d'antislash et que le manifeste
+       est bien a la racine. #>
+    param([Parameter(Mandatory = $true)][string] $ZipPath)
+
+    Add-Type -AssemblyName System.IO.Compression
+    Add-Type -AssemblyName System.IO.Compression.FileSystem
+
+    $archive = [System.IO.Compression.ZipFile]::OpenRead($ZipPath)
+
+    try {
+        $names = @($archive.Entries | ForEach-Object { $_.FullName })
+    }
+    finally {
+        $archive.Dispose()
+    }
+
+    $bad = @($names | Where-Object { $_ -like '*\*' })
+
+    if ($bad.Count -gt 0) {
+        throw "$($bad.Count) entree(s) de l'archive utilisent l'antislash. Archive non conforme."
+    }
+
+    if ($names -notcontains 'jmm.xml') {
+        throw 'jmm.xml absent de la racine de l''archive.'
+    }
+
+    return $names.Count
+}
+
+Write-Host 'Deploy-Jmm.ps1 - revision 7' -ForegroundColor DarkGray
 
 # ---------------------------------------------------------------------------
 # 1. Environnement
@@ -292,12 +383,7 @@ try {
         Remove-Item -LiteralPath $zipPath -Force -WhatIf:$false
     }
 
-    [System.IO.Compression.ZipFile]::CreateFromDirectory(
-        $staging,
-        $zipPath,
-        [System.IO.Compression.CompressionLevel]::Optimal,
-        $false   # pas de dossier racine dans l'archive
-    )
+    $packed = New-JoomlaPackage -SourceDir $staging -ZipPath $zipPath
 }
 finally {
     if (Test-Path -LiteralPath $stagingRoot) {
@@ -305,8 +391,11 @@ finally {
     }
 }
 
-$sizeKb = [math]::Round((Get-Item -LiteralPath $zipPath).Length / 1KB, 1)
-Write-Host "    $copied element(s) empaquete(s)"
+$entries = Test-JoomlaPackage -ZipPath $zipPath
+$sizeKb  = [math]::Round((Get-Item -LiteralPath $zipPath).Length / 1KB, 1)
+
+Write-Host "    $copied element(s) racine, $packed fichier(s), $entries entree(s)"
+Write-Host '    Separateurs de chemin conformes, manifeste a la racine.'
 Write-Host "    $zipPath ($sizeKb Ko)"
 
 # ---------------------------------------------------------------------------

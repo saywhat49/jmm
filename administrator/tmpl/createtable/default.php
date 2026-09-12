@@ -4,7 +4,27 @@ defined('_JEXEC') or die;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
+use Saywhat49\Component\Jmm\Administrator\Helper\JmmHelper;
 
+$columnTypes = JmmHelper::getColumnTypes();
+
+// Le script a besoin de savoir quelle forme de longueur chaque type accepte.
+$this->getDocument()->addScriptOptions('com_jmm.columnTypes', $columnTypes);
+$this->getDocument()->addScriptOptions('com_jmm.createtable', [
+    'lengthNone'    => Text::_('COM_JMM_LENGTH_NOT_APPLICABLE'),
+    'lengthDecimal' => Text::_('COM_JMM_LENGTH_DECIMAL_HINT'),
+    'lengthFsp'     => Text::_('COM_JMM_LENGTH_FSP_HINT'),
+    'lengthInt'     => Text::_('COM_JMM_LENGTH_HINT'),
+]);
+
+/** Options du selecteur de type, partagees par les deux lignes de depart. */
+$typeOptions = static function (string $selected) use ($columnTypes): string {
+    $html = '';
+    foreach (array_keys($columnTypes) as $type) {
+        $html .= '<option value="' . $type . '"' . ($type === $selected ? ' selected' : '') . '>' . $type . '</option>';
+    }
+    return $html;
+};
 ?>
 <form action="<?php echo Route::_('index.php?option=com_jmm&task=createtable.createTableStructure'); ?>" method="post" name="adminForm" id="adminForm">
     <div class="row">
@@ -70,24 +90,15 @@ use Joomla\CMS\Router\Route;
                                     </tr>
                                 </thead>
                                 <tbody id="columns_tbody">
-                                    <tr>
-                                        <td><input type="text" name="field_name[]" class="form-control" value="id" required></td>
+                                    <tr class="jmm-col-row">
+                                        <td><input type="text" name="field_name[0]" class="form-control" value="id" required></td>
                                         <td>
-                                            <select name="field_type[]" class="form-select">
-                                                <option value="INT" selected>INT</option>
-                                                <option value="BIGINT">BIGINT</option>
-                                                <option value="VARCHAR">VARCHAR</option>
-                                                <option value="TEXT">TEXT</option>
-                                                <option value="DATETIME">DATETIME</option>
-                                                <option value="DATE">DATE</option>
-                                                <option value="TINYINT">TINYINT</option>
-                                                <option value="DECIMAL">DECIMAL</option>
-                                            </select>
+                                            <select name="field_type[0]" class="form-select jmm-type-select"><?php echo $typeOptions('INT'); ?></select>
                                         </td>
-                                        <td><input type="text" name="field_length[]" class="form-control" value="11"></td>
+                                        <td><input type="text" name="field_length[0]" class="form-control jmm-length-input" value="11"></td>
                                         <td class="text-center"><input type="checkbox" name="field_null[0]" class="form-check-input" value="1"></td>
                                         <td>
-                                            <select name="field_key[]" class="form-select">
+                                            <select name="field_key[0]" class="form-select">
                                                 <option value="primary" selected>PRIMARY</option>
                                                 <option value="unique">UNIQUE</option>
                                                 <option value="index">INDEX</option>
@@ -95,23 +106,18 @@ use Joomla\CMS\Router\Route;
                                             </select>
                                         </td>
                                         <td class="text-center"><input type="checkbox" name="field_extra[0]" class="form-check-input" value="AUTO_INCREMENT" checked></td>
-                                        <td><input type="text" name="field_comments[]" class="form-control"></td>
+                                        <td><input type="text" name="field_comments[0]" class="form-control"></td>
                                         <td class="text-center"><button type="button" class="btn btn-sm btn-outline-danger btn-remove-row" disabled><span class="icon-trash" aria-hidden="true"></span></button></td>
                                     </tr>
-                                    <tr>
-                                        <td><input type="text" name="field_name[]" class="form-control" value="title" required></td>
+                                    <tr class="jmm-col-row">
+                                        <td><input type="text" name="field_name[1]" class="form-control" value="title" required></td>
                                         <td>
-                                            <select name="field_type[]" class="form-select">
-                                                <option value="VARCHAR" selected>VARCHAR</option>
-                                                <option value="INT">INT</option>
-                                                <option value="TEXT">TEXT</option>
-                                                <option value="DATETIME">DATETIME</option>
-                                            </select>
+                                            <select name="field_type[1]" class="form-select jmm-type-select"><?php echo $typeOptions('VARCHAR'); ?></select>
                                         </td>
-                                        <td><input type="text" name="field_length[]" class="form-control" value="255"></td>
+                                        <td><input type="text" name="field_length[1]" class="form-control jmm-length-input" value="255"></td>
                                         <td class="text-center"><input type="checkbox" name="field_null[1]" class="form-check-input" value="1"></td>
                                         <td>
-                                            <select name="field_key[]" class="form-select">
+                                            <select name="field_key[1]" class="form-select">
                                                 <option value="none" selected>---</option>
                                                 <option value="primary">PRIMARY</option>
                                                 <option value="unique">UNIQUE</option>
@@ -119,7 +125,7 @@ use Joomla\CMS\Router\Route;
                                             </select>
                                         </td>
                                         <td class="text-center"><input type="checkbox" name="field_extra[1]" class="form-check-input" value="AUTO_INCREMENT"></td>
-                                        <td><input type="text" name="field_comments[]" class="form-control"></td>
+                                        <td><input type="text" name="field_comments[1]" class="form-control"></td>
                                         <td class="text-center"><button type="button" class="btn btn-sm btn-outline-danger btn-remove-row"><span class="icon-trash" aria-hidden="true"></span></button></td>
                                     </tr>
                                 </tbody>

@@ -102,6 +102,22 @@ class TablesModel extends ListModel
         return $query;
     }
 
+    /**
+     * ListModel::_getList renvoie par defaut des objets stdClass. Les vues
+     * de com_jmm attendent des tableaux associatifs : elles appellent
+     * array_keys() sur la premiere ligne pour construire l'en-tete et
+     * accedent aux colonnes par $row['Name']. On force donc loadAssocList.
+     */
+    protected function _getList($query, $limitstart = 0, $limit = 0)
+    {
+        $db = $this->getDbo();
+        $db->setQuery($query, $limitstart, $limit);
+
+        $rows = $db->loadAssocList();
+
+        return is_array($rows) ? $rows : [];
+    }
+
     public function getDbo()
     {
         return JmmHelper::getDatabaseConnection($this->activeDb);

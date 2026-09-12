@@ -1,63 +1,91 @@
 /**
- * JMM CSV Export Handler (Vanilla ES6)
+ * JMM - export CSV (ES6, sans dependance).
+ *
+ * Le bouton .jmm-export-btn poste une requete SQL vers
+ * index.php?option=com_jmm&task=export.csv dans un nouvel onglet.
  */
-document.addEventListener('DOMContentLoaded', () => {
-    document.addEventListener('click', (e) => {
-        const btn = e.target.closest('.jmm-export-btn');
-        if (!btn) return;
+(() => {
+    'use strict';
 
+    /**
+     * Jeton CSRF. Joomla le publie sous forme d'option de script, mais
+     * seulement si la page a appele HTMLHelper::_('behavior.core') ;
+     * charger l'asset "core" ne suffit pas toujours. On retombe alors sur
+     * le champ cache que JHtml form.token depose dans le formulaire de la
+     * page : son NOM est le jeton, sa valeur vaut 1.
+     */
+    const getCsrfToken = () => {
+        if (window.Joomla && typeof Joomla.getOptions === 'function') {
+            const token = Joomla.getOptions('csrf.token', '');
+            if (token) {
+                return token;
+            }
+        }
+
+        const field = document.querySelector('input[type="hidden"][value="1"][name]');
+
+        return field && /^[0-9a-f]{32}$/i.test(field.name) ? field.name : '';
+    };
+
+    const submitExport = (btn) => {
         const query = btn.dataset.query || '';
         const filename = btn.dataset.filename || 'export';
         const dbname = btn.dataset.dbname || '';
 
         if (!query) {
-            alert('No query specified for export.');
+            window.alert('Aucune requete associee a ce bouton.');
             return;
         }
 
-        let csrfToken = Joomla.getOptions('csrf.token', '');
-        if (!csrfToken) {
-            const hiddenToken = document.querySelector('#adminForm input[type="hidden"][value="1"]');
-            if (hiddenToken) {
-                csrfToken = hiddenToken.name;
-            }
+        const token = getCsrfToken();
+
+        if (!token) {
+            window.alert('Jeton de securite introuvable. Rechargez la page puis reessayez.');
+            return;
         }
 
         const form = document.createElement('form');
         form.method = 'POST';
         form.action = 'index.php?option=com_jmm&task=export.csv';
         form.target = '_blank';
+        form.style.display = 'none';
 
-        const queryInput = document.createElement('input');
-        queryInput.type = 'hidden';
-        queryInput.name = 'query';
-        queryInput.value = query;
-        form.appendChild(queryInput);
+        const fields = { query, filename, dbname };
+        fields[token] = '1';
 
-        const filenameInput = document.createElement('input');
-        filenameInput.type = 'hidden';
-        filenameInput.name = 'filename';
-        filenameInput.value = filename;
-        form.appendChild(filenameInput);
+        Object.entries(fields).forEach(([name, value]) => {
+            if (value === '') {
+                return;
+            }
 
-        if (dbname) {
-            const dbInput = document.createElement('input');
-            dbInput.type = 'hidden';
-            dbInput.name = 'dbname';
-            dbInput.value = dbname;
-            form.appendChild(dbInput);
-        }
-
-        if (csrfToken) {
-            const tokenInput = document.createElement('input');
-            tokenInput.type = 'hidden';
-            tokenInput.name = csrfToken;
-            tokenInput.value = '1';
-            form.appendChild(tokenInput);
-        }
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = name;
+            input.value = value;
+            form.appendChild(input);
+        });
 
         document.body.appendChild(form);
         form.submit();
-        form.remove();
+
+        // Le retrait immediat peut annuler l'envoi sur certains navigateurs.
+        window.setTimeout(() => form.remove(), 1000);
+    };
+
+    document.addEventListener('click', (e) => {
+        const btn = e.target.closest('.jmm-export-btn');
+
+        if (!btn) {
+            return;
+        }
+
+        e.preventDefault();
+
+        try {
+            submitExport(btn);
+        } catch (err) {
+            console.error('JMM export:', err);
+            window.alert('Export impossible : ' + err.message);
+        }
     });
-});
+})();

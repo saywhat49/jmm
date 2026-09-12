@@ -39,7 +39,7 @@
             "id": "version",
             "type": "promptString",
             "description": "Version à publier (X.Y.Z)",
-            "default": "5.4.2"
+            "default": "5.5.1"
         }
     ]
 }

@@ -12,6 +12,62 @@ use Joomla\Database\DatabaseFactory;
 
 class JmmHelper
 {
+    /**
+     * Types de colonnes proposes par le concepteur de tables, avec la forme
+     * de longueur que chacun accepte :
+     *
+     *   none      aucune longueur (DATE, TEXT, BLOB, JSON...)
+     *   int       un entier facultatif (largeur d'affichage des entiers)
+     *   int_req   un entier obligatoire (VARCHAR, VARBINARY)
+     *   decimal   (M) ou (M,D)  -- DECIMAL, FLOAT, DOUBLE
+     *   fsp       precision des fractions de seconde, 0 a 6
+     *   bit       un entier de 1 a 64
+     *
+     * @return array<string,string>
+     */
+    public static function getColumnTypes(): array
+    {
+        return [
+            'INT'        => 'int',
+            'TINYINT'    => 'int',
+            'SMALLINT'   => 'int',
+            'MEDIUMINT'  => 'int',
+            'BIGINT'     => 'int',
+            'BOOLEAN'    => 'none',
+            'SERIAL'     => 'none',
+            'DECIMAL'    => 'decimal',
+            'NUMERIC'    => 'decimal',
+            'FLOAT'      => 'decimal',
+            'DOUBLE'     => 'decimal',
+            'REAL'       => 'decimal',
+            'BIT'        => 'bit',
+            'CHAR'       => 'int',
+            'VARCHAR'    => 'int_req',
+            'TINYTEXT'   => 'none',
+            'TEXT'       => 'none',
+            'MEDIUMTEXT' => 'none',
+            'LONGTEXT'   => 'none',
+            'JSON'       => 'none',
+            'BINARY'     => 'int',
+            'VARBINARY'  => 'int_req',
+            'TINYBLOB'   => 'none',
+            'BLOB'       => 'none',
+            'MEDIUMBLOB' => 'none',
+            'LONGBLOB'   => 'none',
+            'DATE'       => 'none',
+            'YEAR'       => 'none',
+            'DATETIME'   => 'fsp',
+            'TIMESTAMP'  => 'fsp',
+            'TIME'       => 'fsp',
+        ];
+    }
+
+    /** Types acceptant AUTO_INCREMENT. */
+    public static function getAutoIncrementTypes(): array
+    {
+        return ['INT', 'TINYINT', 'SMALLINT', 'MEDIUMINT', 'BIGINT', 'SERIAL'];
+    }
+
     public static function addSubmenu(string $vName = 'databases'): void
     {
         $input = Factory::getApplication()->getInput();
@@ -134,10 +190,14 @@ class JmmHelper
 
         // Echec explicite : l'utilisateur doit savoir pourquoi il voit
         // les tables de la base de Joomla et non celles qu'il a demandees.
-        $app->enqueueMessage(
-            Text::sprintf('COM_JMM_DB_SWITCH_FAILED', $safeDb),
-            'warning'
-        );
+        // Reserve aux gestionnaires : un visiteur du site n'a pas a lire
+        // un diagnostic sur la configuration des bases de donnees.
+        if ($app->getIdentity()->authorise('core.manage', 'com_jmm')) {
+            $app->enqueueMessage(
+                Text::sprintf('COM_JMM_DB_SWITCH_FAILED', $safeDb),
+                'warning'
+            );
+        }
 
         return $shared;
     }

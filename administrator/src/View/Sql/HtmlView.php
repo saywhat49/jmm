@@ -44,6 +44,8 @@ class HtmlView extends BaseHtmlView
 
         $wa = $app->getDocument()->getWebAssetManager();
         $wa->useScript('com_jmm.sql');
+        // La vue affiche un bouton .jmm-export-btn : son gestionnaire vit ici.
+        $wa->useScript('com_jmm.export');
         $wa->useStyle('com_jmm.admin');
 
         parent::display($tpl);

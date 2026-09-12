@@ -26,6 +26,11 @@ class HtmlView extends BaseHtmlView
         $db = JmmHelper::getDatabaseConnection($this->selectedDb);
         $this->tables = JmmHelper::getTablesFromDB($db);
 
+        $wa = $this->getDocument()->getWebAssetManager();
+
+        $wa->useStyle('com_jmm.admin');
+
+
         JmmHelper::addSubmenu('insert');
         $this->addToolbar();
 

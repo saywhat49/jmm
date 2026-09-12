@@ -23,7 +23,10 @@ class SqlModel extends BaseDatabaseModel
         try {
             $db->setQuery($query);
             
-            if (preg_match('/^\s*(SELECT|SHOW|DESCRIBE|DESC|EXPLAIN)\s/i', $query)) {
+            // WITH introduit une CTE, dont le resultat se lit comme un SELECT.
+            // Sans lui, une requete recursive partait dans execute() et
+            // renvoyait un nombre de lignes affectees au lieu du resultat.
+            if (preg_match('/^\s*\(?\s*(SELECT|WITH|SHOW|DESCRIBE|DESC|EXPLAIN|ANALYZE)\s/i', $query)) {
                 $rows = $db->loadAssocList();
                 $rows = is_array($rows) ? $rows : [];
                 $elapsed = round(microtime(true) - $startTime, 4);

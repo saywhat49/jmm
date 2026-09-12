@@ -1,13 +1,44 @@
 <?php
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
+use Joomla\CMS\Uri\Uri;
 
 $listOrder = $this->escape($this->state->get('list.ordering', 'name'));
 $listDirn  = $this->escape($this->state->get('list.direction', 'ASC'));
+
+$sprite = Uri::root(true) . '/media/com_jmm/images/jmm-icons.svg';
+// La vue n'expose pas de base active : on conserve celle de l'URL si
+// elle est presente, pour ne pas perdre le contexte en naviguant.
+$currentDb = Factory::getApplication()->getInput()->getString('dbname', '');
+$dbSuffix  = $currentDb !== '' ? '&dbname=' . urlencode($currentDb) : '';
+
+// Acces rapide aux sections du composant.
+$tiles = [
+    ['tables',        'jmm-table',     'COM_JMM_TABLES',       'COM_JMM_TILE_TABLES_HINT'],
+    ['sql',           'jmm-sql',       'COM_JMM_SQL_QUERY',    'COM_JMM_TILE_SQL_HINT'],
+    ['cannedqueries', 'jmm-bookmark',  'COM_JMM_CANNED_QUERY', 'COM_JMM_TILE_CANNED_HINT'],
+    ['sitetables',    'jmm-globe',     'COM_JMM_SITE_TABLES',  'COM_JMM_TILE_SITETABLES_HINT'],
+    ['createtable',   'jmm-newtable',  'COM_JMM_CREATE_TABLE', 'COM_JMM_TILE_CREATE_HINT'],
+    ['insert',        'jmm-insert',    'COM_JMM_INSERT_DATA',  'COM_JMM_TILE_INSERT_HINT'],
+    ['templates',     'jmm-template',  'COM_JMM_TEMPLATES',    'COM_JMM_TILE_TEMPLATES_HINT'],
+];
 ?>
+<div class="jmm-tiles">
+    <?php foreach ($tiles as [$view, $icon, $label, $hint]): ?>
+        <a class="jmm-tile" href="<?php echo Route::_('index.php?option=com_jmm&view=' . $view . $dbSuffix); ?>">
+            <svg class="jmm-icon jmm-icon-lg" aria-hidden="true" focusable="false">
+                <use href="<?php echo $sprite; ?>#<?php echo $icon; ?>"></use>
+            </svg>
+            <span class="jmm-tile-label"><?php echo Text::_($label); ?></span>
+            <span class="jmm-tile-hint"><?php echo Text::_($hint); ?></span>
+        </a>
+    <?php endforeach; ?>
+</div>
+<?php ?>
 <form action="<?php echo Route::_('index.php?option=com_jmm&view=databases'); ?>" method="post" name="adminForm" id="adminForm">
     <div class="row">
         <div class="col-md-12">

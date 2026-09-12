@@ -20,6 +20,9 @@ class HtmlView extends BaseHtmlView
         $this->item  = $this->get('Item');
         $this->state = $this->get('State');
 
+        $this->getDocument()->getWebAssetManager()->useStyle('com_jmm.admin');
+
+
         $this->addToolbar();
         parent::display($tpl);
     }

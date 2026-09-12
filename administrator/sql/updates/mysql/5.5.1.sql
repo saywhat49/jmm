@@ -1,0 +1,1 @@
+-- JMM 5.5.1 : validation des longueurs de colonnes, DECIMAL(M,D)
