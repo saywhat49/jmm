@@ -75,6 +75,12 @@ class JmmHelper
         $urlSuffix = $dbname !== '' ? '&dbname=' . urlencode($dbname) : '';
 
         Sidebar::addEntry(
+            Text::_('COM_JMM_DASHBOARD'),
+            'index.php?option=com_jmm&view=dashboard' . $urlSuffix,
+            $vName === 'dashboard'
+        );
+
+        Sidebar::addEntry(
             Text::_('COM_JMM_DATABASES'),
             'index.php?option=com_jmm&view=databases' . $urlSuffix,
             $vName === 'databases'

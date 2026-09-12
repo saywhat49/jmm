@@ -7,7 +7,7 @@
     <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
     <authorEmail>saywhat49@gmail.com</authorEmail>
     <authorUrl>https://github.com/saywhat49/jmm</authorUrl>
-    <version>5.5.1</version>
+    <version>5.6.0</version>
     <description>COM_JMM_XML_DESCRIPTION</description>
 
     <namespace path="src">Saywhat49\Component\Jmm</namespace>
@@ -25,8 +25,9 @@
     </languages>
 
     <administration>
-        <menu link="option=com_jmm&amp;view=databases" img="class:database">COM_JMM_MENU_TITLE</menu>
+        <menu link="option=com_jmm&amp;view=dashboard" img="class:home-2">COM_JMM_MENU_TITLE</menu>
         <submenu>
+            <menu link="option=com_jmm&amp;view=dashboard" alt="COM_JMM_DASHBOARD" img="class:home-2">COM_JMM_DASHBOARD</menu>
             <menu link="option=com_jmm&amp;view=databases" alt="COM_JMM_DATABASES" img="class:database">COM_JMM_DATABASES</menu>
             <menu link="option=com_jmm&amp;view=tables" alt="COM_JMM_TABLES" img="class:table">COM_JMM_TABLES</menu>
             <menu link="option=com_jmm&amp;view=sql" alt="COM_JMM_SQL_QUERY" img="class:code">COM_JMM_SQL_QUERY</menu>

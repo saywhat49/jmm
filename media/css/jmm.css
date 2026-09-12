@@ -205,3 +205,47 @@
 [data-bs-theme="dark"] .jmm-tile {
     background: var(--jmm-surface);
 }
+
+/* --------------------------------------------------------------------------
+   Tableau de bord : bandeau de chiffres cles
+   -------------------------------------------------------------------------- */
+
+.jmm-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: .6rem;
+    margin-bottom: 1.25rem;
+}
+
+.jmm-stat {
+    display: flex;
+    flex-direction: column;
+    gap: .15rem;
+    padding: .85rem 1rem;
+    border: 1px solid var(--jmm-border);
+    border-left: 3px solid var(--jmm-accent);
+    border-radius: var(--jmm-radius);
+    background: var(--jmm-surface);
+}
+
+.jmm-stat-value {
+    font-size: 1.5rem;
+    font-weight: 600;
+    line-height: 1.1;
+}
+
+.jmm-stat-label {
+    font-size: .78rem;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+    color: var(--jmm-muted);
+}
+
+.com-jmm-dashboard .card-header .jmm-icon {
+    margin-right: .4rem;
+    color: var(--jmm-accent);
+}
+
+[data-bs-theme="dark"] .jmm-stat {
+    background: var(--jmm-surface);
+}

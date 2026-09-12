@@ -9,7 +9,7 @@ use Joomla\CMS\MVC\Controller\BaseController;
 
 class DisplayController extends BaseController
 {
-    protected $default_view = 'databases';
+    protected $default_view = 'dashboard';
 
     public function display($cachable = false, $urlparams = [])
     {
