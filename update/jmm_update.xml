@@ -5,11 +5,11 @@
         <description>Joomla MySQL Manager (JMM) - Modern Database Management Extension for Joomla 5 and 6</description>
         <element>com_jmm</element>
         <type>component</type>
-        <version>5.6.1</version>
+        <version>5.6.2</version>
         <downloads>
-            <downloadurl type="full" format="zip">https://github.com/saywhat49/jmm/releases/download/v5.6.1/com_jmm-5.6.1.zip</downloadurl>
+            <downloadurl type="full" format="zip">https://github.com/saywhat49/jmm/releases/download/v5.6.2/com_jmm-5.6.2.zip</downloadurl>
         </downloads>
-        <sha256>e6aa5712dbd25e25b7fc77e768ce54deb0b6aa7afdaef1a4ddedfb9a69f63f9e</sha256>
+        <sha256>49d70a4880e49a422e2970d87c503c06dc0417e598a7bf9e801a03c87663408d</sha256>
         <maintainer>Saywhat49</maintainer>
         <maintainerurl>https://github.com/saywhat49/jmm</maintainerurl>
         <section>Updates</section>

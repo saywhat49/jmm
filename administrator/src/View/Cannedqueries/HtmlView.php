@@ -25,7 +25,7 @@ class HtmlView extends BaseHtmlView
         $this->filterForm    = $this->get('FilterForm');
         $this->activeFilters = $this->get('ActiveFilters');
 
-        $wa->useStyle('com_jmm.admin');
+        $this->getDocument()->getWebAssetManager()->useStyle('com_jmm.admin');
         JmmHelper::addSubmenu('cannedqueries');
         $this->addToolbar();
 

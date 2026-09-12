@@ -1,0 +1,1 @@
+-- JMM 5.6.2 : correction du chargement de la feuille de style

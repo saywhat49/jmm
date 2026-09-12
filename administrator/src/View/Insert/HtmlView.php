@@ -28,8 +28,7 @@ class HtmlView extends BaseHtmlView
 
         $wa = $this->getDocument()->getWebAssetManager();
 
-        $wa->useStyle('com_jmm.admin');
-
+        $this->getDocument()->getWebAssetManager()->useStyle('com_jmm.admin');
 
         JmmHelper::addSubmenu('insert');
         $this->addToolbar();
