@@ -1,0 +1,1 @@
+-- JMM 5.6.3 : palette du modele liste-societes-responsive

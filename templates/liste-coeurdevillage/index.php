@@ -3,7 +3,7 @@
  * @package   JMM
  * @license   GNU/GPL
  *
- * Modèle « sociétés coeur de village » — affichage responsive.
+ * Modèle « sociétés adhérentes » — affichage responsive.
  *
  * Variables disponibles :
  *   $rows   tableau de lignes associatives
@@ -39,7 +39,7 @@ $rawCols = [];
 
     <div class="jmm-toolbar">
         <h3 class="jmm-title">
-            Liste des <span data-jmm-count><?php echo $total; ?></span> sociétés Coeur de village
+            Liste des <span data-jmm-count><?php echo $total; ?></span> sociétés adhérentes
         </h3>
 
         <div class="jmm-search">

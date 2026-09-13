@@ -1,19 +1,26 @@
 /* ==========================================================================
    Modèle JMM « sociétés adhérentes »
-   Tableau responsive : tableau classique sur grand écran,
-   cartes empilées en dessous de 768 px.
+   Tableau responsive, palette claire et contrastée.
+
+   Toutes les couleurs sont regroupées ci-dessous : pour retoucher le rendu,
+   modifiez ces sept lignes, rien d'autre.
+
+   Aucun bloc prefers-color-scheme : ce réglage suit le système
+   d'exploitation du visiteur, pas votre gabarit Joomla. Un visiteur dont
+   le portable est en mode sombre se retrouvait avec un tableau sombre
+   au milieu d'une page claire.
    ========================================================================== */
 
 .jmm-societes {
-    --jmm-border: #dee2e6;
-    --jmm-header-bg: #2c3e50;
-    --jmm-header-color: #ffffff;
-    --jmm-stripe: #f6f8fa;
-    --jmm-hover: #eaf2fb;
-    --jmm-accent: #2c7be5;
-    --jmm-radius: 6px;
-    --jmm-text: #212529;
-    --jmm-muted: #6c757d;
+    --jmm-text:        #1b2733;  /* texte principal      15.2:1 sur blanc */
+    --jmm-muted:       #54606e;  /* texte secondaire      6.4:1 sur blanc */
+    --jmm-accent:      #0f5ca3;  /* liens, focus          6.8:1 sur blanc */
+    --jmm-head-bg:     #eaf0f7;  /* fond d'en-tête */
+    --jmm-head-text:   #12263a;  /* texte d'en-tête      13.4:1 sur son fond */
+    --jmm-border:      #c9d4e0;
+    --jmm-stripe:      #f6f9fc;
+    --jmm-hover:       #e3eefb;
+    --jmm-radius:      6px;
 
     color: var(--jmm-text);
 }
@@ -33,6 +40,7 @@
     margin: 0;
     font-size: 1.35rem;
     line-height: 1.3;
+    color: var(--jmm-text);
 }
 
 .jmm-societes .jmm-search {
@@ -45,13 +53,19 @@
     border: 1px solid var(--jmm-border);
     border-radius: var(--jmm-radius);
     font-size: .95rem;
+    color: var(--jmm-text);
     background: #fff;
 }
 
+.jmm-societes .jmm-search-input::placeholder {
+    color: var(--jmm-muted);
+    opacity: 1;            /* Firefox applique 0.54 par défaut */
+}
+
 .jmm-societes .jmm-search-input:focus {
-    outline: none;
+    outline: 2px solid var(--jmm-accent);
+    outline-offset: 1px;
     border-color: var(--jmm-accent);
-    box-shadow: 0 0 0 3px rgba(44, 123, 229, .18);
 }
 
 .jmm-visually-hidden {
@@ -73,6 +87,7 @@
     -webkit-overflow-scrolling: touch;
     border: 1px solid var(--jmm-border);
     border-radius: var(--jmm-radius);
+    background: #fff;
 }
 
 .jmm-societes .jmm-table {
@@ -80,6 +95,7 @@
     margin: 0;
     border-collapse: collapse;
     font-size: .95rem;
+    background: #fff;
 }
 
 .jmm-societes .jmm-table th,
@@ -88,40 +104,48 @@
     text-align: left;
     vertical-align: top;
     border-bottom: 1px solid var(--jmm-border);
+    color: var(--jmm-text);
 }
 
 .jmm-societes .jmm-table thead th {
     position: sticky;
     top: 0;
     z-index: 2;
-    background: var(--jmm-header-bg);
-    color: var(--jmm-header-color);
-    font-weight: 600;
+    background: var(--jmm-head-bg);
+    color: var(--jmm-head-text);
+    font-weight: 700;
     white-space: nowrap;
     cursor: pointer;
     user-select: none;
+    border-bottom: 2px solid var(--jmm-accent);
+}
+
+.jmm-societes .jmm-table thead th:hover {
+    background: var(--jmm-hover);
 }
 
 .jmm-societes .jmm-table thead th:focus-visible {
-    outline: 2px solid #fff;
+    outline: 2px solid var(--jmm-accent);
     outline-offset: -3px;
 }
 
 .jmm-societes .jmm-sort-icon::after {
     content: "\2195";
     margin-left: .4rem;
-    opacity: .45;
+    opacity: .6;
     font-size: .85em;
 }
 
 .jmm-societes .jmm-table thead th[aria-sort="ascending"] .jmm-sort-icon::after {
     content: "\2191";
     opacity: 1;
+    color: var(--jmm-accent);
 }
 
 .jmm-societes .jmm-table thead th[aria-sort="descending"] .jmm-sort-icon::after {
     content: "\2193";
     opacity: 1;
+    color: var(--jmm-accent);
 }
 
 .jmm-societes .jmm-table tbody tr:nth-child(even) {
@@ -136,12 +160,18 @@
     border-bottom: 0;
 }
 
+.jmm-societes .jmm-table a {
+    color: var(--jmm-accent);
+}
+
 .jmm-societes .jmm-empty {
     margin-top: 1rem;
     padding: .9rem 1rem;
+    border: 1px solid var(--jmm-border);
+    border-left: 3px solid var(--jmm-accent);
     border-radius: var(--jmm-radius);
     background: var(--jmm-stripe);
-    color: var(--jmm-muted);
+    color: var(--jmm-text);
 }
 
 /* --- Mode cartes : moins de 768 px --------------------------------------- */
@@ -152,6 +182,7 @@
         border: 0;
         border-radius: 0;
         overflow: visible;
+        background: transparent;
     }
 
     .jmm-societes .jmm-table,
@@ -171,17 +202,14 @@
         clip: rect(0, 0, 0, 0);
     }
 
-    .jmm-societes .jmm-table tbody tr {
+    .jmm-societes .jmm-table tbody tr,
+    .jmm-societes .jmm-table tbody tr:nth-child(even) {
         margin-bottom: .85rem;
         border: 1px solid var(--jmm-border);
+        border-left: 3px solid var(--jmm-accent);
         border-radius: var(--jmm-radius);
         background: #fff;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, .06);
         overflow: hidden;
-    }
-
-    .jmm-societes .jmm-table tbody tr:nth-child(even) {
-        background: #fff;
     }
 
     .jmm-societes .jmm-table tbody tr td {
@@ -189,27 +217,26 @@
         gap: .75rem;
         align-items: baseline;
         padding: .55rem .8rem;
-        border-bottom: 1px solid #f0f2f5;
+        border-bottom: 1px solid var(--jmm-border);
     }
 
     .jmm-societes .jmm-table tbody tr td:last-child {
         border-bottom: 0;
     }
 
+    /* Libellé de colonne : assez foncé pour rester lisible en petit corps.
+       Le gris clair d'origine tombait sous le seuil de contraste. */
     .jmm-societes .jmm-table tbody tr td::before {
         content: attr(data-label);
-        flex: 0 0 40%;
-        max-width: 40%;
+        flex: 0 0 38%;
+        max-width: 38%;
         font-weight: 600;
-        color: var(--jmm-muted);
-        font-size: .82rem;
-        text-transform: uppercase;
-        letter-spacing: .02em;
+        font-size: .85rem;
+        color: #3d4856;
     }
 
-    /* Cellule vide : on garde la ligne lisible. */
     .jmm-societes .jmm-table tbody tr td:empty::after {
-        content: "—";
+        content: "\2014";
         color: var(--jmm-muted);
     }
 
@@ -241,23 +268,5 @@
         background: #fff;
         color: #000;
         border-bottom: 2px solid #000;
-    }
-}
-
-/* --- Thème sombre du gabarit Joomla, si présent -------------------------- */
-
-@media (prefers-color-scheme: dark) {
-    .jmm-societes {
-        --jmm-border: #3a4048;
-        --jmm-stripe: #23272c;
-        --jmm-hover: #2b323a;
-        --jmm-text: #e6e8ea;
-        --jmm-muted: #9aa2ab;
-    }
-
-    .jmm-societes .jmm-search-input,
-    .jmm-societes .jmm-table tbody tr {
-        background: #1c1f23;
-        color: var(--jmm-text);
     }
 }
