@@ -1,0 +1,1 @@
+-- JMM 5.6.4 : execution des plugins de contenu Joomla (content.prepare) dans les modeles

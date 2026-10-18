@@ -2,6 +2,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 
 $d = $this->jmmDiagnostic;
@@ -100,27 +101,33 @@ if ($useCustom && $this->canSeeDiagnostic()) {
         <?php endif; ?>
 
         <?php if (!empty($this->items)): ?>
-            <?php if ($useCustom): ?>
-                <?php
-                try {
+            <?php
+            ob_start();
+            try {
+                if ($useCustom) {
                     include $customFile;
-                } catch (\Throwable $e) {
-                    if ($this->canSeeDiagnostic()) {
-                        echo '<div class="alert alert-danger"><strong>JMM — erreur dans le modele '
-                            . htmlspecialchars((string) $d['title'], ENT_QUOTES, 'UTF-8') . ' :</strong> '
-                            . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8')
-                            . '<br><small>' . htmlspecialchars(str_replace(JPATH_SITE, '', $e->getFile()), ENT_QUOTES, 'UTF-8')
-                            . ' ligne ' . (int) $e->getLine() . '</small></div>';
-                    }
+                } elseif ($layout === 'cards') {
+                    echo $this->loadTemplate('cards');
+                } elseif ($layout === 'chart') {
+                    echo $this->loadTemplate('chart');
+                } else {
+                    echo $this->loadTemplate('table');
                 }
-                ?>
-            <?php elseif ($layout === 'cards'): ?>
-                <?php echo $this->loadTemplate('cards'); ?>
-            <?php elseif ($layout === 'chart'): ?>
-                <?php echo $this->loadTemplate('chart'); ?>
-            <?php else: ?>
-                <?php echo $this->loadTemplate('table'); ?>
-            <?php endif; ?>
+                $tplOutput = ob_get_clean();
+                echo HTMLHelper::_('content.prepare', (string) $tplOutput, '', 'com_jmm.table');
+            } catch (\Throwable $e) {
+                if (ob_get_level() > 0) {
+                    ob_end_clean();
+                }
+                if ($this->canSeeDiagnostic()) {
+                    echo '<div class="alert alert-danger"><strong>JMM — erreur dans le modele '
+                        . htmlspecialchars((string) $d['title'], ENT_QUOTES, 'UTF-8') . ' :</strong> '
+                        . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8')
+                        . '<br><small>' . htmlspecialchars(str_replace(JPATH_SITE, '', $e->getFile()), ENT_QUOTES, 'UTF-8')
+                        . ' ligne ' . (int) $e->getLine() . '</small></div>';
+                }
+            }
+            ?>
 
             <?php if ($layout !== 'chart' && $this->defaultPagination && $this->pagination && $this->pagination->pagesTotal > 1): ?>
                 <div class="d-flex justify-content-center mt-4">
