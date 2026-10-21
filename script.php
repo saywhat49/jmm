@@ -33,47 +33,6 @@ class Com_JmmInstallerScript extends InstallerScript
         return true;
     }
 
-    public function install($parent): void
-    {
-        $this->cleanupLegacyFiles();
-    }
-
-    public function update($parent): void
-    {
-        $this->cleanupLegacyFiles();
-    }
-
-/**
- * Safely add a column if it doesn't exist (MySQL 8 compatible)
- */
-private function addColumnIfNotExists($db, $table, $column, $definition): void
-{
-    try {
-        $columns = $db->getTableColumns($table);
-        if (!array_key_exists($column, $columns)) {
-            $db->setQuery("ALTER TABLE " . $db->quoteName($table) . " ADD COLUMN " . $db->quoteName($column) . " " . $definition);
-            $db->execute();
-        }
-    } catch (\Throwable $e) {
-        // Column may already exist, silently ignore
-    }
-}
-
-/**
- * Ensure template table has the new columns (safe for MySQL 8)
- */
-private function migrateTemplatesTable(): void
-{
-    try {
-        $db = \Joomla\CMS\Factory::getContainer()->get('DatabaseDriver');
-        $table = $db->getPrefix() . 'jmm_templates';
-        $this->addColumnIfNotExists($db, $table, 'layout_type', "varchar(20) NOT NULL DEFAULT 'table' AFTER `title`");
-        $this->addColumnIfNotExists($db, $table, 'chart_type', "varchar(20) NOT NULL DEFAULT 'PieChart' AFTER `layout_type`");
-        $this->addColumnIfNotExists($db, $table, 'custom_css', "text DEFAULT NULL AFTER `chart_type`");
-    } catch (\Throwable $e) {
-        // Non-fatal
-    }
-}
     public function postflight($type, $parent): void
     {
         $this->cleanupLegacyFiles();
@@ -135,20 +94,31 @@ private function migrateTemplatesTable(): void
 
         $app = Factory::getApplication();
 
+        // Les chaines vivent dans com_jmm.sys.ini ; le repli anglais couvre le
+        // cas ou le fichier de langue n'est pas encore charge pendant l'installation.
+        $app->getLanguage()->load('com_jmm.sys', JPATH_ADMINISTRATOR, null, true);
+
         if ($copied) {
             $app->enqueueMessage(
-                'JMM : ' . count($copied) . ' modele(s) installe(s) : ' . implode(', ', $copied),
+                $this->translate('COM_JMM_INSTALL_TEMPLATES_INSTALLED', 'JMM: %d template(s) installed: %s', count($copied), implode(', ', $copied)),
                 'message'
             );
         }
 
         if ($kept) {
             $app->enqueueMessage(
-                'JMM : ' . count($kept) . ' modele(s) deja present(s), conserve(s) sans modification : '
-                . implode(', ', $kept),
+                $this->translate('COM_JMM_INSTALL_TEMPLATES_KEPT', 'JMM: %d template(s) already present, kept unchanged: %s', count($kept), implode(', ', $kept)),
                 'info'
             );
         }
+    }
+
+    /** Texte traduit, ou $fallback si la cle n'est pas disponible. */
+    private function translate(string $key, string $fallback, ...$args): string
+    {
+        $text = Text::_($key);
+
+        return vsprintf($text === $key ? $fallback : $text, $args);
     }
 
     /**
@@ -226,7 +196,6 @@ private function migrateTemplatesTable(): void
         }
 
         $this->ensureTemplatesFolder();
-        $this->flagCustomTemplates();
     }
 
     /**

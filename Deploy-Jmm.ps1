@@ -1,80 +1,54 @@
 <#
 .SYNOPSIS
-    Construit le paquet d'installation JMM, publie le code sur GitHub,
-    cree la release et met a jour update/jmm_update.xml avec le bon SHA-256.
+    Prepare et declenche une release JMM : version, commit, tag, push.
 
 .DESCRIPTION
+    Ce script ne construit PAS le paquet et ne calcule PAS le SHA-256. C'est le
+    workflow GitHub (.github/workflows/release.yml), declenche par le tag, qui
+    construit le zip, calcule son SHA-256, publie la release et ecrit le hash
+    dans update/jmm_update.xml. Ainsi le hash est toujours celui de l'archive
+    reellement telechargee par Joomla.
+
     Sequence :
-      1. Lit la version dans jmm.xml.
-      2. Prepare une copie propre du composant et la compresse en
-         com_jmm-<version>.zip dans dist/.
-      3. Calcule le SHA-256 de CE fichier precis.
-      4. Genere update/jmm_update.xml.
-      5. Commit, push, tag et release GitHub avec l'archive en piece jointe.
+      1. verifie que l'arbre Git est propre, sur la bonne branche, a jour ;
+      2. verifie que CHANGELOG.md contient une section pour la version ;
+      3. met la version a jour dans jmm.xml, media/joomla.asset.json, README.md ;
+      4. lance les tests PHP si php est disponible ;
+      5. commit "Release vX.Y.Z", tag annote vX.Y.Z, push de la branche et du tag.
 
-    L'ordre compte : le hash doit etre celui de l'archive reellement
-    televersee. Recompresser les memes fichiers produit des octets
-    differents (horodatages), donc un hash different, et Joomla refuserait
-    la mise a jour avec un message de checksum invalide.
-
-    -WhatIf effectue reellement la construction, le hachage et la
-    verification du paquet (operations locales et sans effet de bord),
-    mais n'ecrit rien dans le depot et ne publie rien.
-
-.PARAMETER SourcePath
-    Dossier contenant les sources du composant (jmm.xml a la racine).
-    Par defaut, le dossier du script.
-
-.PARAMETER RepoPath
-    Copie de travail locale du depot GitHub. Par defaut, identique a
-    -SourcePath : c'est le cas ou le depot contient directement les
-    sources, sans dossier intermediaire.
+    -WhatIf n'ecrit rien et ne pousse rien : il affiche ce qui serait fait.
 
 .PARAMETER Version
-    Version a publier. Par defaut, celle lue dans jmm.xml.
+    Version a publier, au format X.Y.Z (obligatoire).
 
 .PARAMETER Branch
-    Branche cible. Par defaut master, conformement a l'URL du serveur
-    de mise a jour declaree dans jmm.xml.
-
-.PARAMETER SkipRelease
-    Prepare et pousse tout, mais ne cree pas la release GitHub.
+    Branche de publication. Par defaut master, comme l'URL du serveur de
+    mises a jour declaree dans jmm.xml.
 
 .EXAMPLE
-    .\Deploy-Jmm.ps1 -WhatIf
+    .\Deploy-Jmm.ps1 -Version 5.7.0 -WhatIf
 
 .EXAMPLE
-    .\Deploy-Jmm.ps1
-
-.EXAMPLE
-    .\Deploy-Jmm.ps1 -SourcePath C:\dev\jmm-src -RepoPath C:\dev\jmm
+    .\Deploy-Jmm.ps1 -Version 5.7.0
 #>
 
 #Requires -Version 5.1
 
 [CmdletBinding(SupportsShouldProcess = $true)]
 param(
-    [string] $SourcePath,
-
-    [string] $RepoPath,
-
+    [Parameter(Mandatory = $true)]
+    [ValidatePattern('^\d+\.\d+\.\d+$')]
     [string] $Version,
 
-    [string] $Branch = 'master',
-
-    [string] $RepoSlug = 'saywhat49/jmm',
-
-    [switch] $SkipRelease
+    [string] $Branch = 'master'
 )
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
-# Ce qui vit dans le depot mais ne doit PAS etre installe par Joomla.
-$ExcludeFromPackage = @(
-    '.git', '.github', '.gitignore', '.vscode', '.editorconfig',
-    'update', 'dist', 'README.md', 'Deploy-Jmm.ps1'
-)
+$Root = $PSScriptRoot
+$Tag  = "v$Version"
+$Utf8 = New-Object System.Text.UTF8Encoding($false)
 
 function Write-Step {
     param([string] $Message)
@@ -82,505 +56,100 @@ function Write-Step {
     Write-Host "==> $Message" -ForegroundColor Cyan
 }
 
-function Assert-Command {
-    param([string] $Name, [string] $Hint)
-    if (-not (Get-Command $Name -ErrorAction SilentlyContinue)) {
-        throw "'$Name' est introuvable dans le PATH. $Hint"
-    }
-}
-
-function Get-Sha256 {
-    param([Parameter(Mandatory = $true)][string] $Path)
-
-    $algorithm = [System.Security.Cryptography.SHA256]::Create()
-    try {
-        $stream = [System.IO.File]::OpenRead($Path)
-        try {
-            $bytes = $algorithm.ComputeHash($stream)
-        }
-        finally {
-            $stream.Dispose()
-        }
-    }
-    finally {
-        $algorithm.Dispose()
-    }
-
-    if ($null -eq $bytes -or $bytes.Length -ne 32) {
-        throw "Calcul de l'empreinte impossible pour $Path."
-    }
-
-    return ([System.BitConverter]::ToString($bytes) -replace '-', '').ToLowerInvariant()
-}
-
-function Invoke-Native {
-    <#
-        Appelle un executable externe sans se faire piegier par
-        $ErrorActionPreference = 'Stop'. PowerShell transforme toute sortie
-        sur stderr d'un programme natif en erreur terminante, or git et gh
-        y ecrivent leur fonctionnement normal : "Switched to branch",
-        la progression d'un push, ou "release not found".
-        On neutralise la preference le temps de l'appel, on fusionne stderr
-        dans la sortie standard, et on decide sur le code de retour, qui est
-        le seul indicateur fiable.
-    #>
-    param(
-        [Parameter(Mandatory = $true)][string]   $FilePath,
-        [Parameter(Mandatory = $true)][string[]] $Arguments,
-        [switch] $AllowFailure
-    )
-
-    $previous = $ErrorActionPreference
+function Invoke-Git {
+    # Fonction simple ($args) : les options comme -m ou --porcelain sont
+    # transmises telles quelles a git. Git ecrit sa progression sur stderr ;
+    # avec ErrorActionPreference = Stop, Windows PowerShell 5.1 y verrait une
+    # erreur. On ne juge donc que le code de sortie.
     $ErrorActionPreference = 'Continue'
-
-    try {
-        $output = & $FilePath @Arguments 2>&1 | ForEach-Object { [string] $_ }
-        $code   = $LASTEXITCODE
+    $output = & git -C $Root @args 2>&1
+    if ($LASTEXITCODE -ne 0) {
+        throw "git $($args -join ' ') a echoue : $($output | Out-String)"
     }
-    finally {
-        $ErrorActionPreference = $previous
+    return ($output | Out-String).Trim()
+}
+
+function Set-FileText {
+    # Reecrit un fichier en UTF-8 sans BOM, en conservant ses fins de ligne.
+    param([string] $Path, [string] $Pattern, [string] $Replacement)
+    $text = [System.IO.File]::ReadAllText($Path, $Utf8)
+    if ($text -notmatch $Pattern) {
+        throw "Motif introuvable dans $Path : $Pattern"
     }
-
-    if (-not $AllowFailure -and $code -ne 0) {
-        $joined = ($output -join [Environment]::NewLine)
-        throw "$FilePath $($Arguments -join ' ') a echoue (code $code) :$([Environment]::NewLine)$joined"
-    }
-
-    return [pscustomobject]@{
-        ExitCode = $code
-        Output   = @($output)
-    }
-}
-
-function New-JoomlaPackage {
-    <#
-        Compresse un dossier en respectant la specification ZIP.
-
-        [System.IO.Compression.ZipFile]::CreateFromDirectory du .NET
-        Framework ecrit les separateurs de chemin avec l'antislash de
-        Windows. La specification (APPNOTE 4.4.17) impose la barre oblique.
-        7-Zip et l'explorateur Windows tolerent l'ecart, mais la classe
-        ZipArchive de PHP prend les noms au pied de la lettre : elle cree
-        des fichiers nommes "administrator\src\...", a plat, au lieu d'une
-        arborescence. Joomla ne retrouve alors plus rien et l'installation
-        echoue.
-
-        On construit donc les entrees une par une, en imposant la barre
-        oblique.
-    #>
-    param(
-        [Parameter(Mandatory = $true)][string] $SourceDir,
-        [Parameter(Mandatory = $true)][string] $ZipPath
-    )
-
-    Add-Type -AssemblyName System.IO.Compression
-    Add-Type -AssemblyName System.IO.Compression.FileSystem
-
-    $root = (Resolve-Path -LiteralPath $SourceDir).Path.TrimEnd('\', '/')
-    $archive = [System.IO.Compression.ZipFile]::Open(
-        $ZipPath,
-        [System.IO.Compression.ZipArchiveMode]::Create
-    )
-
-    $count = 0
-
-    try {
-        foreach ($file in (Get-ChildItem -LiteralPath $SourceDir -Recurse -File -Force)) {
-            $relative = $file.FullName.Substring($root.Length + 1).Replace('\', '/')
-
-            $null = [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile(
-                $archive,
-                $file.FullName,
-                $relative,
-                [System.IO.Compression.CompressionLevel]::Optimal
-            )
-
-            $count++
-        }
-
-        # Dossiers vides : une entree explicite, terminee par une barre oblique.
-        foreach ($dir in (Get-ChildItem -LiteralPath $SourceDir -Recurse -Directory -Force)) {
-            if (-not (Get-ChildItem -LiteralPath $dir.FullName -Force)) {
-                $relative = $dir.FullName.Substring($root.Length + 1).Replace('\', '/') + '/'
-                $null = $archive.CreateEntry($relative)
-            }
-        }
-    }
-    finally {
-        $archive.Dispose()
-    }
-
-    return $count
-}
-
-function Test-JoomlaPackage {
-    <# Verifie qu'aucune entree ne contient d'antislash et que le manifeste
-       est bien a la racine. #>
-    param([Parameter(Mandatory = $true)][string] $ZipPath)
-
-    Add-Type -AssemblyName System.IO.Compression
-    Add-Type -AssemblyName System.IO.Compression.FileSystem
-
-    $archive = [System.IO.Compression.ZipFile]::OpenRead($ZipPath)
-
-    try {
-        $names = @($archive.Entries | ForEach-Object { $_.FullName })
-    }
-    finally {
-        $archive.Dispose()
-    }
-
-    $bad = @($names | Where-Object { $_ -like '*\*' })
-
-    if ($bad.Count -gt 0) {
-        throw "$($bad.Count) entree(s) de l'archive utilisent l'antislash. Archive non conforme."
-    }
-
-    if ($names -notcontains 'jmm.xml') {
-        throw 'jmm.xml absent de la racine de l''archive.'
-    }
-
-    return $names.Count
-}
-
-Write-Host 'Deploy-Jmm.ps1 - revision 7' -ForegroundColor DarkGray
-
-# ---------------------------------------------------------------------------
-# 1. Environnement
-# ---------------------------------------------------------------------------
-
-Write-Step 'Verification de l''environnement'
-
-Assert-Command -Name 'git' -Hint 'Installez Git pour Windows : https://git-scm.com/download/win'
-
-if (-not $SkipRelease) {
-    Assert-Command -Name 'gh' -Hint 'Installez GitHub CLI : winget install GitHub.cli, puis "gh auth login".'
-}
-
-if (-not $SourcePath) {
-    $SourcePath = $PSScriptRoot
-}
-
-$SourcePath = (Resolve-Path -LiteralPath $SourcePath).Path
-
-if (-not $RepoPath) {
-    $RepoPath = $SourcePath
-}
-
-$RepoPath = (Resolve-Path -LiteralPath $RepoPath).Path
-
-# Depot et sources confondus : c'est le cas le plus courant. Il n'y a alors
-# rien a synchroniser, et surtout rien a effacer.
-$inPlace = ($SourcePath -eq $RepoPath)
-
-$manifestPath = Join-Path $SourcePath 'jmm.xml'
-if (-not (Test-Path -LiteralPath $manifestPath)) {
-    throw "jmm.xml introuvable dans $SourcePath. -SourcePath doit pointer sur la racine du composant."
-}
-
-if (-not (Test-Path -LiteralPath (Join-Path $RepoPath '.git'))) {
-    throw "$RepoPath n'est pas une copie de travail Git. Clonez d'abord : git clone https://github.com/$RepoSlug.git"
-}
-
-Write-Host "    Sources : $SourcePath"
-Write-Host "    Depot   : $RepoPath$(if ($inPlace) { '  (identiques)' })"
-
-# ---------------------------------------------------------------------------
-# 2. Version
-# ---------------------------------------------------------------------------
-
-Write-Step 'Lecture de la version'
-
-[xml] $manifest = Get-Content -LiteralPath $manifestPath -Raw
-
-# ATTENTION : ne PAS ecrire $manifest.extension.version.
-# <extension> porte un attribut version="5.0" (version du format de
-# manifeste Joomla) ET un enfant <version> (version du composant).
-# L'adaptateur XML de PowerShell renverrait les deux dans un tableau.
-$versionNodes = @($manifest.SelectNodes('/extension/version'))
-
-if ($versionNodes.Count -eq 0) {
-    throw "Aucun element <version> trouve dans $manifestPath."
-}
-
-if ($versionNodes.Count -gt 1) {
-    throw "Le manifeste contient $($versionNodes.Count) elements <version>. Un seul est attendu."
-}
-
-$manifestVersion = ([string] $versionNodes[0].InnerText).Trim()
-$manifestFormat  = $manifest.DocumentElement.GetAttribute('version')
-
-Write-Host "    Format de manifeste Joomla : $manifestFormat"
-Write-Host "    Version du composant       : [$manifestVersion]"
-
-if ($manifestVersion -match '\s') {
-    throw "La version lue vaut '$manifestVersion' : elle contient un espace."
-}
-
-if (-not $Version) {
-    $Version = $manifestVersion
-}
-
-$Version = ([string] $Version).Trim()
-
-if ($Version -ne $manifestVersion) {
-    Write-Warning "La version demandee [$Version] differe de celle du manifeste [$manifestVersion]."
-    Write-Warning 'Joomla se fie au manifeste : une incoherence bloque la mise a jour.'
-    $answer = Read-Host 'Continuer malgre tout ? (o/N)'
-    if ($answer -notmatch '^[oOyY]') { throw 'Interrompu.' }
-}
-
-if ($Version -notmatch '^\d+\.\d+\.\d+$') {
-    throw "Version '$Version' invalide. Format attendu : X.Y.Z"
-}
-
-$tag     = "v$Version"
-$zipName = "com_jmm-$Version.zip"
-
-Write-Host "    Tag     : $tag"
-Write-Host "    Archive : $zipName"
-
-# ---------------------------------------------------------------------------
-# 3. Construction de l'archive
-#
-# Toutes les operations de cette section portent -WhatIf:$false. Elles se
-# deroulent dans un dossier temporaire et dans dist/, hors du depot : les
-# executer meme en simulation permet de verifier reellement le paquet et
-# d'obtenir son empreinte.
-# ---------------------------------------------------------------------------
-
-Write-Step 'Construction du paquet d''installation'
-
-Add-Type -AssemblyName System.IO.Compression.FileSystem
-
-$stagingRoot = Join-Path ([System.IO.Path]::GetTempPath()) ('jmm-build-' + [guid]::NewGuid().ToString('N'))
-$staging     = Join-Path $stagingRoot 'com_jmm'
-$null        = New-Item -ItemType Directory -Path $staging -Force -WhatIf:$false
-
-$outputDir = Join-Path $RepoPath 'dist'
-$null      = New-Item -ItemType Directory -Path $outputDir -Force -WhatIf:$false
-$zipPath   = Join-Path $outputDir $zipName
-
-try {
-    $copied = 0
-
-    Get-ChildItem -LiteralPath $SourcePath -Force | Where-Object {
-        $ExcludeFromPackage -notcontains $_.Name
-    } | ForEach-Object {
-        Copy-Item -LiteralPath $_.FullName -Destination $staging -Recurse -Force -WhatIf:$false
-        $copied++
-    }
-
-    if ($copied -eq 0) {
-        throw "Aucun element copie depuis $SourcePath."
-    }
-
-    if (-not (Test-Path -LiteralPath (Join-Path $staging 'jmm.xml'))) {
-        throw 'jmm.xml absent du dossier de preparation. Archive non conforme.'
-    }
-
-    if (Test-Path -LiteralPath $zipPath) {
-        Remove-Item -LiteralPath $zipPath -Force -WhatIf:$false
-    }
-
-    $packed = New-JoomlaPackage -SourceDir $staging -ZipPath $zipPath
-}
-finally {
-    if (Test-Path -LiteralPath $stagingRoot) {
-        Remove-Item -LiteralPath $stagingRoot -Recurse -Force -WhatIf:$false -ErrorAction SilentlyContinue
+    $updated = [regex]::Replace($text, $Pattern, $Replacement, 'None')
+    if ($PSCmdlet.ShouldProcess($Path, "Mettre a jour vers $Version")) {
+        [System.IO.File]::WriteAllText($Path, $updated, $Utf8)
     }
 }
 
-$entries = Test-JoomlaPackage -ZipPath $zipPath
-$sizeKb  = [math]::Round((Get-Item -LiteralPath $zipPath).Length / 1KB, 1)
+# ------------------------------------------------------------------ 1. Git
+Write-Step 'Controle du depot'
 
-Write-Host "    $copied element(s) racine, $packed fichier(s), $entries entree(s)"
-Write-Host '    Separateurs de chemin conformes, manifeste a la racine.'
-Write-Host "    $zipPath ($sizeKb Ko)"
+if (-not (Get-Command git -ErrorAction SilentlyContinue)) { throw "git est introuvable dans le PATH." }
 
-# ---------------------------------------------------------------------------
-# 4. Empreinte SHA-256
-# ---------------------------------------------------------------------------
+$current = Invoke-Git rev-parse --abbrev-ref HEAD
+if ($current -ne $Branch) { throw "Vous etes sur '$current' : placez-vous sur '$Branch' avant de publier." }
 
-Write-Step 'Calcul de l''empreinte SHA-256'
+if (Invoke-Git status --porcelain) { throw "L'arbre de travail n'est pas propre. Committez ou remisez vos changements." }
 
-# Calcul direct via .NET plutot que Get-FileHash : cette derniere resout
-# ses chemins avec "Resolve-Path | ForEach-Object ProviderPath", et
-# ForEach-Object -MemberName declare ShouldProcess. Sous -WhatIf,
-# l'extraction est sautee, la fonction ne recoit aucun chemin et renvoie
-# un resultat vide. L'API .NET n'a pas ce probleme.
-$sha256 = Get-Sha256 -Path $zipPath
-
-Write-Host "    $sha256\"
-
-# ---------------------------------------------------------------------------
-# 5. Fichier de mise a jour
-# ---------------------------------------------------------------------------
-
-Write-Step 'Generation du fichier de mise a jour'
-
-$downloadUrl = "https://github.com/$RepoSlug/releases/download/$tag/$zipName"
-
-$updateXml = @"
-<?xml version="1.0" encoding="utf-8"?>
-<updates>
-    <update>
-        <name>Joomla MySQL Manager</name>
-        <description>Joomla MySQL Manager (JMM) - Modern Database Management Extension for Joomla 5 and 6</description>
-        <element>com_jmm</element>
-        <type>component</type>
-        <version>$Version</version>
-        <downloads>
-            <downloadurl type="full" format="zip">$downloadUrl</downloadurl>
-        </downloads>
-        <sha256>$sha256</sha256>
-        <maintainer>Saywhat49</maintainer>
-        <maintainerurl>https://github.com/$RepoSlug</maintainerurl>
-        <section>Updates</section>
-        <targetplatform name="joomla" version="5.*|6.*" />
-        <php_minimum>8.1.0</php_minimum>
-        <client>administrator</client>
-    </update>
-</updates>
-"@
-
-$utf8NoBom = New-Object System.Text.UTF8Encoding($false)
-
-if ($WhatIfPreference) {
-    # En simulation, on ecrit un apercu dans dist/ plutot que dans le depot.
-    $previewFile = Join-Path $outputDir 'jmm_update.preview.xml'
-    [System.IO.File]::WriteAllText($previewFile, $updateXml.Trim() + "`n", $utf8NoBom)
-    Write-Host "    Apercu : $previewFile"
-}
-else {
-    $updateDir  = Join-Path $RepoPath 'update'
-    $null       = New-Item -ItemType Directory -Path $updateDir -Force
-    $updateFile = Join-Path $updateDir 'jmm_update.xml'
-
-    [System.IO.File]::WriteAllText($updateFile, $updateXml.Trim() + "`n", $utf8NoBom)
-    $null = [xml](Get-Content -LiteralPath $updateFile -Raw)
-
-    Write-Host "    $updateFile"
+Invoke-Git fetch origin $Branch --tags | Out-Null
+if ((Invoke-Git rev-parse HEAD) -ne (Invoke-Git rev-parse "origin/$Branch")) {
+    throw "'$Branch' n'est pas a jour avec origin/$Branch (pull ou push d'abord)."
 }
 
-# ---------------------------------------------------------------------------
-# 6. Synchronisation du code dans le depot
-# ---------------------------------------------------------------------------
+if (Invoke-Git tag --list $Tag) { throw "Le tag $Tag existe deja." }
 
-if ($inPlace) {
-    Write-Step 'Synchronisation du code : inutile'
-    Write-Host '    Les sources sont deja dans le depot.'
+# ------------------------------------------------------- 2. Journal des changements
+Write-Step 'Controle du journal des changements'
+
+$changelog = Join-Path $Root 'CHANGELOG.md'
+if (-not (Test-Path -LiteralPath $changelog)) { throw 'CHANGELOG.md est introuvable.' }
+
+$escaped = [regex]::Escape($Version)
+if ([System.IO.File]::ReadAllText($changelog, $Utf8) -notmatch "(?m)^## \[?$escaped\]?") {
+    throw "CHANGELOG.md n'a pas de section '## [$Version]'. Ecrivez les notes de version d'abord : elles deviennent le texte de la release."
 }
-else {
-    Write-Step 'Synchronisation du code dans le depot'
+Write-Host "    Section $Version presente."
 
-    $keepInRepo = @('.git', '.github', '.gitignore', '.vscode', 'update', 'dist')
+# ------------------------------------------------------- 3. Numeros de version
+Write-Step "Version $Version"
 
-    if ($PSCmdlet.ShouldProcess($RepoPath, 'Remplacer le code du composant')) {
-        Get-ChildItem -LiteralPath $RepoPath -Force |
-            Where-Object { $keepInRepo -notcontains $_.Name } |
-            ForEach-Object { Remove-Item -LiteralPath $_.FullName -Recurse -Force }
+$today = Get-Date -Format 'yyyy-MM-dd'
+Set-FileText (Join-Path $Root 'jmm.xml') '(?<=<version>)[^<]*(?=</version>)' $Version
+Set-FileText (Join-Path $Root 'jmm.xml') '(?<=<creationDate>)[^<]*(?=</creationDate>)' $today
+Set-FileText (Join-Path $Root 'media/joomla.asset.json') '(?<="version":\s*")[^"]*(?=")' $Version
+Set-FileText (Join-Path $Root 'README.md') '(?<=\(v)\d+\.\d+\.\d+(?=\))' $Version
 
-        Get-ChildItem -LiteralPath $SourcePath -Force |
-            Where-Object { @('.git', '.github', '.vscode', 'update', 'dist') -notcontains $_.Name } |
-            ForEach-Object { Copy-Item -LiteralPath $_.FullName -Destination $RepoPath -Recurse -Force }
-    }
+# ------------------------------------------------------- 4. Tests
+Write-Step 'Tests'
+
+if (Get-Command php -ErrorAction SilentlyContinue) {
+    & php (Join-Path $Root 'tests/run.php')
+    if ($LASTEXITCODE -ne 0) { throw 'Les tests ont echoue : publication annulee.' }
+} else {
+    Write-Warning "php est introuvable : tests ignores ici (la CI les rejouera avant la release)."
 }
 
-# dist/ contient les archives construites : hors du depot.
-$gitignore = Join-Path $RepoPath '.gitignore'
-$ignoreLines = @()
-if (Test-Path -LiteralPath $gitignore) {
-    $ignoreLines = @(Get-Content -LiteralPath $gitignore)
-}
-if ($ignoreLines -notcontains 'dist/') {
-    Add-Content -LiteralPath $gitignore -Value 'dist/'
-}
+# ------------------------------------------------------- 5. Commit, tag, push
+Write-Step "Commit, tag $Tag et push"
 
-# ---------------------------------------------------------------------------
-# 7. Commit, push, release
-# ---------------------------------------------------------------------------
+if ($PSCmdlet.ShouldProcess("$Branch / $Tag", 'Committer, tagger et pousser')) {
+    Invoke-Git add jmm.xml media/joomla.asset.json README.md | Out-Null
 
-Push-Location $RepoPath
-try {
-    Write-Step "Commit et push sur $Branch"
-
-    $current = (Invoke-Native git @('rev-parse', '--abbrev-ref', 'HEAD')).Output[0].Trim()
-    Write-Host "    Branche courante : $current"
-
-    if ($current -ne $Branch) {
-        if ($PSCmdlet.ShouldProcess($Branch, 'Basculer de branche')) {
-            $null = Invoke-Native git @('checkout', $Branch)
-        }
+    # Rien a committer si la version etait deja la bonne : le tag suffit alors.
+    if (Invoke-Git status --porcelain) {
+        Invoke-Git commit -m "Release $Tag" | Out-Null
     }
 
-    if ($PSCmdlet.ShouldProcess($Branch, 'Commiter et pousser')) {
-        $null = Invoke-Native git @('add', '-A')
+    Invoke-Git tag -a $Tag -m "JMM $Version" | Out-Null
+    Invoke-Git push origin $Branch | Out-Null
+    Invoke-Git push origin $Tag | Out-Null
 
-        $pending = (Invoke-Native git @('status', '--porcelain')).Output
-
-        if ($pending.Count -eq 0) {
-            Write-Host '    Aucun changement a commiter.'
-        }
-        else {
-            Write-Host "    $($pending.Count) fichier(s) modifie(s)"
-            $null = Invoke-Native git @('commit', '-m', "Release $tag")
-            $null = Invoke-Native git @('push', 'origin', $Branch)
-            Write-Host '    Pousse.'
-        }
-    }
-
-    if (-not $SkipRelease -and $PSCmdlet.ShouldProcess($tag, 'Creer la release GitHub')) {
-        Write-Step "Publication de la release $tag"
-
-        # -AllowFailure : "release not found" est une reponse valide ici,
-        # pas une panne.
-        $view = Invoke-Native gh @('release', 'view', $tag, '--repo', $RepoSlug) -AllowFailure
-
-        if ($view.ExitCode -eq 0) {
-            Write-Warning "La release $tag existe deja."
-            $answer = Read-Host 'Remplacer l''archive qui y est attachee ? (o/N)'
-
-            if ($answer -match '^[oOyY]') {
-                $null = Invoke-Native gh @('release', 'upload', $tag, $zipPath, '--repo', $RepoSlug, '--clobber')
-                Write-Host '    Archive remplacee.'
-            }
-            else {
-                Write-Host '    Release inchangee.'
-            }
-        }
-        else {
-            $notes = "Joomla MySQL Manager $Version" + [Environment]::NewLine + [Environment]::NewLine + "SHA-256 : ``$sha256``"
-
-            $null = Invoke-Native gh @(
-                'release', 'create', $tag, $zipPath,
-                '--repo', $RepoSlug,
-                '--title', "JMM $Version",
-                '--notes', $notes,
-                '--target', $Branch
-            )
-            Write-Host '    Release creee.'
-        }
-    }
-}
-finally {
-    Pop-Location
-}
-
-# ---------------------------------------------------------------------------
-
-Write-Step 'Termine'
-Write-Host "    Archive        : $zipPath"
-Write-Host "    SHA-256        : $sha256"
-Write-Host "    Telechargement : $downloadUrl"
-Write-Host "    Mise a jour    : https://raw.githubusercontent.com/$RepoSlug/$Branch/update/jmm_update.xml"
-
-if ($WhatIfPreference) {
     Write-Host ''
-    Write-Host 'Simulation : rien n''a ete ecrit dans le depot ni publie.' -ForegroundColor Yellow
-}
-else {
-    Write-Host ''
-    Write-Host 'Dans Joomla : Systeme > Mettre a jour les sites > Purger le cache,' -ForegroundColor Yellow
-    Write-Host 'sinon la nouvelle version peut mettre plusieurs heures a apparaitre.' -ForegroundColor Yellow
+    Write-Host "Tag $Tag pousse. Le workflow 'Release' construit le paquet, calcule le SHA-256," -ForegroundColor Green
+    Write-Host 'cree la release et met a jour update/jmm_update.xml.' -ForegroundColor Green
+    Write-Host "Suivi : https://github.com/saywhat49/jmm/actions"
+    Write-Host 'Ensuite : Systeme > Mises a jour > Sites de mise a jour, videz le cache (Purger le cache).'
+} else {
+    Write-Host "Simulation terminee : rien n'a ete ecrit ni pousse."
 }

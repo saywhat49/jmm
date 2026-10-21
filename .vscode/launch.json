@@ -2,35 +2,27 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "JMM — simulation (-WhatIf)",
+            "name": "JMM - simulation (-WhatIf)",
             "type": "PowerShell",
             "request": "launch",
             "script": "${workspaceFolder}/Deploy-Jmm.ps1",
-            "args": ["-WhatIf"],
+            "args": ["-Version", "${input:version}", "-WhatIf"],
             "cwd": "${workspaceFolder}"
         },
         {
-            "name": "JMM — construire et pousser, sans release",
-            "type": "PowerShell",
-            "request": "launch",
-            "script": "${workspaceFolder}/Deploy-Jmm.ps1",
-            "args": ["-SkipRelease"],
-            "cwd": "${workspaceFolder}"
-        },
-        {
-            "name": "JMM — publier",
-            "type": "PowerShell",
-            "request": "launch",
-            "script": "${workspaceFolder}/Deploy-Jmm.ps1",
-            "args": [],
-            "cwd": "${workspaceFolder}"
-        },
-        {
-            "name": "JMM — publier (version demandée)",
+            "name": "JMM - publier (tag + workflow)",
             "type": "PowerShell",
             "request": "launch",
             "script": "${workspaceFolder}/Deploy-Jmm.ps1",
             "args": ["-Version", "${input:version}"],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "name": "JMM - tests PHP",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "php",
+            "args": ["${workspaceFolder}/tests/run.php"],
             "cwd": "${workspaceFolder}"
         }
     ],
@@ -38,8 +30,7 @@
         {
             "id": "version",
             "type": "promptString",
-            "description": "Version à publier (X.Y.Z)",
-            "default": "5.5.1"
+            "description": "Version a publier (X.Y.Z)"
         }
     ]
 }
