@@ -4,7 +4,9 @@ namespace Saywhat49\Component\Jmm\Administrator\Model;
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\ListModel;
+use Joomla\Database\DatabaseDriver;
 use Saywhat49\Component\Jmm\Administrator\Helper\JmmHelper;
 
 class TablesModel extends ListModel
@@ -13,27 +15,79 @@ class TablesModel extends ListModel
     protected ?string $activeDb = null;
     protected ?string $action = null;
 
+    /**
+     * Vrai si la base ou la table demandee dans l'URL n'est pas un identifiant
+     * valide. Le modele ne renvoie alors rien, au lieu de se rabattre sur la
+     * base ou la table par defaut.
+     */
+    protected bool $invalidInput = false;
+
+    private ?DatabaseDriver $connection = null;
+    private bool $connectionTried = false;
+    private ?string $resolvedTable = null;
+    private bool $tableResolved = false;
+
     public function __construct($config = [])
     {
-        $input = Factory::getApplication()->getInput();
-        $this->activeDb = JmmHelper::cleanIdentifier($input->getString('dbname', ''));
-        $this->activeTable = JmmHelper::cleanIdentifier($input->getString('tbl', ''));
-        $this->action = $input->getCmd('action', '');
+        $dbValid  = true;
+        $tblValid = true;
 
-        if (empty($config['filter_fields']) && !empty($this->activeTable)) {
-            $config['filter_fields'] = JmmHelper::getColumnsFromTable(
-                $this->activeTable,
-                JmmHelper::getDatabaseConnection($this->activeDb)
-            );
+        $this->activeDb    = JmmHelper::requestIdentifier('dbname', $dbValid);
+        $this->activeTable = JmmHelper::requestIdentifier('tbl', $tblValid);
+        $this->action      = Factory::getApplication()->getInput()->getCmd('action', '');
+
+        if (!$dbValid || !$tblValid) {
+            $this->invalidInput = true;
+            JmmHelper::reportError(Text::_($dbValid ? 'COM_JMM_INVALID_TABLE_NAME' : 'COM_JMM_ERROR_INVALID_DATABASE_NAME'));
+        }
+
+        if (!$this->invalidInput && empty($config['filter_fields']) && !empty($this->activeTable)) {
+            $db = $this->connection();
+
+            // Sans connexion, pas de colonnes : surtout pas de repli sur la base par defaut.
+            if ($db !== null) {
+                $config['filter_fields'] = JmmHelper::getColumnsFromTable($this->activeTable, $db);
+            }
         }
 
         parent::__construct($config);
     }
 
+    /** Connexion vers la base demandee, ouverte une seule fois. Null si elle echoue. */
+    private function connection(): ?DatabaseDriver
+    {
+        if (!$this->connectionTried) {
+            $this->connectionTried = true;
+            $this->connection      = $this->invalidInput ? null : JmmHelper::tryConnection($this->activeDb);
+        }
+
+        return $this->connection;
+    }
+
+    /** Nom reel de la table demandee, confronte a SHOW TABLES. Null si elle n'existe pas. */
+    private function resolvedTable(): ?string
+    {
+        if (!$this->tableResolved) {
+            $this->tableResolved = true;
+            $db                  = $this->connection();
+
+            if ($db !== null && !empty($this->activeTable)) {
+                $this->resolvedTable = JmmHelper::resolveTable($this->activeTable, $db);
+
+                if ($this->resolvedTable === null) {
+                    JmmHelper::reportError(Text::_('COM_JMM_INVALID_TABLE_NAME'));
+                }
+            }
+        }
+
+        return $this->resolvedTable;
+    }
+
     public function getTables(): array
     {
-        $db = JmmHelper::getDatabaseConnection($this->activeDb);
-        return JmmHelper::getTablesFromDB($db);
+        $db = $this->connection();
+
+        return $db === null ? [] : JmmHelper::getTablesFromDB($db);
     }
 
     public function getDatabases(): array
@@ -43,14 +97,17 @@ class TablesModel extends ListModel
 
     public function getTableStructure(): array
     {
-        if (empty($this->activeTable)) {
+        $table = $this->resolvedTable();
+        $db    = $this->connection();
+
+        if ($table === null || $db === null) {
             return [];
         }
 
-        $db = JmmHelper::getDatabaseConnection($this->activeDb);
         try {
-            $db->setQuery('DESCRIBE ' . $db->quoteName($this->activeTable));
+            $db->setQuery('DESCRIBE ' . $db->quoteName($table));
             $rows = $db->loadAssocList();
+
             return is_array($rows) ? $rows : [];
         } catch (\Throwable $e) {
             return [];
@@ -59,41 +116,60 @@ class TablesModel extends ListModel
 
     public function getItems()
     {
+        if ($this->invalidInput) {
+            return [];
+        }
+
         if ($this->action === 'structure') {
             return $this->getTableStructure();
         }
 
-        if ($this->action === 'browse' && !empty($this->activeTable)) {
+        if ($this->action === 'browse' && $this->resolvedTable() !== null) {
             return parent::getItems();
         }
 
-        $db = JmmHelper::getDatabaseConnection($this->activeDb);
+        $db = $this->connection();
+
+        if ($db === null) {
+            return [];
+        }
+
         try {
             $db->setQuery('SHOW TABLE STATUS');
             $rows = $db->loadAssocList();
+
             return is_array($rows) ? $rows : [];
         } catch (\Throwable $e) {
             return [];
         }
     }
 
-    protected function getListQuery()
+    public function getTotal()
     {
-        $db = JmmHelper::getDatabaseConnection($this->activeDb);
-        $query = $db->getQuery(true);
-
-        if (empty($this->activeTable)) {
-            $query->select('1');
-            return $query;
+        if ($this->invalidInput || $this->connection() === null) {
+            return 0;
         }
 
-        $query->select('*')->from($db->quoteName($this->activeTable));
+        return parent::getTotal();
+    }
 
-        $orderCol = $this->getState('list.ordering');
-        $orderDirn = strtoupper($this->getState('list.direction', 'ASC')) === 'DESC' ? 'DESC' : 'ASC';
+    protected function getListQuery()
+    {
+        $db    = $this->connection();
+        $table = $this->resolvedTable();
+
+        if ($db === null || $table === null) {
+            return Factory::getContainer()->get('DatabaseDriver')->getQuery(true)->select('1');
+        }
+
+        $query = $db->getQuery(true)->select('*')->from($db->quoteName($table));
+
+        $orderCol  = $this->getState('list.ordering');
+        $orderDirn = strtoupper((string) $this->getState('list.direction', 'ASC')) === 'DESC' ? 'DESC' : 'ASC';
 
         if (!empty($orderCol)) {
-            $allowedCols = JmmHelper::getColumnsFromTable($this->activeTable, $db);
+            $allowedCols = JmmHelper::getColumnsFromTable($table, $db);
+
             if (in_array($orderCol, $allowedCols, true)) {
                 $query->order($db->quoteName($orderCol) . ' ' . $orderDirn);
             }
@@ -120,6 +196,12 @@ class TablesModel extends ListModel
 
     public function getDbo()
     {
-        return JmmHelper::getDatabaseConnection($this->activeDb);
+        $db = $this->connection();
+
+        if ($db === null) {
+            throw new \RuntimeException(Text::_('COM_JMM_ERROR_CONNECTION_FAILED'));
+        }
+
+        return $db;
     }
 }

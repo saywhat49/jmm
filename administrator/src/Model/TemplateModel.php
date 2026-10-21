@@ -220,13 +220,18 @@ class TemplateModel extends AdminModel
  *   $cols   noms des colonnes
  *   $params paramètres de l'élément de menu
  *   $this   la vue frontend (pagination, escape, ...)
+ *
+ * SÉCURITÉ : les valeurs viennent de la base et s'affichent sur le site
+ * public. Passez-les toujours par $this->escape(). N'affichez une valeur
+ * brute que si vous êtes certain qu'elle ne contient pas de HTML saisi par
+ * un tiers.
  */
 defined('_JEXEC') or die('Restricted access');
 ?>
 <?php foreach ($rows as $row) : ?>
     <div class="jmm-row">
         <?php foreach ($cols as $col) : ?>
-            <span class="jmm-<?php echo $col; ?>"><?php echo $row[$col]; ?></span>
+            <span class="jmm-<?php echo $this->escape($col); ?>"><?php echo $this->escape($row[$col]); ?></span>
         <?php endforeach; ?>
     </div>
 <?php endforeach; ?>

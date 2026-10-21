@@ -46,7 +46,7 @@ use Joomla\CMS\Router\Route;
                         </div>
                         <div class="card-body">
                             <?php
-                            $field = new \Joomla\Component\Jmm\Administrator\Field\TablefieldsField();
+                            $field = new \Saywhat49\Component\Jmm\Administrator\Field\TablefieldsField();
                             echo $field->renderField();
                             ?>
                             <div class="mt-3">

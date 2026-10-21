@@ -28,8 +28,8 @@ class InsertController extends FormController
         }
 
         $input = $app->getInput();
-        $tbl = $input->getString('tbl', '');
-        $dbname = $input->getString('dbname', '');
+        $tbl = trim((string) $input->get('tbl', '', 'raw'));
+        $dbname = trim((string) $input->get('dbname', '', 'raw'));
         $jformData = $input->post->get('jform', [], 'array');
 
         /** @var \Saywhat49\Component\Jmm\Administrator\Model\InsertModel $model */

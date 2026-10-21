@@ -4,12 +4,17 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 
-$chartType = $this->params->get('chart_type', 'PieChart');
+// Le type de graphique est insere tel quel dans du JavaScript : liste blanche.
+$chartType = (string) $this->params->get('chart_type', 'PieChart');
+
+if (!in_array($chartType, ['PieChart', 'ColumnChart', 'BarChart'], true)) {
+    $chartType = 'PieChart';
+}
 $chartId = 'jmm_chart_' . (int) $this->siteTable->id;
 
 // Prepare data for Google Charts
 $labelCol = $this->columns[0] ?? 'Label';
-$numCol   = $this->columns[1] ?? 'Valeur';
+$numCol   = $this->columns[1] ?? Text::_('COM_JMM_CHART_VALUE_COLUMN');
 
 $chartRows = [];
 $totalSum = 0;
@@ -57,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
         <span class="fw-bold fs-5"><span class="icon-pie me-2" aria-hidden="true"></span><?php echo $this->escape($this->siteTable->title); ?></span>
         <?php if ($totalSum > 0): ?>
-            <span class="badge bg-light text-dark fs-6">Total : <?php echo number_format($totalSum, 0, ',', ' '); ?></span>
+            <span class="badge bg-light text-dark fs-6"><?php echo Text::_('COM_JMM_CHART_TOTAL'); ?> : <?php echo number_format($totalSum, 0, ',', ' '); ?></span>
         <?php endif; ?>
     </div>
     <div class="card-body p-3">

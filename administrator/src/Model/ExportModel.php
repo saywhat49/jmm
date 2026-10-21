@@ -7,6 +7,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Saywhat49\Component\Jmm\Administrator\Helper\JmmHelper;
+use Saywhat49\Component\Jmm\Administrator\Helper\QueryHelper;
 
 class ExportModel extends BaseDatabaseModel
 {
@@ -17,8 +18,15 @@ class ExportModel extends BaseDatabaseModel
             return;
         }
 
-        $db = JmmHelper::getDatabaseConnection($dbname);
+        // L'export lit, il n'ecrit pas. Sans ce filtre, un DELETE passait par
+        // ici avec le seul droit core.manage.
+        if (!QueryHelper::isReadOnly($sqlQuery)) {
+            echo Text::_('COM_JMM_ERROR_EXPORT_READ_ONLY');
+            return;
+        }
+
         try {
+            $db = JmmHelper::getDatabaseConnection($dbname);
             $db->setQuery($sqlQuery);
             $rows = $db->loadAssocList();
         } catch (\Throwable $e) {

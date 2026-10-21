@@ -26,10 +26,12 @@ class DashboardModel extends BaseDatabaseModel
     /** Base de donnees en cours de consultation. */
     public function getCurrentDb(): string
     {
-        $requested = (string) Factory::getApplication()->getInput()->getString('dbname', '');
+        // Un nom invalide est ignore : le tableau de bord retombe sur la base
+        // de Joomla, qui est la page d'accueil du composant.
+        $requested = JmmHelper::requestIdentifier('dbname');
 
         if ($requested !== '') {
-            return JmmHelper::cleanIdentifier($requested);
+            return $requested;
         }
 
         return (string) Factory::getApplication()->getConfig()->get('db', '');

@@ -10,7 +10,7 @@ defined('_JEXEC') or die('Restricted access');
 		<tr>
 			<?php
 			foreach($cols as $col){
-				echo '<th>'.$col.'</th>';
+				echo '<th>' . htmlspecialchars((string) $col, ENT_QUOTES, 'UTF-8') . '</th>';
 			}
 			?>
 		</tr>
@@ -22,7 +22,7 @@ defined('_JEXEC') or die('Restricted access');
 
 			<?php
 			foreach ($row as $col => $val) {
-				echo '<td>' . $val . '</td>';
+				echo '<td>' . htmlspecialchars((string) $val, ENT_QUOTES, 'UTF-8') . '</td>';
 			}
 			?>
 		</tr>

@@ -28,8 +28,8 @@ class HtmlView extends BaseHtmlView
         $this->state       = $this->get('State');
         $this->tables      = $this->get('Tables');
         $this->databases   = $this->get('Databases');
-        $this->activeTable = JmmHelper::cleanIdentifier($input->getString('tbl', ''));
-        $this->activeDb    = JmmHelper::cleanIdentifier($input->getString('dbname', ''));
+        $this->activeTable = JmmHelper::requestIdentifier('tbl');
+        $this->activeDb    = JmmHelper::requestIdentifier('dbname');
         $this->action      = $input->getCmd('action', '');
 
         $this->getDocument()->getWebAssetManager()->useStyle('com_jmm.admin');

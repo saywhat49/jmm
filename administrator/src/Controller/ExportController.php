@@ -30,7 +30,7 @@ class ExportController extends BaseController
         $query = (string) $input->get('query', '', 'raw');
         $rawFilename = $input->getString('filename', 'export');
         $filename = preg_replace('/[^A-Za-z0-9_-]/', '', $rawFilename) ?: 'export';
-        $dbname = $input->getString('dbname', '');
+        $dbname = trim((string) $input->get('dbname', '', 'raw'));
 
         /** @var \Saywhat49\Component\Jmm\Administrator\Model\ExportModel $model */
         $model = $this->getModel('Export');

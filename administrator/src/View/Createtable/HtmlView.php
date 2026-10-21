@@ -17,7 +17,12 @@ class HtmlView extends BaseHtmlView
     public function display($tpl = null): void
     {
         $input = Factory::getApplication()->getInput();
-        $this->currentDb = JmmHelper::cleanIdentifier($input->getString('dbname', ''));
+        $this->currentDb = JmmHelper::requestIdentifier('dbname', $dbValid);
+
+        if (!$dbValid) {
+            JmmHelper::reportError(Text::_('COM_JMM_ERROR_INVALID_DATABASE_NAME'));
+        }
+
         $this->databases = JmmHelper::getDataBaseLists();
 
         $this->getDocument()->getWebAssetManager()->useStyle('com_jmm.admin');

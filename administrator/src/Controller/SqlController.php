@@ -8,6 +8,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Response\JsonResponse;
 use Joomla\CMS\Session\Session;
+use Saywhat49\Component\Jmm\Administrator\Helper\JmmHelper;
 
 class SqlController extends BaseController
 {
@@ -40,7 +41,12 @@ class SqlController extends BaseController
         // getString applique le filtre STRING et supprime tout ce qui
         // ressemble a une balise : "WHERE a < 5" y perdrait la suite.
         $query = (string) $input->get('query', '', 'raw');
-        $dbname = $input->getString('dbname', '');
+        $dbname = trim((string) $input->get('dbname', '', 'raw'));
+
+        if ($dbname !== '' && !JmmHelper::isValidIdentifier($dbname)) {
+            echo new JsonResponse(null, Text::_('COM_JMM_ERROR_INVALID_DATABASE_NAME'), true);
+            $app->close();
+        }
 
         /** @var \Saywhat49\Component\Jmm\Administrator\Model\SqlModel $model */
         $model = $this->getModel('Sql');
@@ -73,7 +79,12 @@ class SqlController extends BaseController
         // getString applique le filtre STRING et supprime tout ce qui
         // ressemble a une balise : "WHERE a < 5" y perdrait la suite.
         $query = (string) $input->get('query', '', 'raw');
-        $dbname = $input->getString('dbname', '');
+        $dbname = trim((string) $input->get('dbname', '', 'raw'));
+
+        if ($dbname !== '' && !JmmHelper::isValidIdentifier($dbname)) {
+            echo new JsonResponse(null, Text::_('COM_JMM_ERROR_INVALID_DATABASE_NAME'), true);
+            $app->close();
+        }
 
         /** @var \Saywhat49\Component\Jmm\Administrator\Model\SqlModel $model */
         $model = $this->getModel('Sql');

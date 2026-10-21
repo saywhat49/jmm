@@ -116,11 +116,12 @@ class CreatetableModel extends BaseDatabaseModel
 
     public function createTable(array $posts): array
     {
-        $rawTableName = $posts['tbl_name'] ?? '';
-        $tableName = JmmHelper::cleanIdentifier($rawTableName);
-        $dbname = $posts['dbname'] ?? null;
+        // Un nom est accepte tel quel ou refuse. Le "nettoyer" en silence
+        // creait une table qui ne portait pas le nom saisi.
+        $tableName = trim((string) ($posts['tbl_name'] ?? ''));
+        $dbname    = $posts['dbname'] ?? null;
 
-        if ($tableName === '') {
+        if (!JmmHelper::isValidIdentifier($tableName)) {
             return ['status' => false, 'msg' => Text::_('COM_JMM_INVALID_TABLE_NAME')];
         }
 
@@ -132,7 +133,11 @@ class CreatetableModel extends BaseDatabaseModel
         $autoIncTypes = JmmHelper::getAutoIncrementTypes();
         $allowedEngines = ['INNODB', 'MYISAM', 'MEMORY', 'CSV', 'ARCHIVE', 'BLACKHOLE'];
 
-        $db = JmmHelper::getDatabaseConnection($dbname);
+        try {
+            $db = JmmHelper::getDatabaseConnection($dbname);
+        } catch (\RuntimeException $e) {
+            return ['status' => false, 'msg' => $e->getMessage()];
+        }
 
         $fieldDefinitions = [];
         $primaryKeys = [];
@@ -143,10 +148,15 @@ class CreatetableModel extends BaseDatabaseModel
 
         try {
             foreach ($posts['field_name'] as $i => $rawName) {
-                $fieldName = JmmHelper::cleanIdentifier((string) $rawName);
+                $fieldName = trim((string) $rawName);
 
+                // Une ligne laissee vide est ignoree ; un nom saisi doit etre valide.
                 if ($fieldName === '') {
                     continue;
+                }
+
+                if (!JmmHelper::isValidIdentifier($fieldName)) {
+                    throw new \RuntimeException(Text::_('COM_JMM_ERROR_INVALID_COLUMN_NAME'));
                 }
 
                 $lower = strtolower($fieldName);

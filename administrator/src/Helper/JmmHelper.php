@@ -129,13 +129,47 @@ class JmmHelper
         );
     }
 
-    public static function cleanIdentifier(string $identifier): string
+    /**
+     * Identifiant (base, table, colonne) accepte par le composant.
+     *
+     * Les lettres, chiffres, "_", "$" et "-" suffisent aux bases et aux
+     * tables de Joomla et de ce composant. Un nom different est REFUSE, jamais
+     * "nettoye" : retirer des caracteres en silence conduit a viser une autre
+     * table ou une autre base que celle demandee.
+     */
+    public static function isValidIdentifier(string $identifier): bool
     {
-        return preg_replace('/[^A-Za-z0-9_$-]/', '', trim($identifier));
+        return (bool) preg_match('/^[A-Za-z0-9_$-]{1,64}$/', $identifier);
     }
 
-    /** Connexions dediees deja ouvertes, indexees par nom de base. */
+    /**
+     * Lit un identifiant dans la requete HTTP.
+     *
+     * Renvoie '' si le parametre est absent ou invalide. $valid vaut false
+     * dans le second cas, pour que l'appelant puisse le signaler au lieu de
+     * se rabattre sans le dire sur la base ou la table par defaut.
+     */
+    public static function requestIdentifier(string $name, ?bool &$valid = null): string
+    {
+        $value = trim((string) Factory::getApplication()->getInput()->get($name, '', 'raw'));
+        $valid = $value === '' || self::isValidIdentifier($value);
+
+        return $valid ? $value : '';
+    }
+
+    /** Connexions dediees deja ouvertes, indexees par parametres. */
     private static array $connections = [];
+
+    /** Echecs deja constates dans la requete, pour ne pas retenter. */
+    private static array $failures = [];
+
+    /** Avertissements deja affiches, pour ne pas empiler le meme. */
+    private static array $reported = [];
+
+    private static function isManager(): bool
+    {
+        return Factory::getApplication()->getIdentity()->authorise('core.manage', 'com_jmm');
+    }
 
     /**
      * Retourne une connexion pointant reellement sur $targetDb.
@@ -145,86 +179,116 @@ class JmmHelper
      * menus, journaux passeraient sur la mauvaise base) et elle echoue en
      * silence quand l'utilisateur MySQL n'a pas de droits sur la base cible.
      * On ouvre a la place une connexion distincte, mise en cache.
+     *
+     * Aucun repli silencieux : si la connexion demandee est impossible, on
+     * leve une exception. Afficher les donnees de la base de Joomla a la
+     * place de celle qu'on a demandee, c'est executer des requetes au mauvais
+     * endroit sans que personne ne s'en apercoive.
+     *
+     * @throws \RuntimeException Nom de base invalide ou connexion impossible.
      */
     public static function getDatabaseConnection(?string $targetDb = null): DatabaseDriver
     {
-        $app    = Factory::getApplication();
-        $config = $app->getConfig();
-        $params = ComponentHelper::getParams('com_jmm');
-        $safeDb = $targetDb ? self::cleanIdentifier($targetDb) : '';
+        $app      = Factory::getApplication();
+        $config   = $app->getConfig();
+        $params   = ComponentHelper::getParams('com_jmm');
+        $targetDb = trim((string) $targetDb);
 
-        $useCustom = (int) $params->get('dbsettings', 0) === 1;
+        if ($targetDb !== '' && !self::isValidIdentifier($targetDb)) {
+            throw new \RuntimeException(Text::_('COM_JMM_ERROR_INVALID_DATABASE_NAME'));
+        }
 
-        if ($useCustom) {
-            $options = [
-                'driver'   => 'mysqli',
-                'host'     => (string) $params->get('dbhost', 'localhost'),
-                'user'     => (string) $params->get('dbusername', ''),
-                'password' => (string) $params->get('dbpass', ''),
-                'database' => $safeDb !== '' ? $safeDb : (string) $params->get('dbname', ''),
-                'prefix'   => (string) $params->get('dbprefix', ''),
-            ];
+        // Identifiants dedies saisis dans les options du composant.
+        if ((int) $params->get('dbsettings', 0) === 1) {
+            $database = $targetDb !== '' ? $targetDb : trim((string) $params->get('dbname', ''));
 
-            $driver = self::openConnection($options);
-
-            if ($driver !== null) {
-                return $driver;
-            }
+            return self::openConnection(
+                [
+                    'driver'   => 'mysqli',
+                    'host'     => (string) $params->get('dbhost', 'localhost'),
+                    'user'     => (string) $params->get('dbusername', ''),
+                    'password' => (string) $params->get('dbpass', ''),
+                    'database' => $database,
+                    'prefix'   => (string) $params->get('dbprefix', ''),
+                ],
+                Text::_('COM_JMM_ERROR_CUSTOM_CONNECTION_FAILED')
+            );
         }
 
         $shared = Factory::getContainer()->get('DatabaseDriver');
 
         // Pas de base demandee, ou base identique a celle de Joomla.
-        if ($safeDb === '' || strcasecmp($safeDb, (string) $config->get('db', '')) === 0) {
+        if ($targetDb === '' || strcasecmp($targetDb, (string) $config->get('db', '')) === 0) {
             return $shared;
         }
 
-        $options = [
-            'driver'   => (string) $config->get('dbtype', 'mysqli'),
-            'host'     => (string) $config->get('host', 'localhost'),
-            'user'     => (string) $config->get('user', ''),
-            'password' => (string) $config->get('password', ''),
-            'database' => $safeDb,
-            'prefix'   => (string) $config->get('dbprefix', ''),
-        ];
-
-        $driver = self::openConnection($options);
-
-        if ($driver !== null) {
-            return $driver;
-        }
-
-        // Echec explicite : l'utilisateur doit savoir pourquoi il voit
-        // les tables de la base de Joomla et non celles qu'il a demandees.
-        // Reserve aux gestionnaires : un visiteur du site n'a pas a lire
-        // un diagnostic sur la configuration des bases de donnees.
-        if ($app->getIdentity()->authorise('core.manage', 'com_jmm')) {
-            $app->enqueueMessage(
-                Text::sprintf('COM_JMM_DB_SWITCH_FAILED', $safeDb),
-                'warning'
-            );
-        }
-
-        return $shared;
+        return self::openConnection(
+            [
+                'driver'   => (string) $config->get('dbtype', 'mysqli'),
+                'host'     => (string) $config->get('host', 'localhost'),
+                'user'     => (string) $config->get('user', ''),
+                'password' => (string) $config->get('password', ''),
+                'database' => $targetDb,
+                'prefix'   => (string) $config->get('dbprefix', ''),
+            ],
+            Text::sprintf('COM_JMM_DB_SWITCH_FAILED', $targetDb)
+        );
     }
 
     /**
-     * Ouvre (et met en cache) une connexion, ou null en cas d'echec.
+     * Comme getDatabaseConnection(), mais renvoie null au lieu de lever une
+     * exception, apres avoir prevenu les gestionnaires du composant. Pour les
+     * listes (bases, tables) qui doivent rester affichables, vides.
      */
-    private static function openConnection(array $options): ?DatabaseDriver
+    public static function tryConnection(?string $targetDb = null): ?DatabaseDriver
     {
-        $key = ($options['driver'] ?? '') . '|' . ($options['host'] ?? '')
-            . '|' . ($options['user'] ?? '') . '|' . ($options['database'] ?? '');
+        try {
+            return self::getDatabaseConnection($targetDb);
+        } catch (\RuntimeException $e) {
+            self::reportError($e->getMessage());
+
+            return null;
+        }
+    }
+
+    /** Affiche une erreur aux gestionnaires du composant, une seule fois. */
+    public static function reportError(string $message): void
+    {
+        if (isset(self::$reported[$message]) || !self::isManager()) {
+            return;
+        }
+
+        self::$reported[$message] = true;
+        Factory::getApplication()->enqueueMessage(htmlspecialchars($message, ENT_QUOTES, 'UTF-8'), 'error');
+    }
+
+    /**
+     * Ouvre (et met en cache) une connexion.
+     *
+     * Le message d'erreur du pilote peut contenir l'hote et le compte MySQL :
+     * il n'est joint qu'a l'intention des gestionnaires du composant.
+     *
+     * @throws \RuntimeException
+     */
+    private static function openConnection(array $options, string $failureMessage): DatabaseDriver
+    {
+        $key = md5(json_encode([
+            $options['driver'] ?? '',
+            $options['host'] ?? '',
+            $options['user'] ?? '',
+            $options['database'] ?? '',
+            $options['prefix'] ?? '',
+        ]));
 
         if (isset(self::$connections[$key])) {
             return self::$connections[$key];
         }
 
-        if (($options['database'] ?? '') === '') {
-            return null;
+        if (isset(self::$failures[$key])) {
+            throw new \RuntimeException(self::$failures[$key]);
         }
 
-        $driverName = $options['driver'] ?: 'mysqli';
+        $driverName = ($options['driver'] ?? '') ?: 'mysqli';
 
         if ($driverName === 'mysql') {
             $driverName = 'mysqli';
@@ -233,11 +297,18 @@ class JmmHelper
         $options['driver'] = $driverName;
 
         try {
-            $factory = new DatabaseFactory();
-            $driver  = $factory->getDriver($driverName, $options);
+            $driver = (new DatabaseFactory())->getDriver($driverName, $options);
             $driver->connect();
         } catch (\Throwable $e) {
-            return null;
+            $message = $failureMessage;
+
+            if (self::isManager()) {
+                $message .= ' [' . $e->getMessage() . ']';
+            }
+
+            self::$failures[$key] = $message;
+
+            throw new \RuntimeException($message, 0, $e);
         }
 
         self::$connections[$key] = $driver;
@@ -247,10 +318,16 @@ class JmmHelper
 
     public static function getDataBaseLists(?DatabaseDriver $db = null): array
     {
-        $db = $db ?? self::getDatabaseConnection();
+        $db = $db ?? self::tryConnection();
+
+        if ($db === null) {
+            return [];
+        }
+
         try {
             $db->setQuery('SHOW DATABASES');
             $rows = $db->loadColumn();
+
             return is_array($rows) ? $rows : [];
         } catch (\Throwable $e) {
             return [];
@@ -259,38 +336,86 @@ class JmmHelper
 
     public static function getTablesFromDB(?DatabaseDriver $db = null): array
     {
-        $db = $db ?? self::getDatabaseConnection();
+        $db = $db ?? self::tryConnection();
+
+        if ($db === null) {
+            return [];
+        }
+
         try {
             $db->setQuery('SHOW TABLES');
             $rows = $db->loadColumn();
+
             return is_array($rows) ? $rows : [];
         } catch (\Throwable $e) {
             return [];
         }
     }
 
-    public static function getColumnsFromTable(string $table, ?DatabaseDriver $db = null): array
+    /**
+     * Renvoie le nom reel de la table s'il existe dans la base, null sinon.
+     * Le nom demande est confronte a SHOW TABLES : il ne sert jamais tel quel.
+     */
+    public static function resolveTable(string $table, DatabaseDriver $db): ?string
     {
-        $cleanTable = self::cleanIdentifier($table);
-        if ($cleanTable === '') {
+        if (!self::isValidIdentifier($table)) {
+            return null;
+        }
+
+        $tables = self::getTablesFromDB($db);
+
+        if (in_array($table, $tables, true)) {
+            return $table;
+        }
+
+        foreach ($tables as $name) {
+            if (strcasecmp((string) $name, $table) === 0) {
+                return (string) $name;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Description des colonnes (SHOW COLUMNS), indexee par nom de colonne :
+     * Field, Type, Null, Key, Default, Extra.
+     *
+     * @return array<string,array<string,mixed>>
+     */
+    public static function getColumnsInfo(string $table, ?DatabaseDriver $db = null): array
+    {
+        if (!self::isValidIdentifier($table)) {
             return [];
         }
 
-        $db = $db ?? self::getDatabaseConnection();
+        $db = $db ?? self::tryConnection();
+
+        if ($db === null) {
+            return [];
+        }
+
         try {
-            $db->setQuery('SHOW COLUMNS FROM ' . $db->quoteName($cleanTable));
+            $db->setQuery('SHOW COLUMNS FROM ' . $db->quoteName($table));
             $rows = $db->loadAssocList();
-            $cols = [];
-            if (is_array($rows)) {
-                foreach ($rows as $row) {
-                    if (isset($row['Field'])) {
-                        $cols[] = $row['Field'];
-                    }
-                }
-            }
-            return $cols;
         } catch (\Throwable $e) {
             return [];
         }
+
+        $info = [];
+
+        foreach ((array) $rows as $row) {
+            if (isset($row['Field'])) {
+                $info[(string) $row['Field']] = $row;
+            }
+        }
+
+        return $info;
+    }
+
+    public static function getColumnsFromTable(string $table, ?DatabaseDriver $db = null): array
+    {
+        // Les cles numeriques deviennent des entiers en PHP : on rend des chaines.
+        return array_map('strval', array_keys(self::getColumnsInfo($table, $db)));
     }
 }

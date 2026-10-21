@@ -8,7 +8,6 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Response\JsonResponse;
 use Joomla\CMS\Session\Session;
-use Saywhat49\Component\Jmm\Administrator\Helper\JmmHelper;
 
 class TableController extends BaseController
 {
@@ -36,75 +35,22 @@ class TableController extends BaseController
             $app->close();
         }
 
-        $rawQuery = rtrim(trim((string) $siteTable->query), " \t\n\r\0\x0B;");
-        if (!preg_match('/^\s*(SELECT|SHOW|DESCRIBE|DESC)\s/i', $rawQuery)) {
-            echo new JsonResponse(['Result' => 'ERROR', 'Message' => Text::_('COM_JMM_INVALID_QUERY_TYPE')], null, true);
+        // La lecture, le comptage, le tri et le refus des requetes qui
+        // ecrivent vivent dans le modele, partages avec l'affichage.
+        $page = $model->fetchPage($siteTable, $jtStartIndex, $jtPageSize, $jtSorting);
+
+        if ($page['error'] !== '') {
+            // Message generique : le detail peut citer l'hote ou le compte MySQL.
+            echo new JsonResponse(['Result' => 'ERROR', 'Message' => Text::_('COM_JMM_ERROR_LOADING_DATA')], null, true);
             $app->close();
         }
 
-        $db = JmmHelper::getDatabaseConnection($siteTable->dbname ?: null);
-
-        try {
-            $countQuery = 'SELECT COUNT(*) FROM (' . $rawQuery . ') AS jmm_cnt';
-            $db->setQuery($countQuery);
-            $total = (int) $db->loadResult();
-
-            $orderBy = $this->buildSafeOrderBy($db, $rawQuery, $jtSorting);
-            $pagedQuery = $rawQuery;
-            if ($orderBy !== '') {
-                $pagedQuery .= ' ORDER BY ' . $orderBy;
-            }
-            $pagedQuery .= ' LIMIT ' . (int) $jtStartIndex . ', ' . (int) $jtPageSize;
-
-            $db->setQuery($pagedQuery);
-            $records = $db->loadAssocList();
-            $records = is_array($records) ? $records : [];
-
-            echo new JsonResponse([
-                'Result'           => 'OK',
-                'TotalRecordCount' => $total,
-                'Records'          => $records,
-            ]);
-        } catch (\Throwable $e) {
-            echo new JsonResponse(['Result' => 'ERROR', 'Message' => Text::_('COM_JMM_ERROR_LOADING_DATA')], null, true);
-        }
+        echo new JsonResponse([
+            'Result'           => 'OK',
+            'TotalRecordCount' => $page['total'],
+            'Records'          => $page['rows'],
+        ]);
 
         $app->close();
-    }
-
-    private function buildSafeOrderBy($db, string $query, string $jtSorting): string
-    {
-        if ($jtSorting === '') {
-            return '';
-        }
-
-        try {
-            $db->setQuery($query . ' LIMIT 1');
-            $sample = $db->loadAssocList();
-            if (empty($sample)) {
-                return '';
-            }
-
-            $allowedColumns = array_keys($sample[0]);
-            $parts = array_map('trim', explode(',', $jtSorting));
-            $safe = [];
-
-            foreach ($parts as $part) {
-                if (!preg_match('/^([A-Za-z0-9_]+)(?:\s+(ASC|DESC))?$/i', $part, $matches)) {
-                    continue;
-                }
-
-                $column = $matches[1];
-                $dir    = strtoupper($matches[2] ?? 'ASC');
-
-                if (in_array($column, $allowedColumns, true)) {
-                    $safe[] = $db->quoteName($column) . ' ' . ($dir === 'DESC' ? 'DESC' : 'ASC');
-                }
-            }
-
-            return implode(', ', $safe);
-        } catch (\Throwable $e) {
-            return '';
-        }
     }
 }

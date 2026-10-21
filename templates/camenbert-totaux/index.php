@@ -12,6 +12,15 @@
  */
 defined('_JEXEC') or die('Restricted access');
 
+// Valeur inseree dans du JavaScript : toujours passee par json_encode.
+if (!function_exists('jmmJsString')) {
+	function jmmJsString($value): string
+	{
+		return json_encode((string) $value, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE);
+	}
+}
+
+
 /**
  * Load google charts
  */
@@ -43,7 +52,7 @@ function filterChartFilter($val){
 
 
 function drawPieChart($params,$rows,$cols) {
-	$document =JFactory::getDocument();
+	$document = \Joomla\CMS\Factory::getDocument();
 	$chart_div='chart_div';
 
 	$js='google.load("visualization", "1", {packages:["corechart"]});';
@@ -54,7 +63,7 @@ function drawPieChart($params,$rows,$cols) {
 
 	$js.='['; 
 	foreach($cols as $col) {
-		$js.='"'.$col.'",';
+		$js.=jmmJsString($col).',';
 	}
 	$js=rtrim($js,',');
     $js.='],';
@@ -71,9 +80,9 @@ function drawPieChart($params,$rows,$cols) {
 		$p=0;
 		foreach ($row as $col => $val) {
 			if ($p%2) {
-				$dataArray.=$val.',';
+				$dataArray.=(is_numeric($val) ? $val + 0 : 0).',';
 			}else{
-				$dataArray.='"'.$val.'",';
+				$dataArray.=jmmJsString($val).',';
 			}
 		$p++;
 		}
@@ -94,7 +103,7 @@ function drawPieChart($params,$rows,$cols) {
 	$js.="]); ";
 
 	$js.='var options = {';
-	$js.='title: "'.$params->get('page_title').'",';
+	$js.='title: '.jmmJsString($params->get('page_title')).',';
 	$js.='is3D: true';
 	$js.=' };';
 	
@@ -114,7 +123,7 @@ function drawPieChart($params,$rows,$cols) {
 		<tr>
 			<?php
 			foreach($cols as $col){
-				echo '<th>'.$col.'</th>';
+				echo '<th>' . htmlspecialchars((string) $col, ENT_QUOTES, 'UTF-8') . '</th>';
 			}
 			?>
 		</tr>
@@ -126,7 +135,7 @@ function drawPieChart($params,$rows,$cols) {
 
 			<?php
 			foreach ($row as $col => $val) {
-				echo '<td>' . $val . '</td>';
+				echo '<td>' . htmlspecialchars((string) $val, ENT_QUOTES, 'UTF-8') . '</td>';
 			}
 			?>
 		</tr>

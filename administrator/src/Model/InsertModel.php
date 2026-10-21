@@ -16,15 +16,29 @@ class InsertModel extends AdminModel
 
     public function insertRow(string $tableName, array $data, ?string $dbname = null): array
     {
-        $cleanTable = JmmHelper::cleanIdentifier($tableName);
-        if ($cleanTable === '') {
+        $tableName = trim($tableName);
+
+        if (!JmmHelper::isValidIdentifier($tableName)) {
             return ['status' => false, 'msg' => Text::_('COM_JMM_INVALID_TABLE_NAME')];
         }
 
-        $db = JmmHelper::getDatabaseConnection($dbname);
-        $validColumns = JmmHelper::getColumnsFromTable($cleanTable, $db);
+        try {
+            $db = JmmHelper::getDatabaseConnection($dbname);
+        } catch (\RuntimeException $e) {
+            return ['status' => false, 'msg' => $e->getMessage()];
+        }
 
-        if (empty($validColumns)) {
+        // Le nom de table n'est utilise qu'apres avoir ete retrouve dans la
+        // base : un nom "nettoye" en silence pouvait viser une autre table.
+        $table = JmmHelper::resolveTable($tableName, $db);
+
+        if ($table === null) {
+            return ['status' => false, 'msg' => Text::_('COM_JMM_INVALID_TABLE_NAME')];
+        }
+
+        $columns = JmmHelper::getColumnsInfo($table, $db);
+
+        if (empty($columns)) {
             return ['status' => false, 'msg' => Text::_('COM_JMM_ERROR_NO_COLUMNS_FOUND')];
         }
 
@@ -32,12 +46,34 @@ class InsertModel extends AdminModel
         $insertVals = [];
 
         foreach ($data as $col => $val) {
-            if (!in_array($col, $validColumns, true)) {
+            $col = (string) $col;
+
+            if (!isset($columns[$col]) || (!is_scalar($val) && $val !== null)) {
                 continue;
             }
 
+            $info = $columns[$col];
+            $val  = (string) $val;
+
+            if ($val === '') {
+                if ($this->isStringType((string) ($info['Type'] ?? ''))) {
+                    // Une colonne de texte laissee vide recoit une chaine vide.
+                    $sqlValue = $db->quote('');
+                } elseif (($info['Null'] ?? '') === 'YES') {
+                    // Nombre, date... : une valeur vide n'a pas de sens, NULL oui.
+                    $sqlValue = 'NULL';
+                } else {
+                    // Colonne obligatoire : on laisse jouer la valeur par defaut
+                    // (ou l'AUTO_INCREMENT) au lieu d'envoyer '' que MySQL
+                    // refuse en mode strict.
+                    continue;
+                }
+            } else {
+                $sqlValue = $db->quote($val);
+            }
+
             $insertCols[] = $db->quoteName($col);
-            $insertVals[] = $db->quote((string) $val);
+            $insertVals[] = $sqlValue;
         }
 
         if (empty($insertCols)) {
@@ -45,15 +81,22 @@ class InsertModel extends AdminModel
         }
 
         $query = $db->getQuery(true)
-            ->insert($db->quoteName($cleanTable))
+            ->insert($db->quoteName($table))
             ->columns($insertCols)
             ->values(implode(',', $insertVals));
 
         try {
             $db->setQuery($query)->execute();
+
             return ['status' => true, 'msg' => Text::_('COM_JMM_RECORD_INSERTED_SUCCESS')];
         } catch (\Throwable $e) {
             return ['status' => false, 'msg' => $e->getMessage()];
         }
+    }
+
+    /** Colonnes qui acceptent une chaine vide : CHAR, VARCHAR, TEXT, BINARY, BLOB. */
+    private function isStringType(string $type): bool
+    {
+        return (bool) preg_match('/^(?:var)?(?:char|binary)\b|^(?:tiny|medium|long)?(?:text|blob)\b/i', $type);
     }
 }

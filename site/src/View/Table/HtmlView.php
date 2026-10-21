@@ -11,6 +11,9 @@ class HtmlView extends BaseHtmlView
 {
     protected array $items = [];
     protected array $columns = [];
+
+    /** Erreur de chargement des donnees, montree aux seuls gestionnaires. */
+    protected string $queryError = '';
     protected ?object $siteTable = null;
     protected $pagination;
     protected $params;
@@ -53,6 +56,7 @@ class HtmlView extends BaseHtmlView
         $this->siteTable  = $model->getSiteTableDetails();
         $this->items      = $model->getItems();
         $this->columns    = $model->getColumns();
+        $this->queryError = $model->getQueryError();
         $this->pagination = $model->getPagination();
         $this->params     = Factory::getApplication()->getParams('com_jmm');
 

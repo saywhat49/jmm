@@ -6,9 +6,18 @@
  * @copyright	Biswarup Adhikari
 */
 defined('_JEXEC') or die('Restricted access');
+
+// Valeur inseree dans du JavaScript : toujours passee par json_encode.
+if (!function_exists('jmmJsString')) {
+	function jmmJsString($value): string
+	{
+		return json_encode((string) $value, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE);
+	}
+}
+
 function filterChartFilter($val){
 	if(is_numeric($val)){
-		return $val;
+		return $val + 0;
 	}else{
 		return strlen($val);
 	}
@@ -23,15 +32,15 @@ $js='google.load("visualization", "1", {packages:["corechart"]});';
 $js.='google.setOnLoadCallback('.$Callback.');';
 $js.='function '.$Callback.'() {';
 $js.='var data = google.visualization.arrayToDataTable([';
-$js.=" ['".$params->get('page_title')."', '".$params->get('page_title')."'],";
+$js.=' ['.jmmJsString($params->get('page_title')).', '.jmmJsString($params->get('page_title')).'],';
 $dataArray='';
 foreach($cols as $col){
-		$dataArray.="['".$col."', ".filterChartFilter($row[$col])."],";
+		$dataArray.='['.jmmJsString($col).', '.filterChartFilter($row[$col]).'],';
 }
 $js.=rtrim($dataArray,',');
 $js.=']);';
 $js.='var options = {';
-$js.="title: '".$params->get('page_title')."'";
+$js.='title: '.jmmJsString($params->get('page_title'));
 $js.=' };';
 $js.='var chart = new google.visualization.PieChart(document.getElementById("'.$chart_div.'"));';
 $js.='chart.draw(data, options);';

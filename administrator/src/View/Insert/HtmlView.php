@@ -19,12 +19,23 @@ class HtmlView extends BaseHtmlView
     public function display($tpl = null): void
     {
         $input = Factory::getApplication()->getInput();
-        $this->selectedDb    = JmmHelper::cleanIdentifier($input->getString('dbname', ''));
-        $this->selectedTable = JmmHelper::cleanIdentifier($input->getString('tbl', ''));
+        $this->selectedDb    = JmmHelper::requestIdentifier('dbname', $dbValid);
+        $this->selectedTable = JmmHelper::requestIdentifier('tbl');
 
         $this->databases = JmmHelper::getDataBaseLists();
-        $db = JmmHelper::getDatabaseConnection($this->selectedDb);
-        $this->tables = JmmHelper::getTablesFromDB($db);
+
+        if (!$dbValid) {
+            JmmHelper::reportError(Text::_('COM_JMM_ERROR_INVALID_DATABASE_NAME'));
+            $this->selectedTable = '';
+        } else {
+            $db = JmmHelper::tryConnection($this->selectedDb);
+            $this->tables = $db !== null ? JmmHelper::getTablesFromDB($db) : [];
+        }
+
+        // Une table absente de la base n'est pas selectionnable.
+        if ($this->selectedTable !== '' && !in_array($this->selectedTable, $this->tables, true)) {
+            $this->selectedTable = '';
+        }
 
         $wa = $this->getDocument()->getWebAssetManager();
 

@@ -5,6 +5,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\FormField;
+use Joomla\CMS\Language\Text;
 use Saywhat49\Component\Jmm\Administrator\Helper\JmmHelper;
 
 class TablefieldsField extends FormField
@@ -13,15 +14,31 @@ class TablefieldsField extends FormField
 
     protected function getInput(): string
     {
-        $input = Factory::getApplication()->getInput();
-        $table = JmmHelper::cleanIdentifier($input->getString('tbl', ''));
-        $dbname = $input->getString('dbname', '');
+        $dbValid  = true;
+        $tblValid = true;
+        $dbname   = JmmHelper::requestIdentifier('dbname', $dbValid);
+        $table    = JmmHelper::requestIdentifier('tbl', $tblValid);
+
+        if (!$dbValid || !$tblValid) {
+            return '<div class="alert alert-danger">' . htmlspecialchars(Text::_($dbValid ? 'COM_JMM_INVALID_TABLE_NAME' : 'COM_JMM_ERROR_INVALID_DATABASE_NAME'), ENT_QUOTES, 'UTF-8') . '</div>';
+        }
 
         if ($table === '') {
             return '<div class="alert alert-info">' . Factory::getApplication()->getLanguage()->_('COM_JMM_SELECT_TABLE_FIRST') . '</div>';
         }
 
-        $db = JmmHelper::getDatabaseConnection($dbname);
+        $db = JmmHelper::tryConnection($dbname);
+
+        if ($db === null) {
+            return '<div class="alert alert-danger">' . htmlspecialchars(Text::_('COM_JMM_ERROR_CONNECTION_FAILED'), ENT_QUOTES, 'UTF-8') . '</div>';
+        }
+
+        $table = JmmHelper::resolveTable($table, $db);
+
+        if ($table === null) {
+            return '<div class="alert alert-danger">' . htmlspecialchars(Text::_('COM_JMM_INVALID_TABLE_NAME'), ENT_QUOTES, 'UTF-8') . '</div>';
+        }
+
         try {
             $db->setQuery('DESCRIBE ' . $db->quoteName($table));
             $columns = $db->loadAssocList();

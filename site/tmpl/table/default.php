@@ -21,31 +21,29 @@ $document = Factory::getApplication()->getDocument();
 $app      = Factory::getApplication();
 
 $customFile = $this->jmmTemplatePath !== '' ? $this->jmmTemplatePath . '/index.php' : '';
+$isManager  = $this->canSeeDiagnostic();
 
-// Message de diagnostic, visible uniquement par un gestionnaire du composant.
+// Les diagnostics ne sont montres qu'aux gestionnaires du composant.
 $problem = '';
 
-if (!$useCustom && $this->canSeeDiagnostic()) {
+if (!$useCustom && $isManager) {
     if ((int) $d['template_id'] === 0) {
-        $problem = 'Aucun modele JMM selectionne dans cet element de menu (parametre "Modele JMM"). La mise en page generique "'
-            . $layout . '" est utilisee.';
+        $problem = Text::sprintf('COM_JMM_DIAG_NO_TEMPLATE', $layout);
     } elseif (!$d['record_found']) {
-        $problem = 'Le modele n° ' . (int) $d['template_id'] . ' est introuvable ou non publie.';
+        $problem = Text::sprintf('COM_JMM_DIAG_TEMPLATE_NOT_FOUND', (int) $d['template_id']);
     } elseif ($d['layout_type'] !== 'custom') {
-        $problem = 'Le modele "' . $d['title'] . '" est regle sur la mise en page "' . $d['layout_type']
-            . '". Passez-le sur "Modele PHP personnalise" pour que son index.php soit execute.';
+        $problem = Text::sprintf('COM_JMM_DIAG_TEMPLATE_NOT_CUSTOM', $d['title'], $d['layout_type']);
     } elseif (empty($d['base_exists'])) {
-        $problem = 'Le dossier /components/com_jmm/templates est absent du serveur.';
+        $problem = Text::_('COM_JMM_DIAG_FOLDER_MISSING');
     } else {
-        $problem = 'Le fichier index.php est introuvable : ' . str_replace(JPATH_SITE, '', (string) $d['path']) . '/index.php';
+        $problem = Text::sprintf('COM_JMM_DIAG_INDEX_MISSING', str_replace(JPATH_SITE, '', (string) $d['path']) . '/index.php');
     }
 }
-?>
-<?php
+
 // Avertissement dedie aux fichiers CSS/JS du modele personnalise.
 $assetProblem = '';
 
-if ($useCustom && $this->canSeeDiagnostic()) {
+if ($useCustom && $isManager) {
     $missing = [];
 
     if (empty($d['css_url'])) {
@@ -57,10 +55,14 @@ if ($useCustom && $this->canSeeDiagnostic()) {
     }
 
     if ($missing) {
-        $assetProblem = 'Fichier(s) absent(s) du dossier du modele : ' . implode(', ', $missing)
-            . '. Le modele fonctionne, mais sans mise en forme ni script.';
+        $assetProblem = Text::sprintf('COM_JMM_DIAG_ASSETS_MISSING', implode(', ', $missing));
     }
 }
+
+// Les plugins de contenu (codes courts, protection des adresses e-mail...)
+// ne s'appliquent a la sortie que si le menu le demande : les donnees de la
+// base ne doivent pas pouvoir declencher un code court Joomla.
+$prepareContent = (int) $params->get('prepare_content', 0) === 1;
 ?>
 <div class="com-jmm-container py-3">
     <?php if ($assetProblem !== ''): ?>
@@ -73,8 +75,16 @@ if ($useCustom && $this->canSeeDiagnostic()) {
     <?php if ($problem !== ''): ?>
         <div class="alert alert-warning shadow-sm">
             <span class="icon-exclamation-triangle me-2" aria-hidden="true"></span>
-            <strong>JMM —</strong> <?php echo htmlspecialchars($problem, ENT_QUOTES, 'UTF-8'); ?>
-            <div class="small text-muted mt-1">Message visible uniquement par les gestionnaires du composant.</div>
+            <strong>JMM &mdash;</strong> <?php echo htmlspecialchars($problem, ENT_QUOTES, 'UTF-8'); ?>
+            <div class="small text-muted mt-1"><?php echo Text::_('COM_JMM_DIAG_MANAGERS_ONLY'); ?></div>
+        </div>
+    <?php endif; ?>
+
+    <?php if ($isManager && $this->queryError !== ''): ?>
+        <div class="alert alert-danger shadow-sm">
+            <span class="icon-exclamation-triangle me-2" aria-hidden="true"></span>
+            <strong>JMM &mdash;</strong> <?php echo htmlspecialchars($this->queryError, ENT_QUOTES, 'UTF-8'); ?>
+            <div class="small text-muted mt-1"><?php echo Text::_('COM_JMM_DIAG_MANAGERS_ONLY'); ?></div>
         </div>
     <?php endif; ?>
 
@@ -113,18 +123,19 @@ if ($useCustom && $this->canSeeDiagnostic()) {
                 } else {
                     echo $this->loadTemplate('table');
                 }
-                $tplOutput = ob_get_clean();
-                echo HTMLHelper::_('content.prepare', (string) $tplOutput, '', 'com_jmm.table');
+                $tplOutput = (string) ob_get_clean();
+                echo $prepareContent ? HTMLHelper::_('content.prepare', $tplOutput, '', 'com_jmm.table') : $tplOutput;
             } catch (\Throwable $e) {
                 if (ob_get_level() > 0) {
                     ob_end_clean();
                 }
-                if ($this->canSeeDiagnostic()) {
-                    echo '<div class="alert alert-danger"><strong>JMM — erreur dans le modele '
-                        . htmlspecialchars((string) $d['title'], ENT_QUOTES, 'UTF-8') . ' :</strong> '
+                if ($isManager) {
+                    echo '<div class="alert alert-danger"><strong>'
+                        . htmlspecialchars(Text::sprintf('COM_JMM_DIAG_TEMPLATE_ERROR', (string) $d['title']), ENT_QUOTES, 'UTF-8')
+                        . '</strong> '
                         . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8')
                         . '<br><small>' . htmlspecialchars(str_replace(JPATH_SITE, '', $e->getFile()), ENT_QUOTES, 'UTF-8')
-                        . ' ligne ' . (int) $e->getLine() . '</small></div>';
+                        . ' : ' . (int) $e->getLine() . '</small></div>';
                 }
             }
             ?>
@@ -134,7 +145,7 @@ if ($useCustom && $this->canSeeDiagnostic()) {
                     <?php echo $this->pagination->getPagesLinks(); ?>
                 </div>
             <?php endif; ?>
-        <?php else: ?>
+        <?php elseif ($this->queryError === ''): ?>
             <div class="alert alert-info shadow-sm">
                 <span class="icon-info-circle me-2" aria-hidden="true"></span>
                 <?php echo Text::_('COM_JMM_NO_RECORDS_FOUND'); ?>
