@@ -61,7 +61,7 @@ jobs:
           sha256sum -c ./*.zip.sha256
           unzip -l ./*.zip | grep -qE ' jmm\.xml$'
           unzip -l ./*.zip | grep -qE ' script\.php$'
-          if unzip -l ./*.zip | grep -qE 'Deploy-Jmm|\.github/|\.vscode/|tools/|tests/'; then
+          if unzip -l ./*.zip | grep -qE '\.github/|\.vscode/|tools/|tests/'; then
             echo "::error::Des fichiers de developpement se sont glisses dans le paquet."
             exit 1
           fi

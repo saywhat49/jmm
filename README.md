@@ -89,8 +89,9 @@ Run the tests with `php tests/run.php`. The CI (`.github/workflows/ci.yml`) also
 **Publishing a release** has a single path, so that the SHA-256 in the update file is always the hash of the archive Joomla downloads:
 
 1. Add a `## [X.Y.Z]` section to `CHANGELOG.md` (it becomes the release notes).
-2. Run `.\Deploy-Jmm.ps1 -Version X.Y.Z` (add `-WhatIf` to rehearse). It checks the Git state, updates the version in `jmm.xml`, `media/joomla.asset.json` and this file, runs the tests, commits, tags `vX.Y.Z` and pushes.
-3. The tag triggers `.github/workflows/release.yml`, which builds the package with `tools/build-package.py`, computes its SHA-256, creates the GitHub release and commits the new version, download URL and hash to `update/jmm_update.xml` on `master`.
+2. Set the same version in `jmm.xml`, `media/joomla.asset.json` and the title of this file, run `php tests/run.php`, then commit and push to `master`.
+3. Tag the commit and push the tag: `git tag vX.Y.Z && git push origin vX.Y.Z`.
+4. The tag triggers `.github/workflows/release.yml`, which builds the package with `tools/build-package.py`, computes its SHA-256, creates the GitHub release and commits the new version, download URL and hash to `update/jmm_update.xml` on `master`.
 
 Do not edit `update/jmm_update.xml` by hand and do not attach a zip built elsewhere: a rebuilt archive has different bytes, hence a different hash, and Joomla would reject the update.
 

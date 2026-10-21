@@ -36,7 +36,7 @@ from xml.dom import minidom
 EXCLUDE_TOP = {
     '.git', '.github', '.gitignore', '.gitattributes', '.vscode', '.editorconfig',
     'update', 'dist', 'build', 'tests', 'tools',
-    'README.md', 'CHANGELOG.md', 'Deploy-Jmm.ps1',
+    'README.md', 'CHANGELOG.md',
 }
 EXCLUDE_NAMES = {'.DS_Store', 'Thumbs.db'}
 EXCLUDE_SUFFIXES = ('.zip', '.sha256')
@@ -73,7 +73,7 @@ def check_consistency(root, version, tag):
         expected = tag[1:] if tag.startswith('v') else tag
         if expected != version:
             fail('le tag %s ne correspond pas a la version %s de jmm.xml. '
-                 'Relancez Deploy-Jmm.ps1 ou corrigez jmm.xml avant de tagger.' % (tag, version))
+                 'Corrigez jmm.xml (et media/joomla.asset.json) avant de tagger.' % (tag, version))
 
     assets = root / 'media' / 'joomla.asset.json'
     if assets.is_file():

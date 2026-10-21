@@ -27,7 +27,7 @@ Format : [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/). Chaque sectio
 - La requête d'une table de site n'est plus exécutée deux fois par page ; le tri AJAX ne lance plus de requête d'essai.
 - Les messages de diagnostic du site et de l'installation passent par les fichiers de langue (en-GB, fr-FR).
 - `script.php` : suppression du code mort (`migrateTemplatesTable`), des appels redondants et de l'indentation cassée.
-- Publication : **un seul chemin**. Le tag `vX.Y.Z` déclenche le workflow qui construit le paquet, calcule son SHA-256, crée la release et écrit le hash dans `update/jmm_update.xml`. `Deploy-Jmm.ps1` ne fait plus que préparer la version, committer, tagger et pousser.
+- Publication : **un seul chemin**. Le tag `vX.Y.Z` déclenche le workflow qui construit le paquet, calcule son SHA-256, crée la release et écrit le hash dans `update/jmm_update.xml`. Le script `Deploy-Jmm.ps1` est supprimé : la version se prépare à la main (voir README).
 - CI : syntaxe PHP 8.1/8.2/8.3, tests, XML, cohérence des fichiers de langue, essai de construction du paquet.
 - Ajout de `LICENSE.txt` (GPL v2), `.editorconfig`, tests de `QueryHelper` (`php tests/run.php`).
 
